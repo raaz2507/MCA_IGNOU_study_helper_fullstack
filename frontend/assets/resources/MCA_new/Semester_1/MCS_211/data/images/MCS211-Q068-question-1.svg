@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif" viewbox="0 0 360 220" width="360">
+<defs>
+<marker id="dijkstra-arrow-dec23" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="20" refy="5" viewbox="0 0 10 10">
+<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333"></path>
+</marker>
+</defs>
+<circle cx="40" cy="110" fill="none" r="16" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="40" y="114">a</text>
+<circle cx="140" cy="40" fill="none" r="16" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="140" y="44">b</text>
+<circle cx="140" cy="180" fill="none" r="16" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="140" y="184">c</text>
+<circle cx="280" cy="40" fill="none" r="16" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="280" y="44">d</text>
+<circle cx="280" cy="180" fill="none" r="16" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="280" y="184">e</text>
+<line marker-end="url(#dijkstra-arrow-dec23)" stroke="#333" stroke-width="1.5" x1="54" x2="126" y1="99" y2="51"></line>
+<line marker-end="url(#dijkstra-arrow-dec23)" stroke="#333" stroke-width="1.5" x1="54" x2="126" y1="121" y2="169"></line>
+<line marker-end="url(#dijkstra-arrow-dec23)" stroke="#333" stroke-width="1.5" x1="156" x2="264" y1="40" y2="40"></line>
+<line marker-end="url(#dijkstra-arrow-dec23)" stroke="#333" stroke-width="1.5" x1="140" x2="140" y1="56" y2="164"></line>
+<line marker-end="url(#dijkstra-arrow-dec23)" stroke="#333" stroke-width="1.5" x1="152" x2="268" y1="52" y2="168"></line>
+<line marker-end="url(#dijkstra-arrow-dec23)" stroke="#333" stroke-width="1.5" x1="156" x2="264" y1="180" y2="180"></line>
+<line marker-end="url(#dijkstra-arrow-dec23)" stroke="#333" stroke-width="1.5" x1="280" x2="280" y1="56" y2="164"></line>
+<text font-size="12" x="90" y="65">10</text>
+<text font-size="12" x="90" y="155">5</text>
+<text font-size="12" text-anchor="middle" x="210" y="34">1</text>
+<text font-size="12" x="146" y="105">2</text>
+<text font-size="12" x="190" y="90">3</text>
+<text font-size="12" text-anchor="middle" x="210" y="174">9</text>
+<text font-size="12" x="286" y="105">6</text>
+</svg>

@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif" viewbox="0 0 400 220" width="400">
+<defs>
+<marker id="arrow" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="20" refy="5" viewbox="0 0 10 10">
+<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333"></path>
+</marker>
+</defs>
+<circle cx="40" cy="100" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="40" y="105">a</text>
+<circle cx="140" cy="30" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="140" y="35">b</text>
+<circle cx="140" cy="130" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="140" y="135">c</text>
+<circle cx="140" cy="200" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="140" y="205">e</text>
+<circle cx="260" cy="30" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="260" y="35">d</text>
+<circle cx="320" cy="110" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="320" y="115">f</text>
+<circle cx="260" cy="200" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="260" y="205">g</text>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="40" x2="140" y1="100" y2="30"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="40" x2="140" y1="100" y2="130"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="40" x2="140" y1="100" y2="200"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="140" x2="260" y1="30" y2="30"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="260" x2="140" y1="30" y2="130"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="260" x2="320" y1="30" y2="110"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="140" x2="140" y1="130" y2="200"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="140" x2="320" y1="130" y2="110"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="140" x2="260" y1="200" y2="200"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="320" x2="260" y1="110" y2="200"></line>
+<path d="M 140 200 Q 40 220 40 118" fill="none" marker-end="url(#arrow)" stroke="#333" stroke-width="1.5"></path>
+<path d="M 260 200 Q 380 180 260 42" fill="none" marker-end="url(#arrow)" stroke="#333" stroke-width="1.5"></path>
+<text font-size="12" x="85" y="55">2</text>
+<text font-size="12" x="90" y="105">7</text>
+<text font-size="12" x="75" y="160">12</text>
+<text font-size="12" x="200" y="22">2</text>
+<text font-size="12" x="185" y="75">-1</text>
+<text font-size="12" x="295" y="65">2</text>
+<text font-size="12" x="146" y="170">2</text>
+<text font-size="12" x="220" y="110">9</text>
+<text font-size="12" x="200" y="215">-7</text>
+<text font-size="12" x="295" y="165">2</text>
+<text font-size="12" x="65" y="215">-4</text>
+<text font-size="12" x="355" y="115">1</text>
+</svg>

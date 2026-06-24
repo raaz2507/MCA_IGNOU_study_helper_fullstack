@@ -1,0 +1,272 @@
+﻿<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="robots" content="noindex, nofollow" />
+	<title>Dashboard | GyanPath</title>
+	<link rel="stylesheet" href="../assets/css/index.css?v=25" />
+</head>
+
+<body class="auth-pending" data-allowed-roles="admin,editor" data-page="dashboard" data-header-variant="dashboard" data-header-label="Resource Management" data-header-title="GyanPath Dashboard" data-header-subtitle="Welcome to the resource management area." data-header-action="dashboard">
+	<div id="app-header"></div>
+
+	<div class="dashboard-layout">
+		<aside class="dashboard-section-nav" aria-label="Dashboard sections">
+			<strong>Dashboard Sections</strong>
+			<nav>
+				<a href="#videoLectureManagement">Video Lectures</a>
+				<a href="#bannerManagement">Banner Management</a>
+				<a href="#studyMaterialManagement">Study Materials</a>
+				<a href="#paperManagement">Question Papers</a>
+				<a href="#contributorManagement">Contributors</a>
+			</nav>
+		</aside>
+
+	<main class="dashboard-page">
+		<section id="videoLectureManagement" class="dashboard-panel lecture-manager" aria-labelledby="lectureManagerTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Admin and Editor</p>
+				<h2 id="lectureManagerTitle">Video Lecture Management</h2>
+				<p>Add YouTube or other online video links to individual subject cards.</p>
+			</div>
+
+			<form id="lectureForm" class="contributor-form">
+				<input id="lectureId" type="hidden" />
+				<label>
+					<span>YouTube video or playlist URL</span>
+					<div class="lecture-url-fetch">
+						<input id="lectureUrl" type="url" maxlength="600" required placeholder="https://www.youtube.com/watch?v=... or playlist?list=..." />
+						<button id="fetchLectureDetails" class="secondary-link" type="button">Fetch</button>
+					</div>
+				</label>
+				<div class="banner-form-grid">
+					<label>
+						<span>Subject</span>
+						<select id="lectureSubject" required></select>
+					</label>
+					<label>
+						<span>Language</span>
+						<select id="lectureLanguage">
+							<option>Hindi</option>
+							<option>English</option>
+							<option>Hindi + English</option>
+						</select>
+					</label>
+				</div>
+				<label>
+					<span>Lecture title</span>
+					<input id="lectureTitle" type="text" maxlength="140" required />
+				</label>
+				<div class="banner-form-grid">
+					<label>
+						<span>Unit / Block</span>
+						<input id="lectureUnit" type="text" maxlength="100" placeholder="Block 1 - Unit 2" />
+					</label>
+					<label>
+						<span>Teacher / Channel</span>
+						<input id="lectureTeacher" type="text" maxlength="100" />
+					</label>
+				</div>
+				<label>
+					<span>Description</span>
+					<textarea id="lectureDescription" rows="3" maxlength="500"></textarea>
+				</label>
+				<label>
+					<span>Display order</span>
+					<input id="lectureOrder" type="number" min="0" max="999" value="1" required />
+				</label>
+				<label class="banner-active-option">
+					<input id="lectureActive" type="checkbox" checked />
+					<span>Published and visible on the Video Lectures page</span>
+				</label>
+				<div class="contributor-form-actions">
+					<button class="logout-button" type="submit">Save Video Lecture</button>
+					<button id="cancelLectureEdit" class="secondary-link" type="button" hidden>Cancel Edit</button>
+				</div>
+				<p id="lectureMessage" class="contributor-message" aria-live="polite"></p>
+			</form>
+			<div id="lectureAdminList" class="lecture-admin-list"></div>
+		</section>
+
+		<section id="bannerManagement" class="dashboard-panel banner-manager" aria-labelledby="bannerManagerTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Admin and Editor</p>
+				<h2 id="bannerManagerTitle">Banner Content Management</h2>
+				<p>Create exam notices, date-sheet updates and permission announcements for the home page.</p>
+			</div>
+
+			<div class="banner-manager-layout">
+				<form id="bannerForm" class="contributor-form banner-form">
+					<input id="bannerId" type="hidden" />
+					<input id="bannerImageData" type="hidden" />
+
+					<label>
+						<span>Banner title</span>
+						<input id="bannerTitle" type="text" maxlength="100" required />
+					</label>
+
+					<label>
+						<span>Short description</span>
+						<textarea id="bannerDescription" rows="3" maxlength="260" required></textarea>
+					</label>
+
+					<div class="banner-form-grid">
+						<label>
+							<span>Category</span>
+							<select id="bannerCategory">
+								<option>Exam</option>
+								<option>Date Sheet</option>
+								<option>Permission</option>
+								<option>Assignment</option>
+								<option>Result</option>
+								<option>General Notice</option>
+							</select>
+						</label>
+						<label>
+							<span>Priority</span>
+							<input id="bannerPriority" type="number" min="0" max="999" value="1" required />
+						</label>
+					</div>
+
+					<label>
+						<span>Banner image</span>
+						<input id="bannerImage" type="file" accept="image/*" />
+						<small class="field-help">Recommended size: 1200 x 500 px (12:5 ratio). Use JPG, PNG or WebP. Keep important text/logo near the center because edges may crop on small screens.</small>
+					</label>
+
+					<div class="banner-form-grid">
+						<label>
+							<span>Button text</span>
+							<input id="bannerButtonText" type="text" maxlength="40" placeholder="View Date Sheet" />
+						</label>
+						<label>
+							<span>Button URL</span>
+							<input id="bannerButtonUrl" type="text" maxlength="500" placeholder="datesheet.pdf or https://..." />
+						</label>
+					</div>
+
+					<div class="banner-form-grid">
+						<label>
+							<span>Show from (optional)</span>
+							<input id="bannerStartDate" type="date" />
+						</label>
+						<label>
+							<span>Show until (optional)</span>
+							<input id="bannerEndDate" type="date" />
+						</label>
+					</div>
+
+					<label class="banner-active-option">
+						<input id="bannerActive" type="checkbox" checked />
+						<span>Published and visible on home page</span>
+					</label>
+
+					<div class="contributor-form-actions">
+						<button class="logout-button" type="submit">Save Banner</button>
+						<button id="cancelBannerEdit" class="secondary-link" type="button" hidden>Cancel Edit</button>
+					</div>
+					<p id="bannerMessage" class="contributor-message" aria-live="polite"></p>
+				</form>
+
+				<div class="banner-preview-column">
+					<p class="dashboard-label">Live Preview</p>
+					<div id="bannerPreview" class="banner-preview">
+						<div>
+							<span data-preview-category>Category</span>
+							<h3 data-preview-title>Banner title</h3>
+							<p data-preview-description>Banner description will appear here.</p>
+							<b data-preview-button>Action</b>
+						</div>
+					</div>
+					<p class="banner-storage-note">Images and banners are saved through the Node.js API in PostgreSQL.</p>
+				</div>
+			</div>
+
+			<div id="bannerAdminList" class="banner-admin-list"></div>
+		</section>
+
+		<section id="studyMaterialManagement" class="dashboard-panel management-shortcut-panel" aria-labelledby="studyMaterialTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Admin and Editor</p>
+				<h2 id="studyMaterialTitle">Study Material Management</h2>
+				<p>Open the dedicated dashboard page for study material metadata, Hindi availability and checksums.</p>
+			</div>
+			<div class="admin-quick-links">
+				<a href="/dashboard/study-materials">Open Study Materials</a>
+			</div>
+		</section>
+
+		<section id="paperManagement" class="dashboard-panel management-shortcut-panel" aria-labelledby="paperManagerTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Admin and Editor</p>
+				<h2 id="paperManagerTitle">Question Paper Management</h2>
+				<p>Open the dedicated dashboard page for question paper metadata, Hindi availability and checksums.</p>
+			</div>
+			<div class="admin-quick-links">
+				<a href="/dashboard/question-papers">Open Question Papers</a>
+			</div>
+		</section>
+
+		<section id="contributorManagement" class="dashboard-panel contributor-manager" aria-labelledby="contributorManagerTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Admin and Editor</p>
+				<h2 id="contributorManagerTitle">Manage Contributors</h2>
+				<p>Add or edit the contributors shown on the About page.</p>
+			</div>
+
+			<form id="contributorForm" class="contributor-form">
+				<input id="contributorId" type="hidden" />
+
+				<div class="avatar-editor">
+					<div id="contributorAvatarPreview" class="contributor-avatar contributor-avatar-preview">?</div>
+					<label>
+						<span>Avatar or profile picture</span>
+						<input id="contributorAvatar" type="file" accept="image/*" />
+					</label>
+				</div>
+
+				<label>
+					<span>Name</span>
+					<input id="contributorName" type="text" maxlength="80" required />
+				</label>
+
+				<label>
+					<span>General information</span>
+					<textarea id="contributorInfo" rows="3" maxlength="500" required></textarea>
+				</label>
+
+				<label>
+					<span>Contributions - write one item per line</span>
+					<textarea id="contributorContributions" rows="6" required placeholder="Added MCS-220 question papers&#10;Reviewed study material links"></textarea>
+				</label>
+
+				<div class="contributor-form-actions">
+					<button class="logout-button" type="submit">Save Contributor</button>
+					<button id="cancelContributorEdit" class="secondary-link" type="button" hidden>Cancel Edit</button>
+				</div>
+				<p id="contributorMessage" class="contributor-message" aria-live="polite"></p>
+			</form>
+
+			<div id="contributorAdminList" class="contributor-admin-list"></div>
+		</section>
+	</main>
+	</div>
+
+		<div id="app-footer"></div>
+	<script type="module" src="../assets/js/components/site-shell.js"></script>
+<script src="../assets/js/utils/theme.js"></script>
+	<script type="module" src="../assets/js/utils/protected-page.js"></script>
+	<script type="module" src="../assets/js/pages/video-lectures-admin.js"></script>
+	<script type="module" src="../assets/js/pages/banner-admin.js"></script>
+	<script type="module" src="../assets/js/pages/contributors-admin.js"></script>
+	<script type="module" src="../assets/js/utils/page-preferences.js"></script>
+</body>
+
+</html>
+
+
+
+
+

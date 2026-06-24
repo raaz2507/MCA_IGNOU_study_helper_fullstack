@@ -1,0 +1,34 @@
+{
+  "contentRoot": "assets/resources/MCA_new",
+  "semesterPrefix": "Semester_",
+  "examFolder": "exam_papers",
+  "studyFolder": "study_material",
+  "catalogOutput": "tools/generated/subjects.data.js",
+  "questionBanks": {
+    "MCS-211": "/question-bank?subject=MCA_new/Semester_1/MCS_211"
+  },
+  "subjectNames": {
+    "MCS-211": "Design and Analysis of Algorithms",
+    "MCS-212": "Discrete Mathematics",
+    "MCS-213": "Software Engineering",
+    "MCS-214": "Professional Skills and Ethics",
+    "MCS-215": "Security and Cyber Laws",
+    "MCSL-216": "DAA and Web Design Lab",
+    "MCSL-217": "Software Engineering Lab",
+    "MCS-218": "Data Communication and Computer Networks",
+    "MCS-219": "Object Oriented Analysis and Design",
+    "MCS-220": "Web Technologies",
+    "MCS-221": "Data Warehousing and Data Mining",
+    "MCSL-222": "OOAD and Web Technologies Lab",
+    "MCSL-223": "Computer Networks and Data Mining Lab",
+    "MCS-224": "Artificial Intelligence and Machine Learning",
+    "MCS-225": "Accountancy and Financial Management",
+    "MCS-226": "Data Science and Big Data",
+    "MCS-227": "Cloud Computing and IoT",
+    "MCS-228": "Artificial Intelligence and Machine Learning Lab",
+    "MCS-229": "Cloud and Data Science Lab",
+    "MCS-230": "Digital Image Processing and Computer Vision",
+    "MCS-231": "Mobile Computing",
+    "MCS-232": "Project Guidelines"
+  }
+}

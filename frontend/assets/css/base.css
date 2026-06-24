@@ -1,0 +1,286 @@
+﻿:root {
+	/* Central typography
+	 * Add local @font-face files later using these same family names.
+	 */
+	--font-body: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+	--font-heading: "Poppins", "Segoe UI", Arial, sans-serif;
+	--font-content: "Merriweather", Georgia, "Times New Roman", serif;
+	--font-code: "Roboto Mono", "Cascadia Code", Consolas, monospace;
+	--font-ui: "Inter", "Segoe UI", Roboto, Arial, sans-serif;
+
+	/* Shared application theme */
+	--app-background: linear-gradient(135deg, #eef3f8, #dfe7f0);
+	--app-background-solid: #edf3fa;
+	--app-text: #1f2937;
+	--app-heading: #0f172a;
+	--app-muted: #64748b;
+	--app-surface: #ffffff;
+	--app-surface-translucent: rgba(255, 255, 255, 0.92);
+	--app-card-translucent: rgba(255, 255, 255, 0.48);
+	--contributor-card-bg: rgba(255, 255, 255, 0.54);
+	--contributor-card-panel: rgba(248, 250, 252, 0.7);
+	--contributor-card-frame: rgba(37, 99, 235, 0.5);
+	--contributor-card-highlight: rgba(96, 165, 250, 0.18);
+	--app-surface-soft: #f1f5f9;
+	--app-surface-softer: #f8fafc;
+	--app-border: #dbe3ee;
+	--app-border-strong: #d0d5dd;
+	--app-primary: #2563eb;
+	--app-primary-dark: #0d4fa9;
+	--app-primary-text: #ffffff;
+	--app-success: #16a34a;
+	--app-danger: #dc2626;
+	--app-danger-dark: #b91c1c;
+	--app-warning: #ea580c;
+	--app-shadow-color: rgba(15, 23, 42, 0.12);
+	--app-shadow: 0 12px 32px var(--app-shadow-color);
+	--app-sidebar: #07172e;
+	--app-sidebar-end: #102747;
+	--app-paper: #fffdf5;
+	--body-art-opacity: 0.2;
+
+	/* Reusable layout scale */
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 20px;
+	--space-6: 24px;
+	--space-7: 28px;
+	--space-8: 32px;
+
+	--radius-sm: 8px;
+	--radius-md: 10px;
+	--radius-lg: 14px;
+	--radius-xl: 18px;
+	--radius-panel: 20px;
+
+	--page-gutter: 30px;
+	--layout-gap: var(--space-6);
+	--panel-padding: 26px;
+	--panel-padding-compact: 18px;
+	--sidebar-width: 220px;
+	--content-width: 1100px;
+	--management-content-width: calc(100vw - 268px);
+	--management-table-min-width: 980px;
+	--table-row-height: 72px;
+	--action-gap: 14px;
+	--field-padding-y: 11px;
+	--field-padding-x: 12px;
+	--button-padding-y: 9px;
+	--button-padding-x: 12px;
+	--button-radius: var(--radius-md);
+	--button-font-size: 0.78rem;
+	--field-radius: var(--radius-md);
+	--field-focus-ring: 2px solid color-mix(in srgb, var(--app-primary), transparent 55%);
+	--card-padding: 15px;
+	--card-padding-lg: 26px;
+	--app-shell-sidebar-width: 280px;
+	--app-shell-list-width: 410px;
+	--topbar-padding-y: 18px;
+	--topbar-padding-x: 22px;
+	--toolbar-gap: 14px;
+	--filter-gap: 10px;
+	--badge-padding-y: 6px;
+	--badge-padding-x: 10px;
+	--badge-radius: 999px;
+	--badge-font-size: 0.8rem;
+	--table-min-width: 690px;
+	--table-cell-padding-y: 13px;
+	--table-cell-padding-x: 14px;
+	--table-font-size: 0.8rem;
+	--meta-font-size: 0.72rem;
+	--label-font-size: 0.78rem;
+
+	/* Compatibility aliases used by existing pages */
+	--page-background: var(--app-background);
+	--main-text: var(--app-text);
+	--heading-text: var(--app-heading);
+	--muted-text: var(--app-muted);
+	--card-background: var(--app-surface-translucent);
+	--card-border: var(--app-border);
+	--soft-background: var(--app-surface-soft);
+	--soft-background-2: var(--app-surface-softer);
+	--item-background: var(--app-surface);
+	--item-border: var(--app-border);
+	--theme-shadow: var(--app-shadow-color);
+
+	--background: var(--app-background-solid);
+	--page: var(--app-background-solid);
+	--surface: var(--app-surface);
+	--surface-soft: var(--app-surface-soft);
+	--soft: var(--app-surface-softer);
+	--text: var(--app-text);
+	--muted: var(--app-muted);
+	--border: var(--app-border);
+	--accent: var(--app-primary);
+	--accent-dark: var(--app-primary-dark);
+	--accent-text: var(--app-primary-text);
+	--shadow: var(--app-shadow);
+
+	--bg: var(--app-background-solid);
+	--ink: var(--app-text);
+	--card: var(--app-surface);
+	--panel: var(--app-surface-soft);
+	--paper: var(--app-paper);
+	--line: var(--app-border);
+	--blue: var(--app-primary);
+	--green: var(--app-success);
+	--orange: var(--app-warning);
+	--sidebar: var(--app-sidebar);
+	--sidebar2: var(--app-sidebar-end);
+	--pdf-filter: none;
+}
+
+html {
+	scrollbar-width: thin;
+	scrollbar-color: var(--accent) var(--page-background);
+}
+
+html::-webkit-scrollbar {
+	width: 12px;
+	height: 12px;
+}
+
+html::-webkit-scrollbar-track {
+	background: var(--page-background);
+}
+
+html::-webkit-scrollbar-thumb {
+	border: 3px solid var(--page-background);
+	border-radius: 999px;
+	background: linear-gradient(180deg, var(--accent), var(--app-sidebar-end));
+}
+
+html::-webkit-scrollbar-thumb:hover {
+	background: var(--accent);
+}
+
+html::-webkit-scrollbar-corner {
+	background: var(--page-background);
+}
+
+html[data-theme="dark"],
+body.dark {
+	--app-background: linear-gradient(135deg, #111827, #020617);
+	--app-background-solid: #0f172a;
+	--app-text: #e5e7eb;
+	--app-heading: #f8fafc;
+	--app-muted: #a8b3c7;
+	--app-surface: #172033;
+	--app-surface-translucent: rgba(23, 32, 51, 0.96);
+	--app-card-translucent: rgba(23, 32, 51, 0.58);
+	--contributor-card-bg: rgba(23, 32, 51, 0.62);
+	--contributor-card-panel: rgba(15, 23, 42, 0.72);
+	--contributor-card-frame: rgba(96, 165, 250, 0.58);
+	--contributor-card-highlight: rgba(96, 165, 250, 0.18);
+	--app-surface-soft: #202b40;
+	--app-surface-softer: #273449;
+	--app-border: #344054;
+	--app-border-strong: #3d4b61;
+	--app-primary: #60a5fa;
+	--app-primary-dark: #3b82f6;
+	--app-primary-text: #08111f;
+	--app-shadow-color: rgba(0, 0, 0, 0.4);
+	--app-paper: #151922;
+	--body-art-opacity: 0.1;
+	--pdf-filter: invert(0.9) hue-rotate(180deg);
+	color-scheme: dark;
+}
+
+html[data-theme="sepia"] {
+	--app-background: linear-gradient(135deg, #e5d4b3, #cdb98f);
+	--app-background-solid: #d8c6a3;
+	--app-text: #463724;
+	--app-heading: #382918;
+	--app-muted: #79664c;
+	--app-surface: #f4ecd8;
+	--app-surface-translucent: rgba(248, 239, 218, 0.96);
+	--app-card-translucent: rgba(248, 239, 218, 0.52);
+	--contributor-card-bg: rgba(248, 239, 218, 0.58);
+	--contributor-card-panel: rgba(244, 236, 216, 0.72);
+	--contributor-card-frame: rgba(138, 90, 43, 0.5);
+	--contributor-card-highlight: rgba(180, 124, 68, 0.18);
+	--app-surface-soft: #eadfc6;
+	--app-surface-softer: #f3ead7;
+	--app-border: #c8b690;
+	--app-border-strong: #bca77d;
+	--app-primary: #8a5a2b;
+	--app-primary-dark: #69401d;
+	--app-primary-text: #ffffff;
+	--app-shadow-color: rgba(74, 54, 31, 0.22);
+	--app-paper: #fff8e8;
+	--body-art-opacity: 0.28;
+	--pdf-filter: sepia(0.36) brightness(0.96);
+}
+
+html[data-theme="pink"] {
+	--app-background: linear-gradient(135deg, #fff0f6, #fbcfe8);
+	--app-background-solid: #fff1f7;
+	--app-text: #4a2035;
+	--app-heading: #581c3b;
+	--app-muted: #8f5571;
+	--app-surface: #fff8fb;
+	--app-surface-translucent: rgba(255, 248, 251, 0.92);
+	--app-card-translucent: rgba(255, 248, 251, 0.5);
+	--contributor-card-bg: rgba(255, 248, 251, 0.58);
+	--contributor-card-panel: rgba(252, 231, 243, 0.72);
+	--contributor-card-frame: rgba(219, 39, 119, 0.48);
+	--contributor-card-highlight: rgba(244, 114, 182, 0.2);
+	--app-surface-soft: #fce7f3;
+	--app-surface-softer: #fff1f7;
+	--app-border: #f5b8d3;
+	--app-border-strong: #ec8fba;
+	--app-primary: #db2777;
+	--app-primary-dark: #be185d;
+	--app-primary-text: #ffffff;
+	--app-shadow-color: rgba(157, 23, 77, 0.18);
+	--app-paper: #fff7fb;
+	--body-art-opacity: 0.18;
+	--pdf-filter: none;
+}
+
+html[data-theme="skyblue"] {
+	--app-background: linear-gradient(135deg, #e0f7ff, #bae6fd);
+	--app-background-solid: #eaf9ff;
+	--app-text: #17354a;
+	--app-heading: #0c4a6e;
+	--app-muted: #52798e;
+	--app-surface: #f7fdff;
+	--app-surface-translucent: rgba(247, 253, 255, 0.92);
+	--app-card-translucent: rgba(247, 253, 255, 0.5);
+	--contributor-card-bg: rgba(247, 253, 255, 0.58);
+	--contributor-card-panel: rgba(223, 245, 255, 0.72);
+	--contributor-card-frame: rgba(2, 132, 199, 0.48);
+	--contributor-card-highlight: rgba(56, 189, 248, 0.2);
+	--app-surface-soft: #dff5ff;
+	--app-surface-softer: #effaff;
+	--app-border: #9ddcf5;
+	--app-border-strong: #70c6eb;
+	--app-primary: #0284c7;
+	--app-primary-dark: #0369a1;
+	--app-primary-text: #ffffff;
+	--app-shadow-color: rgba(3, 105, 161, 0.18);
+	--app-paper: #f4fcff;
+	--body-art-opacity: 0.2;
+	--pdf-filter: none;
+}
+
+body {
+	position: relative;
+	isolation: isolate;
+}
+
+body::before {
+	content: "";
+	position: fixed;
+	inset: 0;
+	z-index: -1;
+	pointer-events: none;
+	background-image: url("../images/bckgruound.svg");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: cover;
+	opacity: var(--body-art-opacity);
+}
+

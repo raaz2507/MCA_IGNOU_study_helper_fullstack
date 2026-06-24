@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="robots" content="noindex, nofollow" />
+	<title>Question Papers | GyanPath Dashboard</title>
+	<link rel="stylesheet" href="../assets/css/index.css?v=25" />
+</head>
+<body class="auth-pending" data-allowed-roles="admin,editor" data-page="dashboard-question-papers" data-header-variant="dashboard" data-header-label="Resource Management" data-header-title="Question Papers" data-header-subtitle="Manage question paper metadata, Hindi availability and checksums." data-header-action="dashboard">
+	<div id="app-header"></div>
+
+	<div class="dashboard-layout management-layout">
+		<aside class="dashboard-section-nav" aria-label="Dashboard sections">
+			<strong>Dashboard Sections</strong>
+			<nav>
+				<a href="#paperManagement">Editor</a>
+				<a href="#paperListSection">Question Paper List</a>
+			</nav>
+		</aside>
+
+		<main class="dashboard-page management-page">
+			<section id="paperManagement" class="dashboard-panel management-editor-panel" aria-labelledby="paperManagerTitle">
+				<div class="section-heading">
+					<p class="dashboard-label">Admin and Editor</p>
+					<h2 id="paperManagerTitle">Question Paper Management</h2>
+					<p>Manage paper metadata, Hindi availability and checksums without moving resource files.</p>
+				</div>
+				<form id="paperForm" class="contributor-form management-form">
+					<input id="paperId" type="hidden" />
+					<div class="banner-form-grid">
+						<label><span>Subject</span><select id="paperSubject" required></select></label>
+						<label><span>Status</span><select id="paperStatus"><option value="PUBLISHED">Published</option><option value="DRAFT">Draft</option><option value="ARCHIVED">Archived</option></select></label>
+					</div>
+					<div class="banner-form-grid">
+						<label><span>Title</span><input id="paperTitle" type="text" maxlength="220" required /></label>
+						<label><span>Session</span><input id="paperSession" type="text" maxlength="80" required placeholder="June 2024" /></label>
+					</div>
+					<label><span>English file path</span><input id="paperEnglishPath" type="text" maxlength="700" required /></label>
+					<div class="banner-form-grid">
+						<label><span>File name</span><input id="paperFileName" type="text" maxlength="260" placeholder="Auto from path if blank" /></label>
+						<label><span>Preview path</span><input id="paperPreviewPath" type="text" maxlength="700" /></label>
+					</div>
+					<div class="banner-form-grid">
+						<label><span>English checksum</span><input id="paperEnglishChecksum" type="text" maxlength="160" /></label>
+						<label><span>Hindi checksum</span><input id="paperHindiChecksum" type="text" maxlength="160" /></label>
+					</div>
+					<label class="banner-active-option">
+						<input id="paperHindiAvailable" type="checkbox" />
+						<span>Hindi version available</span>
+					</label>
+					<label id="paperHindiPathWrap" hidden><span>Hindi file path</span><input id="paperHindiPath" type="text" maxlength="700" /></label>
+					<div class="contributor-form-actions">
+						<button class="logout-button" type="submit">Save Question Paper</button>
+						<button id="cancelPaperEdit" class="secondary-link" type="button" hidden>Cancel Edit</button>
+					</div>
+					<p id="paperMessage" class="contributor-message" aria-live="polite"></p>
+				</form>
+			</section>
+
+			<section id="paperListSection" class="dashboard-panel management-list-panel" aria-labelledby="paperListTitle">
+				<div class="section-heading">
+					<p class="dashboard-label">Question paper library</p>
+					<h2 id="paperListTitle">Question Paper List</h2>
+					<p>View, filter and edit saved question paper records.</p>
+				</div>
+				<div class="admin-list-toolbar">
+					<label><span>View subject</span><select id="paperSubjectFilter"></select></label>
+					<label>
+						<span>Sort</span>
+						<select id="paperSort">
+							<option value="date-desc">Newest first</option>
+							<option value="date-asc">Oldest first</option>
+							<option value="subject">By subject</option>
+							<option value="session">By session</option>
+							<option value="title">By title</option>
+						</select>
+					</label>
+				</div>
+				<div class="admin-table-wrap management-table-wrap">
+					<table class="admin-user-table management-table">
+						<thead><tr><th>Subject</th><th>Paper</th><th>Hindi</th><th>Checksums</th><th>Actions</th></tr></thead>
+						<tbody id="paperList"></tbody>
+					</table>
+				</div>
+			</section>
+		</main>
+	</div>
+
+	<div id="app-footer"></div>
+	<script type="module" src="../assets/js/components/site-shell.js"></script>
+	<script src="../assets/js/utils/theme.js"></script>
+	<script type="module" src="../assets/js/utils/protected-page.js"></script>
+	<script type="module" src="../assets/js/pages/resource-management.js"></script>
+	<script type="module" src="../assets/js/utils/page-preferences.js"></script>
+</body>
+</html>

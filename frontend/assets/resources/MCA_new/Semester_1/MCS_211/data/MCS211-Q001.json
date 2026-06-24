@@ -1,0 +1,72 @@
+{
+  "schemaVersion": 1,
+  "id": "MCS211-Q001",
+  "classification": {
+    "unit": null,
+    "chapterId": "complexity",
+    "chapterTitle": "Complexity",
+    "topicId": "complexity-analysis",
+    "topicTitle": "Complexity Analysis"
+  },
+  "tags": [
+    "time-complexity",
+    "big-oh",
+    "asymptotic-notation",
+    "nested-loops",
+    "logarithmic-loop"
+  ],
+  "question": {
+    "markdown": "# Question\n\nCalculate the time complexity of the following program fragments using **Big Oh notation**.\n\n## Fragment 1\n\n{{MEDIA:question-code-1}}\n\n## Fragment 2\n\n{{MEDIA:question-code-2}}",
+    "parts": [
+      {
+        "id": "a",
+        "mediaIds": [
+          "question-code-1"
+        ]
+      },
+      {
+        "id": "b",
+        "mediaIds": [
+          "question-code-2"
+        ]
+      }
+    ]
+  },
+  "answers": {
+    "en": {
+      "short": "The first fragment has **O(n²)** complexity and the second fragment has **O(log n)** complexity.",
+      "exam": "# Solution\n\n## Fragment 1\n\nThe first loop executes **n** times, so it takes **O(n)** time.\n\nThe second part contains two nested loops.\n\n```text\nOuter loop = n\nInner loop = n\n```\n\nTherefore:\n\n```text\nO(n × n) = O(n²)\n```\n\nTotal complexity:\n\n```text\nO(n) + O(n²) = O(n²)\n```\n\n## Fragment 2\n\nThe value of `i` doubles in every iteration.\n\n```text\n1, 2, 4, 8, ... , n\n```\n\nAfter `k` iterations:\n\n```text\n2^k = n\n```\n\nTherefore:\n\n```text\nk = log₂ n\n```\n\nHence time complexity is **O(log n)**.",
+      "detailed": "# Detailed Solution\n\n## First Program Fragment\n\nThe first loop initializes array elements and executes exactly `n` times.\n\n```text\nT(n) = n = O(n)\n```\n\nThe next part has nested loops. The outer loop runs `n` times and for each outer iteration, the inner loop also runs `n` times.\n\n```text\nn × n = n²\n```\n\nSo the nested part is **O(n²)**. The total complexity is:\n\n```text\nO(n) + O(n²) = O(n²)\n```\n\n## Second Program Fragment\n\nHere `i` starts from 1 and is multiplied by 2 each time.\n\n```text\n1, 2, 4, 8, 16, ...\n```\n\nIf the loop runs `k` times, then `2^k = n`, so `k = log₂ n`. Therefore the complexity is **O(log n)**."
+    },
+    "hi-en": {
+      "short": "First fragment की complexity **O(n²)** है और second fragment की complexity **O(log n)** है.",
+      "exam": "# Solution\n\n## Fragment 1\n\nFirst loop **n times** run होता है, इसलिए इसका time **O(n)** होगा.\n\nSecond part में nested loops हैं.\n\n```text\nOuter loop = n\nInner loop = n\n```\n\nइसलिए:\n\n```text\nO(n × n) = O(n²)\n```\n\nTotal complexity:\n\n```text\nO(n) + O(n²) = O(n²)\n```\n\n## Fragment 2\n\n`i` हर iteration में double होता है.\n\n```text\n1, 2, 4, 8, ... , n\n```\n\nअगर loop `k` times run करता है:\n\n```text\n2^k = n\n```\n\nइसलिए:\n\n```text\nk = log₂ n\n```\n\nHence time complexity **O(log n)** होगी.",
+      "detailed": "# Detailed Solution\n\n## First Program Fragment\n\nFirst loop array elements को initialize करता है और exactly `n` times execute होता है.\n\n```text\nT(n) = n = O(n)\n```\n\nNext part में nested loops हैं. Outer loop `n` times run होता है और हर outer iteration के लिए inner loop भी `n` times run होता है.\n\n```text\nn × n = n²\n```\n\nSo nested part की complexity **O(n²)** होगी. Total complexity:\n\n```text\nO(n) + O(n²) = O(n²)\n```\n\n## Second Program Fragment\n\nयहाँ `i` 1 से start होता है और हर iteration में 2 से multiply होता है.\n\n```text\n1, 2, 4, 8, 16, ...\n```\n\nअगर loop `k` times run करता है, then `2^k = n`, so `k = log₂ n`. इसलिए complexity **O(log n)** होगी."
+    }
+  },
+  "media": [
+    {
+      "id": "question-code-1",
+      "kind": "image",
+      "format": "svg",
+      "file": "MCS211-Q001-question-code-1.svg",
+      "usage": "question",
+      "alt": "Program fragment containing a linear loop and nested loops"
+    },
+    {
+      "id": "question-code-2",
+      "kind": "image",
+      "format": "svg",
+      "file": "MCS211-Q001-question-code-2.svg",
+      "usage": "question",
+      "alt": "Program fragment containing a loop whose counter doubles"
+    }
+  ],
+  "source": {
+    "year": 2022,
+    "term": "june",
+    "questionNo": "Q1(a)"
+  },
+  "contentStatus": "reviewed",
+  "updatedAt": "2026-06-19"
+}

@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="240" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif" viewbox="0 0 320 240" width="320">
+<defs>
+<marker id="arrow" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="20" refy="5" viewbox="0 0 10 10">
+<path d="M 0 2 L 10 5 L 0 8 z" fill="#333"></path>
+</marker>
+</defs>
+<circle cx="80" cy="40" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text font-style="italic" text-anchor="middle" x="80" y="45">a</text>
+<circle cx="220" cy="40" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text font-style="italic" text-anchor="middle" x="220" y="45">b</text>
+<circle cx="40" cy="120" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text font-style="italic" text-anchor="middle" x="40" y="125">c</text>
+<circle cx="150" cy="120" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text font-style="italic" text-anchor="middle" x="150" y="125">d</text>
+<circle cx="280" cy="120" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text font-style="italic" text-anchor="middle" x="280" y="125">e</text>
+<circle cx="80" cy="200" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text font-style="italic" text-anchor="middle" x="80" y="205">f</text>
+<circle cx="200" cy="200" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text font-style="italic" text-anchor="middle" x="200" y="205">g</text>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="80" x2="220" y1="40" y2="40"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="80" x2="40" y1="40" y2="120"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="80" x2="150" y1="40" y2="120"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="220" x2="280" y1="40" y2="120"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="150" x2="40" y1="120" y2="120"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="280" x2="150" y1="120" y2="120"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="40" x2="80" y1="120" y2="200"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="150" x2="80" y1="120" y2="200"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="200" x2="150" y1="200" y2="120"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="200" x2="280" y1="200" y2="120"></line>
+<line marker-end="url(#arrow)" stroke="#333" stroke-width="1.5" x1="200" x2="80" y1="200" y2="200"></line>
+</svg>

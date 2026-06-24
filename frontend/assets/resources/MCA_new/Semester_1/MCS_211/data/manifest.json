@@ -1,0 +1,2995 @@
+{
+  "schemaVersion": 2,
+  "subject": {
+    "id": "mcs-211",
+    "code": "MCS-211",
+    "title": "Design and Analysis of Algorithms"
+  },
+  "paths": {
+    "questions": "data/",
+    "media": "data/images/"
+  },
+  "papers": [
+    {
+      "year": 2022,
+      "term": "june",
+      "questionNo": ""
+    },
+    {
+      "year": 2022,
+      "term": "december",
+      "questionNo": ""
+    },
+    {
+      "year": 2023,
+      "term": "june",
+      "questionNo": ""
+    },
+    {
+      "year": 2023,
+      "term": "december",
+      "questionNo": ""
+    },
+    {
+      "year": 2024,
+      "term": "june",
+      "questionNo": ""
+    }
+  ],
+  "groups": {
+    "complexity-analysis": {
+      "id": "complexity-analysis",
+      "title": "Complexity Analysis",
+      "questionIds": [
+        "MCS211-Q001",
+        "MCS211-Q010",
+        "MCS211-Q015",
+        "MCS211-Q018",
+        "MCS211-Q023",
+        "MCS211-Q030",
+        "MCS211-Q033",
+        "MCS211-Q049",
+        "MCS211-Q055",
+        "MCS211-Q060",
+        "MCS211-Q080"
+      ],
+      "frequency": 11
+    },
+    "floyd-warshall": {
+      "id": "floyd-warshall",
+      "title": "Floyd Warshall",
+      "questionIds": [
+        "MCS211-Q002",
+        "MCS211-Q029",
+        "MCS211-Q070",
+        "MCS211-Q091"
+      ],
+      "frequency": 4
+    },
+    "topological-sort": {
+      "id": "topological-sort",
+      "title": "Topological Sort",
+      "questionIds": [
+        "MCS211-Q003",
+        "MCS211-Q085"
+      ],
+      "frequency": 2
+    },
+    "recurrence": {
+      "id": "recurrence",
+      "title": "Recurrence",
+      "questionIds": [
+        "MCS211-Q004",
+        "MCS211-Q020",
+        "MCS211-Q034",
+        "MCS211-Q040",
+        "MCS211-Q059",
+        "MCS211-Q063"
+      ],
+      "frequency": 6
+    },
+    "dijkstra": {
+      "id": "dijkstra",
+      "title": "Dijkstra",
+      "questionIds": [
+        "MCS211-Q005",
+        "MCS211-Q024",
+        "MCS211-Q068",
+        "MCS211-Q090"
+      ],
+      "frequency": 4
+    },
+    "algorithm-basics": {
+      "id": "algorithm-basics",
+      "title": "Algorithm Basics",
+      "questionIds": [
+        "MCS211-Q006",
+        "MCS211-Q007",
+        "MCS211-Q025",
+        "MCS211-Q032",
+        "MCS211-Q052",
+        "MCS211-Q054",
+        "MCS211-Q056",
+        "MCS211-Q058",
+        "MCS211-Q062",
+        "MCS211-Q066",
+        "MCS211-Q078",
+        "MCS211-Q086",
+        "MCS211-Q087",
+        "MCS211-Q089"
+      ],
+      "frequency": 14
+    },
+    "kruskal-mst": {
+      "id": "kruskal-mst",
+      "title": "Kruskal Mst",
+      "questionIds": [
+        "MCS211-Q008",
+        "MCS211-Q046"
+      ],
+      "frequency": 2
+    },
+    "general": {
+      "id": "general",
+      "title": "General",
+      "questionIds": [
+        "MCS211-Q009",
+        "MCS211-Q013",
+        "MCS211-Q038",
+        "MCS211-Q042",
+        "MCS211-Q072",
+        "MCS211-Q076"
+      ],
+      "frequency": 6
+    },
+    "knapsack": {
+      "id": "knapsack",
+      "title": "Knapsack",
+      "questionIds": [
+        "MCS211-Q011",
+        "MCS211-Q053",
+        "MCS211-Q088"
+      ],
+      "frequency": 3
+    },
+    "rabin-karp": {
+      "id": "rabin-karp",
+      "title": "Rabin Karp",
+      "questionIds": [
+        "MCS211-Q012",
+        "MCS211-Q031",
+        "MCS211-Q048"
+      ],
+      "frequency": 3
+    },
+    "huffman-coding": {
+      "id": "huffman-coding",
+      "title": "Huffman Coding",
+      "questionIds": [
+        "MCS211-Q014",
+        "MCS211-Q022",
+        "MCS211-Q043"
+      ],
+      "frequency": 3
+    },
+    "greedy": {
+      "id": "greedy",
+      "title": "Greedy",
+      "questionIds": [
+        "MCS211-Q016",
+        "MCS211-Q065"
+      ],
+      "frequency": 2
+    },
+    "graph-theory": {
+      "id": "graph-theory",
+      "title": "Graph Theory",
+      "questionIds": [
+        "MCS211-Q017",
+        "MCS211-Q045",
+        "MCS211-Q050",
+        "MCS211-Q067",
+        "MCS211-Q073",
+        "MCS211-Q075"
+      ],
+      "frequency": 6
+    },
+    "dynamic-programming": {
+      "id": "dynamic-programming",
+      "title": "Dynamic Programming",
+      "questionIds": [
+        "MCS211-Q019",
+        "MCS211-Q037"
+      ],
+      "frequency": 2
+    },
+    "mst-prim-mcst": {
+      "id": "mst-prim-mcst",
+      "title": "Mst Prim Mcst",
+      "questionIds": [
+        "MCS211-Q021",
+        "MCS211-Q061",
+        "MCS211-Q084"
+      ],
+      "frequency": 3
+    },
+    "quick-sort": {
+      "id": "quick-sort",
+      "title": "Quick Sort",
+      "questionIds": [
+        "MCS211-Q026",
+        "MCS211-Q044",
+        "MCS211-Q081"
+      ],
+      "frequency": 3
+    },
+    "dfs": {
+      "id": "dfs",
+      "title": "Dfs",
+      "questionIds": [
+        "MCS211-Q027",
+        "MCS211-Q036"
+      ],
+      "frequency": 2
+    },
+    "binary-search": {
+      "id": "binary-search",
+      "title": "Binary Search",
+      "questionIds": [
+        "MCS211-Q028",
+        "MCS211-Q035",
+        "MCS211-Q077"
+      ],
+      "frequency": 3
+    },
+    "backtracking": {
+      "id": "backtracking",
+      "title": "Backtracking",
+      "questionIds": [
+        "MCS211-Q039",
+        "MCS211-Q051"
+      ],
+      "frequency": 2
+    },
+    "polynomial-evaluation": {
+      "id": "polynomial-evaluation",
+      "title": "Polynomial Evaluation",
+      "questionIds": [
+        "MCS211-Q041",
+        "MCS211-Q064"
+      ],
+      "frequency": 2
+    },
+    "matrix-algorithms": {
+      "id": "matrix-algorithms",
+      "title": "Matrix Algorithms",
+      "questionIds": [
+        "MCS211-Q047",
+        "MCS211-Q071",
+        "MCS211-Q079"
+      ],
+      "frequency": 3
+    },
+    "bfs": {
+      "id": "bfs",
+      "title": "Bfs",
+      "questionIds": [
+        "MCS211-Q057"
+      ],
+      "frequency": 1
+    },
+    "string-matching": {
+      "id": "string-matching",
+      "title": "String Matching",
+      "questionIds": [
+        "MCS211-Q069",
+        "MCS211-Q083"
+      ],
+      "frequency": 2
+    },
+    "karatsuba": {
+      "id": "karatsuba",
+      "title": "Karatsuba",
+      "questionIds": [
+        "MCS211-Q074",
+        "MCS211-Q082"
+      ],
+      "frequency": 2
+    }
+  },
+  "questions": [
+    {
+      "id": "MCS211-Q001",
+      "file": "MCS211-Q001.json",
+      "title": "Time complexity of program fragments",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "asymptotic-notation",
+        "complexity-analysis",
+        "time-complexity",
+        "big-oh"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q1(a)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "reviewed",
+      "hasAnswer": true,
+      "mediaCount": 2
+    },
+    {
+      "id": "MCS211-Q002",
+      "file": "MCS211-Q002.json",
+      "title": "Explain the working principle of Floyd-Warshall's algorithm. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "floyd-warshall",
+        "chapterTitle": "Floyd-Warshall",
+        "topicId": "floyd-warshall",
+        "topicTitle": "Floyd Warshall"
+      },
+      "tags": [
+        "floyd-warshall",
+        "shortest-path"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q1(b)"
+        }
+      ],
+      "groupId": "floyd-warshall",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q003",
+      "file": "MCS211-Q003.json",
+      "title": "Define topological ordering of a graph. Write the algorithm to find topological ordering of the following graph. Calculate the complexity of the algorithm: [10] a b c d e f g",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "topological-sort",
+        "chapterTitle": "Topological Sort",
+        "topicId": "topological-sort",
+        "topicTitle": "Topological Sort"
+      },
+      "tags": [
+        "graph",
+        "topological-sort",
+        "dag",
+        "complexity",
+        "time-complexity",
+        "sorting"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q1(c)"
+        }
+      ],
+      "groupId": "topological-sort",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q004",
+      "file": "MCS211-Q004.json",
+      "title": "Define the substitution method to solve a recurrence relation. Solve the following recurrence relation using substitution method: [10] $$T(n) = 2T(n/2) + n$$",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "recurrence",
+        "chapterTitle": "Recurrence",
+        "topicId": "recurrence",
+        "topicTitle": "Recurrence"
+      },
+      "tags": [
+        "recurrence",
+        "recurrence-relation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q1(d)"
+        }
+      ],
+      "groupId": "recurrence",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q005",
+      "file": "MCS211-Q005.json",
+      "title": "Describe the most commonly used data structure for implementing Dijkstra single source shortest path algorithm. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "dijkstra",
+        "chapterTitle": "Dijkstra",
+        "topicId": "dijkstra",
+        "topicTitle": "Dijkstra"
+      },
+      "tags": [
+        "dijkstra",
+        "shortest-path"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q2(a)"
+        }
+      ],
+      "groupId": "dijkstra",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q006",
+      "file": "MCS211-Q006.json",
+      "title": "Prove that \"Subpaths of the shortest path in a single source shortest path algorithm are also the shortest paths.\" [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics",
+        "shortest-path"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q2(b)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q007",
+      "file": "MCS211-Q007.json",
+      "title": "Apply Bubble sort algorithm for the following list of numbers: [10] 12 65 45 15 25 30 20 18 7",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "bubble-sort",
+        "chapterTitle": "Bubble Sort",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "sorting",
+        "bubble-sort",
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q2(c)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q008",
+      "file": "MCS211-Q008.json",
+      "title": "Write Kruskal's algorithm to find minimum cost spanning tree of the following graph. Calculate its best case and worst case time complexities: [10] A B E C D F 5 2 7 3 3 5 9 8 3",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "kruskal-mst",
+        "chapterTitle": "Kruskal MST",
+        "topicId": "kruskal-mst",
+        "topicTitle": "Kruskal Mst"
+      },
+      "tags": [
+        "graph",
+        "kruskal",
+        "mst",
+        "kruskal-mst",
+        "minimum-spanning-tree"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q2(d)"
+        }
+      ],
+      "groupId": "kruskal-mst",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q009",
+      "file": "MCS211-Q009.json",
+      "title": "Write and explain the procedure to find a solution to maximum bipartite matching problem with the help of an example. [7]",
+      "marks": 7,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "general",
+        "chapterTitle": "General",
+        "topicId": "general",
+        "topicTitle": "General"
+      },
+      "tags": [
+        "general"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q3(a)"
+        }
+      ],
+      "groupId": "general",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q010",
+      "file": "MCS211-Q010.json",
+      "title": "List one algorithm each for the following time complexities. Show complexity analysis of the algorithm and all the intermediate steps: [3] $O(m \\log n)$ $O(\\log n)$ $O(n^2)$",
+      "marks": 3,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q3(b)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q011",
+      "file": "MCS211-Q011.json",
+      "title": "Find the optimal solution to the following instance of a fractional Knapsack problem. Show step-by-step running of the algorithm: [10] Number of objects = 5 Capacity of a knapsack W = 15 (P1, P2, P3, P4, P5) = (15, 30, 40, 35, 55) (w1, w2, w3, w4, w5) = (5, 9, 3, 7, 2)",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "knapsack",
+        "chapterTitle": "Knapsack",
+        "topicId": "knapsack",
+        "topicTitle": "Knapsack"
+      },
+      "tags": [
+        "fractional-knapsack",
+        "greedy",
+        "knapsack"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q3(c)"
+        }
+      ],
+      "groupId": "knapsack",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q012",
+      "file": "MCS211-Q012.json",
+      "title": "Explain the concept of rolling hash function applied in Rabin-Karp algorithm for string matching problem with the help of an example. [10]",
+      "marks": 10,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "rabin-karp",
+        "chapterTitle": "Rabin-Karp",
+        "topicId": "rabin-karp",
+        "topicTitle": "Rabin Karp"
+      },
+      "tags": [
+        "string-matching",
+        "rabin-karp"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q4(a)"
+        }
+      ],
+      "groupId": "rabin-karp",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q013",
+      "file": "MCS211-Q013.json",
+      "title": "Whether the following is in correct order? [2] $$1, \\log n, n, n \\log n, n^2, 2^n, n!$$",
+      "marks": 2,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "general",
+        "chapterTitle": "General",
+        "topicId": "general",
+        "topicTitle": "General"
+      },
+      "tags": [
+        "general"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q4(b)"
+        }
+      ],
+      "groupId": "general",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q014",
+      "file": "MCS211-Q014.json",
+      "title": "Construct an optimal Huffman tree and Huffman code for each character for the following set of frequencies. Show all the intermediate steps: [10] A: 20, B: 25, C: 10, D: 8, E: 7, F: 12, G: 10",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "huffman-coding",
+        "chapterTitle": "Huffman Coding",
+        "topicId": "huffman-coding",
+        "topicTitle": "Huffman Coding"
+      },
+      "tags": [
+        "huffman-coding",
+        "greedy"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q4(c)"
+        }
+      ],
+      "groupId": "huffman-coding",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q015",
+      "file": "MCS211-Q015.json",
+      "title": "Explain the concept of non-deterministic algorithm with the help of an example. List the problems which belong to non-deterministic class of complexity. [8]",
+      "marks": 8,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q5(a)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q016",
+      "file": "MCS211-Q016.json",
+      "title": "Differentiate between greedy approach and dynamic approach to solve an optimization problem. [4]",
+      "marks": 4,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "greedy",
+        "chapterTitle": "Greedy",
+        "topicId": "greedy",
+        "topicTitle": "Greedy"
+      },
+      "tags": [
+        "greedy"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q5(b)"
+        }
+      ],
+      "groupId": "greedy",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q017",
+      "file": "MCS211-Q017.json",
+      "title": "Formulate the following problems as optimization and decision problems: [6] Traveling salesperson problem Graph coloring problem",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "graph-theory",
+        "chapterTitle": "Graph Theory",
+        "topicId": "graph-theory",
+        "topicTitle": "Graph Theory"
+      },
+      "tags": [
+        "graph",
+        "graph-coloring",
+        "graph-theory"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "june",
+          "questionNo": "Q5(c)"
+        }
+      ],
+      "groupId": "graph-theory",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q018",
+      "file": "MCS211-Q018.json",
+      "title": "Write a mathematical definition of big omega ($\\Omega$). For the functions defined by $f(n)=3n^{3}+2n^{2}+1$ and $g(n)=2n^{2}+3$, verify that $f(n)=\\Omega(g(n))$. [6]",
+      "marks": 6,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "asymptotic-notation",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q1(a)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q019",
+      "file": "MCS211-Q019.json",
+      "title": "Explain the principle of optimality in dynamic programming, with the help of an example. [6]",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "dynamic-programming",
+        "chapterTitle": "Dynamic Programming",
+        "topicId": "dynamic-programming",
+        "topicTitle": "Dynamic Programming"
+      },
+      "tags": [
+        "dynamic-programming"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q1(b)"
+        }
+      ],
+      "groupId": "dynamic-programming",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q020",
+      "file": "MCS211-Q020.json",
+      "title": "Apply a master method to give the tight asymptotic bounds of the following recurrences: [8] $T(n)=4T(n/2)+n^{2}$ $T(n)=9T(n/3)+n$",
+      "marks": 8,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "recurrence",
+        "topicTitle": "Recurrence"
+      },
+      "tags": [
+        "complexity",
+        "recurrence",
+        "master-theorem",
+        "time-complexity",
+        "recurrence-relation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q1(c)"
+        }
+      ],
+      "groupId": "recurrence",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q021",
+      "file": "MCS211-Q021.json",
+      "title": "Run the Prim's algorithm on the following graph. Assume that the root vertex is (a). Derive the complexity of the algorithm. [10] a b e d c f g 1 2 3 4 5 7 6 9 2 8",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "prim-mst",
+        "chapterTitle": "Prim MST",
+        "topicId": "mst-prim-mcst",
+        "topicTitle": "Mst Prim Mcst"
+      },
+      "tags": [
+        "graph",
+        "prim",
+        "mst",
+        "complexity",
+        "prim-mst",
+        "mst-prim-mcst",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q1(d)"
+        }
+      ],
+      "groupId": "mst-prim-mcst",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q022",
+      "file": "MCS211-Q022.json",
+      "title": "Apply Huffman's algorithm to construct a Huffman's tree and optimal binary prefix code for the letters and its frequencies as given in the following table: [10] Letter Frequency A 15 B 6 C 7 D 5 E 12 I 13 Z 2",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "huffman-coding",
+        "chapterTitle": "Huffman Coding",
+        "topicId": "huffman-coding",
+        "topicTitle": "Huffman Coding"
+      },
+      "tags": [
+        "huffman-coding",
+        "greedy"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q1(e)"
+        }
+      ],
+      "groupId": "huffman-coding",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q023",
+      "file": "MCS211-Q023.json",
+      "title": "Explain Cook-Levin's theorem on CNF-Satisfiability problem, with the help of an example. [10]",
+      "marks": 10,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "np-complexity",
+        "chapterTitle": "NP Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "np-complexity",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q2(a)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q024",
+      "file": "MCS211-Q024.json",
+      "title": "Apply Dijkstra's single source shortest path algorithm to the following graph with (a) as starting vertex. Show all the intermediate steps. [7] a b c e d f g 2 7 12 2 -1 2 2 9 -7 2 -4 1 What is the significant feature of Bellman-Ford's algorithm which is not supported in Dijkstra's algorithm? [3]",
+      "marks": 3,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "dijkstra",
+        "chapterTitle": "Dijkstra",
+        "topicId": "dijkstra",
+        "topicTitle": "Dijkstra"
+      },
+      "tags": [
+        "graph",
+        "dijkstra",
+        "shortest-path",
+        "bellman-ford"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q2(b)"
+        }
+      ],
+      "groupId": "dijkstra",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q025",
+      "file": "MCS211-Q025.json",
+      "title": "Write and explain pseudocode for Ford-Fulkerson's algorithm for maximum bipartite matching. [10]",
+      "marks": 10,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q3(a)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q026",
+      "file": "MCS211-Q026.json",
+      "title": "Apply the partition procedure of Quicksort algorithm to the following array: [35, 10, 40, 5, 60, 25, 45, 15] Show all the intermediate steps. [10]",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "quick-sort",
+        "chapterTitle": "Quick Sort",
+        "topicId": "quick-sort",
+        "topicTitle": "Quick Sort"
+      },
+      "tags": [
+        "sorting",
+        "quick-sort"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q3(b)"
+        }
+      ],
+      "groupId": "quick-sort",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q027",
+      "file": "MCS211-Q027.json",
+      "title": "Apply DFS to the complete graph on four vertices. List the vertices in the order they would be visited. [7]",
+      "marks": 7,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "dfs",
+        "chapterTitle": "DFS",
+        "topicId": "dfs",
+        "topicTitle": "Dfs"
+      },
+      "tags": [
+        "graph",
+        "dfs"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q4(a)"
+        }
+      ],
+      "groupId": "dfs",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q028",
+      "file": "MCS211-Q028.json",
+      "title": "How many comparisons are needed for a binary search in a set of 512 elements? [3]",
+      "marks": 3,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "binary-search",
+        "chapterTitle": "Binary Search",
+        "topicId": "binary-search",
+        "topicTitle": "Binary Search"
+      },
+      "tags": [
+        "searching",
+        "binary-search"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q4(b)"
+        }
+      ],
+      "groupId": "binary-search",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q029",
+      "file": "MCS211-Q029.json",
+      "title": "Apply Floyd-Warshall's algorithm to the following graph and show $D^{2}$. [10] A B C D 8 7 3 2 -3 6",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "floyd-warshall",
+        "chapterTitle": "Floyd-Warshall",
+        "topicId": "floyd-warshall",
+        "topicTitle": "Floyd Warshall"
+      },
+      "tags": [
+        "graph",
+        "floyd-warshall",
+        "shortest-path"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q4(c)"
+        }
+      ],
+      "groupId": "floyd-warshall",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q030",
+      "file": "MCS211-Q030.json",
+      "title": "Describe the task scheduling algorithm as an optimization problem and calculate its complexity. Consider the following jobs and its service times and apply the task scheduling algorithm to minimize the total amount of time spent in the system. [10] Job Service time 1 10 2 15 3 8 4 12 5 6",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "scheduling",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q5(a)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q031",
+      "file": "MCS211-Q031.json",
+      "title": "Describe the basic principle of KMP algorithm for string matching. What is its advantage compared to Naive and Rabin-Karp's algorithm for string matching? Calculate the time complexity of KMP algorithm. [10]",
+      "marks": 10,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "rabin-karp",
+        "chapterTitle": "Rabin-Karp",
+        "topicId": "rabin-karp",
+        "topicTitle": "Rabin Karp"
+      },
+      "tags": [
+        "complexity",
+        "string-matching",
+        "rabin-karp",
+        "kmp",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2022,
+          "term": "december",
+          "questionNo": "Q5(b)"
+        }
+      ],
+      "groupId": "rabin-karp",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q032",
+      "file": "MCS211-Q032.json",
+      "title": "What is an algorithm ? What are its desirable characteristics? [5]",
+      "marks": 5,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(a)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q033",
+      "file": "MCS211-Q033.json",
+      "title": "What are asymptotic notations? Explain any two asymptotic notations with suitable example for each. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(b)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q034",
+      "file": "MCS211-Q034.json",
+      "title": "Solve the following recurrence relation using substitution method : [5] $$T(n)=2T\\left(\\frac{n}{2}\\right)+n$$",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "recurrence",
+        "chapterTitle": "Recurrence",
+        "topicId": "recurrence",
+        "topicTitle": "Recurrence"
+      },
+      "tags": [
+        "recurrence",
+        "recurrence-relation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(c)"
+        }
+      ],
+      "groupId": "recurrence",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q035",
+      "file": "MCS211-Q035.json",
+      "title": "Write and explain binary search algorithm with a suitable example. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "binary-search",
+        "chapterTitle": "Binary Search",
+        "topicId": "binary-search",
+        "topicTitle": "Binary Search"
+      },
+      "tags": [
+        "searching",
+        "binary-search"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(d)"
+        }
+      ],
+      "groupId": "binary-search",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q036",
+      "file": "MCS211-Q036.json",
+      "title": "Explain Depth First Search (DFS) algorithm with a suitable example. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "dfs",
+        "chapterTitle": "DFS",
+        "topicId": "dfs",
+        "topicTitle": "Dfs"
+      },
+      "tags": [
+        "dfs",
+        "searching"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(e)"
+        }
+      ],
+      "groupId": "dfs",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q037",
+      "file": "MCS211-Q037.json",
+      "title": "What is Dynamic Programming approach of problem solving? Write the steps involved in dynamic programming. [6]",
+      "marks": 6,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "dynamic-programming",
+        "chapterTitle": "Dynamic Programming",
+        "topicId": "dynamic-programming",
+        "topicTitle": "Dynamic Programming"
+      },
+      "tags": [
+        "dynamic-programming"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(f)"
+        }
+      ],
+      "groupId": "dynamic-programming",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q038",
+      "file": "MCS211-Q038.json",
+      "title": "What are Optimization and Decision problems? Give an example of each. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "general",
+        "chapterTitle": "General",
+        "topicId": "general",
+        "topicTitle": "General"
+      },
+      "tags": [
+        "general"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(g)"
+        }
+      ],
+      "groupId": "general",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q039",
+      "file": "MCS211-Q039.json",
+      "title": "Design a state space tree for the given subset sum problem. $S=\\{4,6,7,8\\}$, $W=8$. [4] 0 4 0 6 8 (Sol) +4 -4 +6 +8",
+      "marks": 4,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "backtracking",
+        "chapterTitle": "Backtracking",
+        "topicId": "backtracking",
+        "topicTitle": "Backtracking"
+      },
+      "tags": [
+        "backtracking"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q1(h)"
+        }
+      ],
+      "groupId": "backtracking",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q040",
+      "file": "MCS211-Q040.json",
+      "title": "Explain all the three cases of Master's Theorem. Apply Master's theorem to solve the given recurrence relation : [8] $$T(n)=9T\\left(\\frac{n}{3}\\right)+n$$",
+      "marks": 8,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "recurrence",
+        "chapterTitle": "Recurrence",
+        "topicId": "recurrence",
+        "topicTitle": "Recurrence"
+      },
+      "tags": [
+        "recurrence",
+        "master-theorem",
+        "recurrence-relation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q2(a)"
+        }
+      ],
+      "groupId": "recurrence",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q041",
+      "file": "MCS211-Q041.json",
+      "title": "Evaluate : $$p(x)=3x^{4}+2x^{3}-5x+7 \\text{ at } x=2$$ using Horner's rule. Show stepwise iterations. [6]",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "polynomial-evaluation",
+        "chapterTitle": "Polynomial Evaluation",
+        "topicId": "polynomial-evaluation",
+        "topicTitle": "Polynomial Evaluation"
+      },
+      "tags": [
+        "polynomial-evaluation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q2(b)"
+        }
+      ],
+      "groupId": "polynomial-evaluation",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q042",
+      "file": "MCS211-Q042.json",
+      "title": "Prove that for all non-negative integers 'n': [6] $$2^{0}+2^{1}+2^{2}+\\dots+2^{n}=2^{n+1}-1$$",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "general",
+        "chapterTitle": "General",
+        "topicId": "general",
+        "topicTitle": "General"
+      },
+      "tags": [
+        "general"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q2(c)"
+        }
+      ],
+      "groupId": "general",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q043",
+      "file": "MCS211-Q043.json",
+      "title": "What is Huffman coding? Write the steps for building the Huffman tree with an example. [6]",
+      "marks": 6,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "huffman-coding",
+        "chapterTitle": "Huffman Coding",
+        "topicId": "huffman-coding",
+        "topicTitle": "Huffman Coding"
+      },
+      "tags": [
+        "huffman-coding",
+        "greedy"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q3(a)"
+        }
+      ],
+      "groupId": "huffman-coding",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q044",
+      "file": "MCS211-Q044.json",
+      "title": "Explain Quick sort algorithm using divide and conquer approach. [6]",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "quick-sort",
+        "chapterTitle": "Quick Sort",
+        "topicId": "quick-sort",
+        "topicTitle": "Quick Sort"
+      },
+      "tags": [
+        "sorting",
+        "quick-sort",
+        "divide-and-conquer"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q3(b)"
+        }
+      ],
+      "groupId": "quick-sort",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q045",
+      "file": "MCS211-Q045.json",
+      "title": "What are strongly connected components ? Explain how adjacency matrix and adjacency list are created for a connected graph with the help of a suitable diagram. [2+3+3=8]",
+      "marks": 8,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "graph-theory",
+        "chapterTitle": "Graph Theory",
+        "topicId": "graph-theory",
+        "topicTitle": "Graph Theory"
+      },
+      "tags": [
+        "graph",
+        "graph-theory"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q3(c)"
+        }
+      ],
+      "groupId": "graph-theory",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q046",
+      "file": "MCS211-Q046.json",
+      "title": "Show the step by step execution of Kruskal's algorithm for the following graph: [6] a b c d e f g 1 2 3 4 5 7 6 9 2 8",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "kruskal-mst",
+        "chapterTitle": "Kruskal MST",
+        "topicId": "kruskal-mst",
+        "topicTitle": "Kruskal Mst"
+      },
+      "tags": [
+        "graph",
+        "kruskal",
+        "mst",
+        "kruskal-mst"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q4(a)"
+        }
+      ],
+      "groupId": "kruskal-mst",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q047",
+      "file": "MCS211-Q047.json",
+      "title": "What is Matrix chain multiplication problem? Find an optimal parenthesization of a matrix-chain product whose sequence of dimensions are as follows: [2+6=8] Matrix Dimension $A_{1}$ $30 \\times 35$ $A_{2}$ $35 \\times 15$ $A_{3}$ $15 \\times 5$",
+      "marks": 8,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "matrix-algorithms",
+        "chapterTitle": "Matrix Algorithms",
+        "topicId": "matrix-algorithms",
+        "topicTitle": "Matrix Algorithms"
+      },
+      "tags": [
+        "dynamic-programming",
+        "matrix-chain",
+        "matrix-algorithms"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q4(b)"
+        }
+      ],
+      "groupId": "matrix-algorithms",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q048",
+      "file": "MCS211-Q048.json",
+      "title": "Explain Rabin Karp Algorithm for string matching with suitable example. [6]",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "rabin-karp",
+        "chapterTitle": "Rabin-Karp",
+        "topicId": "rabin-karp",
+        "topicTitle": "Rabin Karp"
+      },
+      "tags": [
+        "string-matching",
+        "rabin-karp"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q4(c)"
+        }
+      ],
+      "groupId": "rabin-karp",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q049",
+      "file": "MCS211-Q049.json",
+      "title": "Deterministic vs. Non-deterministic algorithms",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "np-complexity",
+        "chapterTitle": "NP Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "np-complexity",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q5(a)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q050",
+      "file": "MCS211-Q050.json",
+      "title": "CLIQUE and vertex cover problem",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "graph-theory",
+        "chapterTitle": "Graph Theory",
+        "topicId": "graph-theory",
+        "topicTitle": "Graph Theory"
+      },
+      "tags": [
+        "graph",
+        "vertex-cover",
+        "clique",
+        "graph-theory"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q5(b)"
+        }
+      ],
+      "groupId": "graph-theory",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q051",
+      "file": "MCS211-Q051.json",
+      "title": "Backtracking problem with example",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "backtracking",
+        "chapterTitle": "Backtracking",
+        "topicId": "backtracking",
+        "topicTitle": "Backtracking"
+      },
+      "tags": [
+        "backtracking"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q5(c)"
+        }
+      ],
+      "groupId": "backtracking",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q052",
+      "file": "MCS211-Q052.json",
+      "title": "Bellman-Ford algorithm",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "bellman-ford",
+        "chapterTitle": "Bellman-Ford",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "bellman-ford",
+        "shortest-path",
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q5(d)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q053",
+      "file": "MCS211-Q053.json",
+      "title": "Fractional Knapsack problem",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "knapsack",
+        "chapterTitle": "Knapsack",
+        "topicId": "knapsack",
+        "topicTitle": "Knapsack"
+      },
+      "tags": [
+        "fractional-knapsack",
+        "greedy",
+        "knapsack"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "june",
+          "questionNo": "Q5(e)"
+        }
+      ],
+      "groupId": "knapsack",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q054",
+      "file": "MCS211-Q054.json",
+      "title": "What is Euclid's algorithm to find GCD of two given integers? Write the steps involved in finding GCD of (a, b) using Euclid's algorithm. [5]",
+      "marks": 5,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(a)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q055",
+      "file": "MCS211-Q055.json",
+      "title": "What are Big 'O' and Big '$\\Omega$' notations? Explain with the help of representative diagram. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "asymptotic-notation",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(b)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q056",
+      "file": "MCS211-Q056.json",
+      "title": "Write and explain linear search algorithm. Mention best case, worst case and average case scenarios of linear search. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "linear-search",
+        "chapterTitle": "Linear Search",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "searching",
+        "linear-search",
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(c)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q057",
+      "file": "MCS211-Q057.json",
+      "title": "Explain Breadth First Search (BFS) algorithm with a suitable example. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "bfs",
+        "chapterTitle": "BFS",
+        "topicId": "bfs",
+        "topicTitle": "Bfs"
+      },
+      "tags": [
+        "bfs",
+        "searching"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(d)"
+        }
+      ],
+      "groupId": "bfs",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q058",
+      "file": "MCS211-Q058.json",
+      "title": "What is Task Scheduling algorithm? Write pseudo code for task scheduling algorithm. [5]",
+      "marks": 5,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "task-scheduling",
+        "chapterTitle": "Task Scheduling",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "scheduling",
+        "task-scheduling",
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(e)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q059",
+      "file": "MCS211-Q059.json",
+      "title": "Solve the given recurrence relation using recursion tree method: [5] $$T(n)=2T\\left(\\frac{n}{2}\\right)+n$$",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "recurrence",
+        "chapterTitle": "Recurrence",
+        "topicId": "recurrence",
+        "topicTitle": "Recurrence"
+      },
+      "tags": [
+        "recurrence",
+        "recurrence-relation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(f)"
+        }
+      ],
+      "groupId": "recurrence",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q060",
+      "file": "MCS211-Q060.json",
+      "title": "What are P, NP and NP-complete problems? Give example of each. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "np-complexity",
+        "chapterTitle": "NP Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "np-complexity",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(g)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q061",
+      "file": "MCS211-Q061.json",
+      "title": "What is a Minimum Cost Spanning Tree (MCST)? Write Generic MCST algorithm. [5]",
+      "marks": 5,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "minimum-spanning-tree",
+        "chapterTitle": "Minimum Spanning Tree",
+        "topicId": "mst-prim-mcst",
+        "topicTitle": "Mst Prim Mcst"
+      },
+      "tags": [
+        "mst",
+        "minimum-spanning-tree",
+        "mst-prim-mcst"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q1(h)"
+        }
+      ],
+      "groupId": "mst-prim-mcst",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q062",
+      "file": "MCS211-Q062.json",
+      "title": "What are the building blocks of an algorithm? Explain how to judge an algorithm. [6]",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q2(a)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q063",
+      "file": "MCS211-Q063.json",
+      "title": "Solve the following recurrence relation using Master's Theorem: [6] $$T(n)=4T\\left(\\frac{n}{2}\\right)+n^{2}$$",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "recurrence",
+        "chapterTitle": "Recurrence",
+        "topicId": "recurrence",
+        "topicTitle": "Recurrence"
+      },
+      "tags": [
+        "recurrence",
+        "master-theorem",
+        "recurrence-relation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q2(b)"
+        }
+      ],
+      "groupId": "recurrence",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q064",
+      "file": "MCS211-Q064.json",
+      "title": "What is polynomial evaluation? What are its methods of evaluation? Evaluate $P(x)=3x^{2}+5x+6$ using Horner's rule at $x=3$. [2+2+4=8]",
+      "marks": 8,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "polynomial-evaluation",
+        "chapterTitle": "Polynomial Evaluation",
+        "topicId": "polynomial-evaluation",
+        "topicTitle": "Polynomial Evaluation"
+      },
+      "tags": [
+        "polynomial-evaluation"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q2(c)"
+        }
+      ],
+      "groupId": "polynomial-evaluation",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q065",
+      "file": "MCS211-Q065.json",
+      "title": "What is Greedy approach for problem solving? How does a Greedy algorithm work? Write the activities performed in Greedy method. [6]",
+      "marks": 6,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "greedy",
+        "chapterTitle": "Greedy",
+        "topicId": "greedy",
+        "topicTitle": "Greedy"
+      },
+      "tags": [
+        "greedy"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q3(a)"
+        }
+      ],
+      "groupId": "greedy",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q066",
+      "file": "MCS211-Q066.json",
+      "title": "Explain merge sort algorithm using divide and conquer approach. Also mention its best case and worst case time complexities. [6+2=8]",
+      "marks": 8,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "merge-sort",
+        "chapterTitle": "Merge Sort",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "sorting",
+        "merge-sort",
+        "algorithm-basics",
+        "divide-and-conquer"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q3(b)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q067",
+      "file": "MCS211-Q067.json",
+      "title": "Explain any three of the following terms with the help of a suitable diagram: [3 × 2 = 6] Subgraph Connected graph Adjacency matrix Directed acyclic graph",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "graph-theory",
+        "chapterTitle": "Graph Theory",
+        "topicId": "graph-theory",
+        "topicTitle": "Graph Theory"
+      },
+      "tags": [
+        "graph",
+        "graph-theory"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q3(c)"
+        }
+      ],
+      "groupId": "graph-theory",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q068",
+      "file": "MCS211-Q068.json",
+      "title": "Show the step by step execution of Dijkstra's single source shortest path algorithm on the given directed graph from source vertex 'a': [6] a b c d e 10 5 1 2 3 9 6",
+      "marks": 6,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "dijkstra",
+        "chapterTitle": "Dijkstra",
+        "topicId": "dijkstra",
+        "topicTitle": "Dijkstra"
+      },
+      "tags": [
+        "graph",
+        "dijkstra",
+        "shortest-path"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q4(a)"
+        }
+      ],
+      "groupId": "dijkstra",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q069",
+      "file": "MCS211-Q069.json",
+      "title": "What is string matching problem? Explain Knuth Morris Pratt algorithm of string matching with a suitable example. Explain the process of building LPS array for a pattern 'P'. [2+4+2=8]",
+      "marks": 8,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "kmp",
+        "chapterTitle": "KMP",
+        "topicId": "string-matching",
+        "topicTitle": "String Matching"
+      },
+      "tags": [
+        "string-matching",
+        "kmp"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q4(b)"
+        }
+      ],
+      "groupId": "string-matching",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q070",
+      "file": "MCS211-Q070.json",
+      "title": "What is all pair shortest path problem? Write and explain Floyd Warshall algorithm for shortest paths with the help of a diagram. [6]",
+      "marks": 6,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "floyd-warshall",
+        "chapterTitle": "Floyd-Warshall",
+        "topicId": "floyd-warshall",
+        "topicTitle": "Floyd Warshall"
+      },
+      "tags": [
+        "floyd-warshall",
+        "shortest-path"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q4(c)"
+        }
+      ],
+      "groupId": "floyd-warshall",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q071",
+      "file": "MCS211-Q071.json",
+      "title": "Stassen's Matrix Multiplication",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "matrix-algorithms",
+        "chapterTitle": "Matrix Algorithms",
+        "topicId": "matrix-algorithms",
+        "topicTitle": "Matrix Algorithms"
+      },
+      "tags": [
+        "matrix-algorithms"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q5(a)"
+        }
+      ],
+      "groupId": "matrix-algorithms",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q072",
+      "file": "MCS211-Q072.json",
+      "title": "Chomsky's Normal Form",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "general",
+        "chapterTitle": "General",
+        "topicId": "general",
+        "topicTitle": "General"
+      },
+      "tags": [
+        "general"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q5(b)"
+        }
+      ],
+      "groupId": "general",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q073",
+      "file": "MCS211-Q073.json",
+      "title": "Graph Colouring Problem",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "graph-theory",
+        "chapterTitle": "Graph Theory",
+        "topicId": "graph-theory",
+        "topicTitle": "Graph Theory"
+      },
+      "tags": [
+        "graph",
+        "graph-theory"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q5(c)"
+        }
+      ],
+      "groupId": "graph-theory",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q074",
+      "file": "MCS211-Q074.json",
+      "title": "Karatsuba's Method for Multiplication",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "karatsuba",
+        "chapterTitle": "Karatsuba",
+        "topicId": "karatsuba",
+        "topicTitle": "Karatsuba"
+      },
+      "tags": [
+        "karatsuba"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q5(d)"
+        }
+      ],
+      "groupId": "karatsuba",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q075",
+      "file": "MCS211-Q075.json",
+      "title": "Vertex Cover Problem",
+      "marks": null,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "graph-theory",
+        "chapterTitle": "Graph Theory",
+        "topicId": "graph-theory",
+        "topicTitle": "Graph Theory"
+      },
+      "tags": [
+        "graph",
+        "vertex-cover",
+        "graph-theory"
+      ],
+      "appearedIn": [
+        {
+          "year": 2023,
+          "term": "december",
+          "questionNo": "Q5(e)"
+        }
+      ],
+      "groupId": "graph-theory",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q076",
+      "file": "MCS211-Q076.json",
+      "title": "Use mathematical induction to prove that: [5] $$\\sum_{i=1}^{n}i^{2}=\\frac{n(n+1)(2n+1)}{6}$$",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "general",
+        "chapterTitle": "General",
+        "topicId": "general",
+        "topicTitle": "General"
+      },
+      "tags": [
+        "general"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(a)"
+        }
+      ],
+      "groupId": "general",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q077",
+      "file": "MCS211-Q077.json",
+      "title": "Write recursive binary search algorithms and analyse its complexity in worst case scenario. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "binary-search",
+        "chapterTitle": "Binary Search",
+        "topicId": "binary-search",
+        "topicTitle": "Binary Search"
+      },
+      "tags": [
+        "complexity",
+        "searching",
+        "binary-search",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(b)"
+        }
+      ],
+      "groupId": "binary-search",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q078",
+      "file": "MCS211-Q078.json",
+      "title": "What is an algorithm? Explain characteristics of an algorithm with the help of an example. [5]",
+      "marks": 5,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(c)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q079",
+      "file": "MCS211-Q079.json",
+      "title": "Multiply the following two matrix using Strassen's algorithm: [5] $$\\begin{bmatrix} 5 & 6 \\\\ 4 & 3 \\end{bmatrix} \\quad\\text{and}\\quad \\begin{bmatrix} -7 & 6 \\\\ 5 & 9 \\end{bmatrix}$$",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "matrix-algorithms",
+        "chapterTitle": "Matrix Algorithms",
+        "topicId": "matrix-algorithms",
+        "topicTitle": "Matrix Algorithms"
+      },
+      "tags": [
+        "strassen",
+        "matrix-algorithms"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(d)"
+        }
+      ],
+      "groupId": "matrix-algorithms",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q080",
+      "file": "MCS211-Q080.json",
+      "title": "What are P and NP class of problems? Differentiate between NP-Hard and NP-Complete problems. [5]",
+      "marks": 5,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "np-complexity",
+        "chapterTitle": "NP Complexity",
+        "topicId": "complexity-analysis",
+        "topicTitle": "Complexity Analysis"
+      },
+      "tags": [
+        "complexity",
+        "np-complexity",
+        "complexity-analysis",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(e)"
+        }
+      ],
+      "groupId": "complexity-analysis",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q081",
+      "file": "MCS211-Q081.json",
+      "title": "Explain quick sort algorithm using suitable example. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "quick-sort",
+        "chapterTitle": "Quick Sort",
+        "topicId": "quick-sort",
+        "topicTitle": "Quick Sort"
+      },
+      "tags": [
+        "sorting",
+        "quick-sort"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(f)"
+        }
+      ],
+      "groupId": "quick-sort",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q082",
+      "file": "MCS211-Q082.json",
+      "title": "Multiply the following two numbers using Karatsuba's algorithm. [5]",
+      "marks": 5,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "karatsuba",
+        "chapterTitle": "Karatsuba",
+        "topicId": "karatsuba",
+        "topicTitle": "Karatsuba"
+      },
+      "tags": [
+        "karatsuba"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(g)"
+        }
+      ],
+      "groupId": "karatsuba",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q083",
+      "file": "MCS211-Q083.json",
+      "title": "What is string matching algorithm? Derive its best case time complexity. [5]",
+      "marks": 5,
+      "difficulty": "easy",
+      "classification": {
+        "unit": null,
+        "chapterId": "complexity",
+        "chapterTitle": "Complexity",
+        "topicId": "string-matching",
+        "topicTitle": "String Matching"
+      },
+      "tags": [
+        "complexity",
+        "string-matching",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q1(h)"
+        }
+      ],
+      "groupId": "string-matching",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q084",
+      "file": "MCS211-Q084.json",
+      "title": "What is Minimum Spanning Tree? Write Prim's algorithm for finding Minimum Spanning Tree and find its time complexity. Also find MST of the following graph using Prim's algorithm: [10] A B C D E 7 3 2 1 5",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "prim-mst",
+        "chapterTitle": "Prim MST",
+        "topicId": "mst-prim-mcst",
+        "topicTitle": "Mst Prim Mcst"
+      },
+      "tags": [
+        "graph",
+        "prim",
+        "mst",
+        "complexity",
+        "prim-mst",
+        "mst-prim-mcst",
+        "time-complexity",
+        "minimum-spanning-tree"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q2(a)"
+        }
+      ],
+      "groupId": "mst-prim-mcst",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q085",
+      "file": "MCS211-Q085.json",
+      "title": "Write an algorithm for topological sort. Obtain a topological ordering for the following graph: [10] 1 2 3 4 5 6 7 8",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "topological-sort",
+        "chapterTitle": "Topological Sort",
+        "topicId": "topological-sort",
+        "topicTitle": "Topological Sort"
+      },
+      "tags": [
+        "graph",
+        "topological-sort",
+        "dag",
+        "sorting"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q2(b)"
+        }
+      ],
+      "groupId": "topological-sort",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q086",
+      "file": "MCS211-Q086.json",
+      "title": "\"The best-case analysis is not as important as the worst-case analysis of an algorithm.\" Yes or No. Justify your answer with the help of an example. [10]",
+      "marks": 10,
+      "difficulty": "medium",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q3(a)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q087",
+      "file": "MCS211-Q087.json",
+      "title": "Sort the following sequence of numbers, using selection sort. Also find the number of comparisons and copy operations required by the algorithm is sorting this list: [10] [28, 13, 12, 28, 35, 11, 15, 9, 36]",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics",
+        "sorting"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q3(b)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q088",
+      "file": "MCS211-Q088.json",
+      "title": "Explain the $0/1$ Knapsack problem. Solve the following $0/1$ Knapsack problem: [10] Given number of objects $n=6$ Capacity of Knapsack $(M)=12$ $$(P_1, P_2, P_3, P_4, P_5, P_6) = (1, 6, 18, 22, 28, 43)$$ $$(W_1, W_2, W_3, W_4, W_5, W_6) = (1, 2, 5, 6, 7, 10)$$ where $P_i$'s and $W_i$'s are the profit and weights of the corresponding objects.",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "knapsack",
+        "chapterTitle": "Knapsack",
+        "topicId": "knapsack",
+        "topicTitle": "Knapsack"
+      },
+      "tags": [
+        "fractional-knapsack",
+        "greedy",
+        "knapsack"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q4(a)"
+        }
+      ],
+      "groupId": "knapsack",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q089",
+      "file": "MCS211-Q089.json",
+      "title": "Give a divide and conquer based algorithm to find the $i$-th smallest element in an array of size $n$. Trace your algorithm to find 3rd smallest in the array: [10] $$A = [10, 2, 5, 15, 50, 6, 20, 25]$$",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "algorithm-basics",
+        "chapterTitle": "Algorithm Basics",
+        "topicId": "algorithm-basics",
+        "topicTitle": "Algorithm Basics"
+      },
+      "tags": [
+        "algorithm-basics",
+        "divide-and-conquer"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q4(b)"
+        }
+      ],
+      "groupId": "algorithm-basics",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 0
+    },
+    {
+      "id": "MCS211-Q090",
+      "file": "MCS211-Q090.json",
+      "title": "Write Dijkstra's algorithm to find the shortest path in a graph. Apply Dijkstra's algorithm on the following graph: [10] a b c d e f g 2 7 10 1 2 2 2 2 1 2",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "dijkstra",
+        "chapterTitle": "Dijkstra",
+        "topicId": "dijkstra",
+        "topicTitle": "Dijkstra"
+      },
+      "tags": [
+        "graph",
+        "dijkstra",
+        "shortest-path"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q5(a)"
+        }
+      ],
+      "groupId": "dijkstra",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    },
+    {
+      "id": "MCS211-Q091",
+      "file": "MCS211-Q091.json",
+      "title": "Apply Floyd Warshall Algorithm (FWA) to find the shortest path distance between every pair of vertices in the following directed weighted graph: [10] 1 2 3 4 4 -2 3 -1 2 Also, find the time complexity of an algorithm.",
+      "marks": 10,
+      "difficulty": "hard",
+      "classification": {
+        "unit": null,
+        "chapterId": "floyd-warshall",
+        "chapterTitle": "Floyd-Warshall",
+        "topicId": "floyd-warshall",
+        "topicTitle": "Floyd Warshall"
+      },
+      "tags": [
+        "graph",
+        "floyd-warshall",
+        "shortest-path",
+        "complexity",
+        "time-complexity"
+      ],
+      "appearedIn": [
+        {
+          "year": 2024,
+          "term": "june",
+          "questionNo": "Q5(b)"
+        }
+      ],
+      "groupId": "floyd-warshall",
+      "contentStatus": "pending",
+      "hasAnswer": false,
+      "mediaCount": 1
+    }
+  ]
+}

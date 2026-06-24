@@ -1,0 +1,53 @@
+# Dependencies
+node_modules/
+
+# Build output and coverage
+dist/
+build/
+coverage/
+*.tsbuildinfo
+
+# Environment files and local secrets
+.env
+.env.*
+!.env.example
+
+# Logs and runtime files
+*.log
+logs/
+*.pid
+*.pid.lock
+
+# Temporary and cache files
+tmp/
+temp/
+.cache/
+**/__pycache__/
+*.py[cod]
+
+# Editor and operating-system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*~
+
+# Backend-generated data
+backend/data/*.json
+!backend/data/.gitkeep
+
+# Local PDF resources for offline testing
+local-resources/
+frontend/assets/resources/MCA_new/**/exam_papers/*.pdf
+frontend/assets/resources/MCA_new/**/study_material/**/*.pdf
+
+# User uploads (retain directory placeholders)
+backend/uploads/*
+!backend/uploads/pdfs/
+!backend/uploads/images/
+!backend/uploads/exports/
+backend/uploads/pdfs/*
+backend/uploads/images/*
+backend/uploads/exports/*

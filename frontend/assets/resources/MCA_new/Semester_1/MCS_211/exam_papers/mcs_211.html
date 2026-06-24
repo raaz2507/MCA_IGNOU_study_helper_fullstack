@@ -1,0 +1,1275 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>MCS-211 December 2021 to June 2024</title>
+		<link rel="stylesheet" href="../../../../../css/style.css">
+	</head>
+	<body>
+		<button id="navToggle">☰</button>
+		<nav></nav>
+		<header></header>
+		<div class="page" data-set="1" id="mcs211_2021december">
+			<header data-set="1">
+				<h2>MASTER IN COMPUTER APPLICATIONS (MCA-NEW)</h2>
+				<h3>Term-End Examination: December, 2021</h3>
+				<h4>MCS-211: DESIGN AND ANALYSIS OF ALGORITHMS</h4>
+				<p><strong>Time:</strong> 3 Hours | <strong>Maximum Marks:</strong> 100 (Weightage: 70%)</p>
+				<p><em>Note: Question No. 1 is compulsory. Attempt any three questions from the rest.</em></p>
+			</header>
+			<hr />
+			<ol type="1">
+				<li>
+					<ol type="a">
+						<li><p>Write a mathematical definition of O (big oh). Assume that the function
+							f(n) = 2n<sup>2</sup> + 3n + 1. Show that f(n) = O(n<sup>2</sup>). <strong>[5]</strong></p></li>
+						<li><p>Define a recurrence relation of QuickSort algorithm and solve it using a recurrence tree.
+							<strong>[10]</strong></p></li>
+						<li><p>What are the key features of combinatorial problems? Describe and formulate three
+							combinatorial problems. <strong>[10]</strong></p></li>
+						<li>
+							<p>Describe a task scheduling problem as an optimization problem. Apply the scheduling
+								algorithm with deadlines to maximize the total profit to the following problem:
+								<strong>[10]</strong></p>
+							<div style="overflow-x: auto; margin: 16px 0;">
+								<table style="width: min(100%, 430px); margin: auto; border-collapse: collapse; text-align: center;">
+									<thead><tr><th style="border: 1px solid currentColor; padding: 8px;">Jobs</th><th style="border: 1px solid currentColor; padding: 8px;">Deadlines</th><th style="border: 1px solid currentColor; padding: 8px;">Profits</th></tr></thead>
+									<tbody>
+										<tr><td style="border: 1px solid currentColor; padding: 7px;">1</td><td style="border: 1px solid currentColor; padding: 7px;">2</td><td style="border: 1px solid currentColor; padding: 7px;">60</td></tr>
+										<tr><td style="border: 1px solid currentColor; padding: 7px;">2</td><td style="border: 1px solid currentColor; padding: 7px;">3</td><td style="border: 1px solid currentColor; padding: 7px;">50</td></tr>
+										<tr><td style="border: 1px solid currentColor; padding: 7px;">3</td><td style="border: 1px solid currentColor; padding: 7px;">4</td><td style="border: 1px solid currentColor; padding: 7px;">70</td></tr>
+										<tr><td style="border: 1px solid currentColor; padding: 7px;">4</td><td style="border: 1px solid currentColor; padding: 7px;">5</td><td style="border: 1px solid currentColor; padding: 7px;">80</td></tr>
+										<tr><td style="border: 1px solid currentColor; padding: 7px;">5</td><td style="border: 1px solid currentColor; padding: 7px;">4</td><td style="border: 1px solid currentColor; padding: 7px;">75</td></tr>
+										<tr><td style="border: 1px solid currentColor; padding: 7px;">6</td><td style="border: 1px solid currentColor; padding: 7px;">3</td><td style="border: 1px solid currentColor; padding: 7px;">55</td></tr>
+										<tr><td style="border: 1px solid currentColor; padding: 7px;">7</td><td style="border: 1px solid currentColor; padding: 7px;">2</td><td style="border: 1px solid currentColor; padding: 7px;">40</td></tr>
+									</tbody>
+								</table>
+							</div>
+						</li>
+						<li><p>List all the different orders in which we can multiply five matrices M1, M2, M3, M4,
+							M5. <strong>[5]</strong></p></li>
+					</ol>
+				</li>
+				<hr />
+				<li>
+					<ol type="a">
+						<li>
+							<p>Explain the naive string matching algorithm and derive its worst case complexity. What is
+								its drawback? What will be the maximum valid shifts of a pattern in the text in the
+								following example? <strong>[10]</strong></p>
+							<p><strong>Text:</strong> a b c x y z d e f g h</p>
+							<p><strong>Pattern:</strong> f g h</p>
+						</li>
+						<li>
+							<p>What is the similarity between Dijkstra's single source shortest path and Prim's minimum
+								cost spanning tree algorithms? Apply Dijkstra's algorithm to find the shortest path from
+								v<sub>1</sub> to all other vertices of the following graph: <strong>[10]</strong></p>
+							<div style="margin: 18px 0; overflow-x: auto;">
+								<svg width="620" height="330" viewBox="0 0 620 330" role="img" aria-labelledby="mcs211-dijkstra-title"
+									style="max-width: 100%; height: auto; background: #fff; border: 1px solid #ccc; font-family: sans-serif;">
+									<title id="mcs211-dijkstra-title">Directed weighted graph for Dijkstra's algorithm</title>
+									<defs><marker id="mcs211-dijkstra-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1L10 5L0 9z" fill="#334155"/></marker></defs>
+									<g fill="none" stroke="#334155" stroke-width="2" marker-end="url(#mcs211-dijkstra-arrow)">
+										<line x1="76" y1="159" x2="177" y2="76"/><line x1="80" y1="174" x2="204" y2="183"/><line x1="72" y1="187" x2="180" y2="275"/>
+										<line x1="218" y1="65" x2="352" y2="65"/><line x1="205" y1="86" x2="218" y2="163"/><line x1="245" y1="171" x2="355" y2="82"/>
+										<line x1="230" y1="203" x2="211" y2="267"/><line x1="247" y1="191" x2="367" y2="224"/><line x1="379" y1="91" x2="397" y2="211"/>
+										<line x1="398" y1="81" x2="520" y2="151"/><line x1="231" y1="280" x2="371" y2="242"/><line x1="415" y1="224" x2="526" y2="177"/>
+									</g>
+									<g fill="#fff" stroke="#0f172a" stroke-width="2"><circle cx="60" cy="172" r="22"/><circle cx="200" cy="65" r="22"/><circle cx="225" cy="184" r="22"/><circle cx="205" cy="285" r="22"/><circle cx="375" cy="65" r="22"/><circle cx="395" cy="232" r="22"/><circle cx="545" cy="164" r="22"/></g>
+									<g fill="#0f172a" font-size="17" text-anchor="middle"><text x="60" y="178">v1</text><text x="200" y="71">v2</text><text x="225" y="190">v5</text><text x="205" y="291">v6</text><text x="375" y="71">v3</text><text x="395" y="238">v7</text><text x="545" y="170">v4</text></g>
+									<g fill="#0f172a" font-size="15"><text x="112" y="104">5</text><text x="135" y="166">7</text><text x="112" y="246">12</text><text x="282" y="55">6</text><text x="205" y="129">1</text><text x="294" y="119">5</text><text x="215" y="238">1</text><text x="304" y="198">3</text><text x="380" y="154">2</text><text x="461" y="107">7</text><text x="294" y="275">13</text><text x="474" y="213">3</text></g>
+								</svg>
+							</div>
+						</li>
+					</ol>
+				</li>
+				<hr />
+				<li>
+					<ol type="a">
+						<li>
+							<p>Apply Horner's method for evaluating a polynomial expression
+								p(x) = 6x<sup>6</sup> + 5x<sup>5</sup> + 4x<sup>4</sup> - 3x<sup>3</sup> + 8x - 7
+								at x = 3. Calculate: <strong>[10]</strong></p>
+							<ol type="i"><li>How many times will the loop execute?</li><li>What will be the total number of multiplication and addition operations?</li></ol>
+						</li>
+						<li><p>Define a fractional knapsack problem as an optimization problem. Write a greedy method to
+							find an optimal solution to the problem. Show the complexity of the algorithm.
+							<strong>[10]</strong></p></li>
+					</ol>
+				</li>
+				<hr />
+				<li>
+					<ol type="a">
+						<li>
+							<p>Apply the DFS algorithm to the following graph with the starting vertex v<sub>1</sub>.
+								List the order in which vertices will be visited. Show the complexity analysis if a graph
+								is represented through (i) adjacency list, and (ii) adjacency matrix. <strong>[10]</strong></p>
+							<div style="margin: 18px 0; overflow-x: auto;">
+								<svg width="500" height="330" viewBox="0 0 500 330" role="img" aria-labelledby="mcs211-dfs-title"
+									style="max-width: 100%; height: auto; background: #fff; border: 1px solid #ccc; font-family: sans-serif;">
+									<title id="mcs211-dfs-title">Graph for depth first search</title>
+									<g fill="none" stroke="#334155" stroke-width="2"><line x1="250" y1="50" x2="155" y2="116"/><line x1="250" y1="50" x2="345" y2="116"/><line x1="145" y1="137" x2="82" y2="207"/><line x1="163" y1="139" x2="205" y2="207"/><line x1="337" y1="139" x2="295" y2="207"/><line x1="355" y1="137" x2="418" y2="207"/><line x1="99" y1="229" x2="232" y2="286"/><line x1="216" y1="231" x2="242" y2="280"/><line x1="284" y1="231" x2="258" y2="280"/><line x1="401" y1="229" x2="268" y2="286"/></g>
+									<g fill="#fff" stroke="#0f172a" stroke-width="2"><circle cx="250" cy="40" r="22"/><circle cx="145" cy="125" r="22"/><circle cx="355" cy="125" r="22"/><circle cx="75" cy="220" r="22"/><circle cx="215" cy="220" r="22"/><circle cx="285" cy="220" r="22"/><circle cx="425" cy="220" r="22"/><circle cx="250" cy="295" r="22"/></g>
+									<g fill="#0f172a" font-size="17" text-anchor="middle"><text x="250" y="46">v1</text><text x="145" y="131">v2</text><text x="355" y="131">v3</text><text x="75" y="226">v4</text><text x="215" y="226">v5</text><text x="285" y="226">v6</text><text x="425" y="226">v7</text><text x="250" y="301">v8</text></g>
+								</svg>
+							</div>
+						</li>
+						<li><p>Explain P, NP and NP-complete class of problems with appropriate examples of each class.
+							<strong>[10]</strong></p></li>
+					</ol>
+				</li>
+				<hr />
+				<li>
+					<ol type="a">
+						<li>
+							<p>Apply Floyd Warshall's algorithm and show the matrix D<sup>2</sup> of the following graph:
+								<strong>[10]</strong></p>
+							<div style="margin: 18px 0; overflow-x: auto;">
+								<svg width="500" height="330" viewBox="0 0 500 330" role="img" aria-labelledby="mcs211-floyd-title"
+									style="max-width: 100%; height: auto; background: #fff; border: 1px solid #ccc; font-family: sans-serif;">
+									<title id="mcs211-floyd-title">Directed weighted graph for Floyd Warshall's algorithm</title>
+									<defs><marker id="mcs211-floyd-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M0 1L10 5L0 9z" fill="#334155"/></marker></defs>
+									<g fill="none" stroke="#334155" stroke-width="2" marker-end="url(#mcs211-floyd-arrow)"><line x1="108" y1="82" x2="230" y2="48"/><line x1="267" y1="58" x2="375" y2="100"/><line x1="110" y1="93" x2="371" y2="113"/><line x1="250" y1="70" x2="258" y2="245"/><line x1="277" y1="246" x2="382" y2="133"/><line x1="120" y1="268" x2="237" y2="268"/><line x1="120" y1="250" x2="235" y2="66"/><line x1="240" y1="250" x2="105" y2="105"/><line x1="93" y1="110" x2="102" y2="247"/></g>
+									<g fill="#fff" stroke="#0f172a" stroke-width="2"><circle cx="90" cy="90" r="22"/><circle cx="250" cy="45" r="22"/><circle cx="400" cy="115" r="22"/><circle cx="260" cy="268" r="22"/><circle cx="105" cy="268" r="22"/></g>
+									<g fill="#0f172a" font-size="17" text-anchor="middle"><text x="90" y="96">1</text><text x="250" y="51">2</text><text x="400" y="121">3</text><text x="260" y="274">4</text><text x="105" y="274">5</text></g>
+									<g fill="#0f172a" font-size="15"><text x="165" y="54">4</text><text x="326" y="70">5</text><text x="240" y="100">9</text><text x="263" y="165">2</text><text x="338" y="210">-6</text><text x="174" y="287">7</text><text x="177" y="164">3</text><text x="170" y="210">8</text><text x="65" y="185">-5</text></g>
+								</svg>
+							</div>
+						</li>
+						<li><p>Explain the use of master method. Write and interpret all the three cases of the master
+							method to solve recurrence relation problem. <strong>[10]</strong></p></li>
+					</ol>
+				</li>
+			</ol>
+			<footer></footer>
+		</div>
+
+		<div class="page" data-set="2" id="mcs211_2022june">
+			<header data-set="2">
+				<h2>MASTER OF COMPUTER APPLICATION (MCA) (NEW) [cite: 3, 5]</h2>
+				<h3>Term-End Examination: June, 2022 [cite: 6, 7]</h3>
+				<h4>MCS-211: DESIGN AND ANALYSIS OF ALGORITHMS [cite: 8, 10]</h4>
+				<p><strong>Time:</strong> 3 Hours | <strong>Maximum Marks:</strong> 100 (Weightage: 70%) [cite: 9, 11, 12]</p>
+				<p><em>Note: Question No. 1 is compulsory. Attempt any three from the rest. [cite: 13, 14]</em></p>
+			</header>
+			<hr />
+
+			<ol type="1">
+				<li>
+					<ol type="a">
+						<li>
+							<p>Calculate the time complexity of the following program fragments using Big Oh notation: <strong>[5]</strong> [cite: 15]</p>
+							<ol type="i">
+								<li>
+									<pre>
+for (i = 0; i &lt; n; i++) [cite: 16]
+    a[i] = 0; [cite: 17]
+for (i = 0; i &lt; n; i++) [cite: 18]
+    for (j = 0; j &lt; n; j++) [cite: 19]
+        A[i] = A[i] + A[j]; [cite: 20]
+                            </pre
+									>
+								</li>
+								<li>
+									<pre>
+for (i = 1; i &lt;= n; i = i * 2) { [cite: 23]
+    x = x + i; [cite: 25]
+}
+                            </pre
+									>
+								</li>
+							</ol>
+						</li>
+						<li>
+							<p>Explain the working principle of Floyd-Warshall's algorithm. <strong>[5]</strong> [cite: 28, 29]</p>
+						</li>
+						<li>
+							<p>Define topological ordering of a graph. Write the algorithm to find topological ordering of the following graph. Calculate the complexity of the algorithm: <strong>[10]</strong> [cite: 30, 31, 32]</p>
+
+							<div style="margin: 20px 0">
+								<svg width="320" height="240" viewBox="0 0 320 240" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<defs>
+										<marker id="arrow" viewBox="0 0 10 10" refX="20" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+											<path d="M 0 2 L 10 5 L 0 8 z" fill="#333" />
+										</marker>
+									</defs>
+									<circle cx="80" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="80" y="45" text-anchor="middle" font-style="italic">a</text>
+
+									<circle cx="220" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="220" y="45" text-anchor="middle" font-style="italic">b</text>
+
+									<circle cx="40" cy="120" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="40" y="125" text-anchor="middle" font-style="italic">c</text>
+
+									<circle cx="150" cy="120" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="150" y="125" text-anchor="middle" font-style="italic">d</text>
+
+									<circle cx="280" cy="120" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="280" y="125" text-anchor="middle" font-style="italic">e</text>
+
+									<circle cx="80" cy="200" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="80" y="205" text-anchor="middle" font-style="italic">f</text>
+
+									<circle cx="200" cy="200" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="200" y="205" text-anchor="middle" font-style="italic">g</text>
+
+									<line x1="80" y1="40" x2="220" y2="40" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="80" y1="40" x2="40" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="80" y1="40" x2="150" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="220" y1="40" x2="280" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="150" y1="120" x2="40" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="280" y1="120" x2="150" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="40" y1="120" x2="80" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="150" y1="120" x2="80" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="200" y1="200" x2="150" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="200" y1="200" x2="280" y2="120" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+									<line x1="200" y1="200" x2="80" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+								</svg>
+							</div>
+						</li>
+						<li>
+							<p>Define the substitution method to solve a recurrence relation. [cite: 40] Solve the following recurrence relation using substitution method: <strong>[10]</strong> [cite: 42, 43]</p>
+							<p>$$T(n) = 2T(n/2) + n$$ [cite: 44]</p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Describe the most commonly used data structure for implementing Dijkstra single source shortest path algorithm. <strong>[5]</strong> [cite: 79, 80, 81]</p>
+						</li>
+						<li>
+							<p>Prove that "Subpaths of the shortest path in a single source shortest path algorithm are also the shortest paths." <strong>[5]</strong> [cite: 82, 83, 84]</p>
+						</li>
+						<li>
+							<p>Apply Bubble sort algorithm for the following list of numbers: <strong>[10]</strong> [cite: 47, 48]</p>
+							<table border="1" cellpadding="5" style="border-collapse: collapse; text-align: center; margin: 10px 0">
+								<tr>
+									<td>12</td>
+									<td>65</td>
+									<td>45</td>
+									<td>15</td>
+									<td>25</td>
+									<td>30</td>
+									<td>20</td>
+									<td>18</td>
+									<td>7</td>
+									[cite: 49]
+								</tr>
+							</table>
+						</li>
+						<li>
+							<p>Write Kruskal's algorithm to find minimum cost spanning tree of the following graph. Calculate its best case and worst case time complexities: <strong>[10]</strong> [cite: 50, 51, 52, 53, 54, 55, 66]</p>
+
+							<div style="margin: 20px 0">
+								<svg width="420" height="160" viewBox="0 0 420 160" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<text x="20" y="30" font-weight="bold">A</text>
+									<text x="200" y="30" font-weight="bold">B</text>
+									<text x="380" y="30" font-weight="bold">E</text>
+									<text x="20" y="140" font-weight="bold">C</text>
+									<text x="200" y="140" font-weight="bold">D</text>
+									<text x="380" y="140" font-weight="bold">F</text>
+
+									<line x1="35" y1="25" x2="190" y2="25" stroke="#333" stroke-width="1.5" />
+									<line x1="215" y1="25" x2="370" y2="25" stroke="#333" stroke-width="1.5" />
+									<line x1="35" y1="135" x2="190" y2="135" stroke="#333" stroke-width="1.5" />
+									<line x1="215" y1="135" x2="370" y2="135" stroke="#333" stroke-width="1.5" />
+									<line x1="25" y1="40" x2="25" y2="120" stroke="#333" stroke-width="1.5" />
+									<line x1="205" y1="40" x2="205" y2="120" stroke="#333" stroke-width="1.5" />
+									<line x1="385" y1="40" x2="385" y2="120" stroke="#333" stroke-width="1.5" />
+									<line x1="35" y1="135" x2="195" y2="25" stroke="#333" stroke-width="1.5" />
+									<line x1="215" y1="135" x2="375" y2="25" stroke="#333" stroke-width="1.5" />
+									<text x="110" y="20" font-size="14">5</text>
+									<text x="290" y="20" font-size="14">2</text>
+									<text x="110" y="130" font-size="14">7</text>
+									<text x="290" y="130" font-size="14">3</text>
+									<text x="12" y="85" font-size="14">3</text>
+									<text x="212" y="85" font-size="14">5</text>
+									<text x="392" y="85" font-size="14">9</text>
+									<text x="100" y="75" font-size="14">8</text>
+									<text x="280" y="75" font-size="14">3</text>
+								</svg>
+							</div>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Write and explain the procedure to find a solution to maximum bipartite matching problem with the help of an example. <strong>[7]</strong> [cite: 67, 68]</p>
+						</li>
+						<li>
+							<p>List one algorithm each for the following time complexities. Show complexity analysis of the algorithm and all the intermediate steps: <strong>[3]</strong> [cite: 69, 71, 78]</p>
+							<ol type="i">
+								<li>$O(m \log n)$ [cite: 70]</li>
+								<li>$O(\log n)$ [cite: 77]</li>
+								<li>$O(n^2)$ [cite: 85]</li>
+							</ol>
+						</li>
+						<li>
+							<p>Find the optimal solution to the following instance of a fractional Knapsack problem. Show step-by-step running of the algorithm: <strong>[10]</strong> [cite: 86, 89]</p>
+							<pre>
+Number of objects = 5 [cite: 87]
+Capacity of a knapsack W = 15 [cite: 88]
+(P1, P2, P3, P4, P5) = (15, 30, 40, 35, 55) [cite: 97]
+(w1, w2, w3, w4, w5) = (5, 9, 3, 7, 2) [cite: 97]
+                    </pre
+							>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Explain the concept of rolling hash function applied in Rabin-Karp algorithm for string matching problem with the help of an example. <strong>[10]</strong> [cite: 98, 108]</p>
+						</li>
+						<li>
+							<p>Whether the following is in correct order? <strong>[2]</strong> [cite: 99, 100, 102]</p>
+							<p>$$1, \log n, n, n \log n, n^2, 2^n, n!$$ [cite: 101]</p>
+						</li>
+						<li>
+							<p>Construct an optimal Huffman tree and Huffman code for each character for the following set of frequencies. Show all the intermediate steps: <strong>[10]</strong> [cite: 103, 106, 107]</p>
+							<p><strong>A:</strong> 20, <strong>B:</strong> 25, <strong>C:</strong> 10, <strong>D:</strong> 8, <strong>E:</strong> 7, <strong>F:</strong> 12, <strong>G:</strong> 10 [cite: 104, 105]</p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Explain the concept of non-deterministic algorithm with the help of an example. List the problems which belong to non-deterministic class of complexity. <strong>[8]</strong> [cite: 117, 118, 119]</p>
+						</li>
+						<li>
+							<p>Differentiate between greedy approach and dynamic approach to solve an optimization problem. <strong>[4]</strong> [cite: 109, 110, 111, 112]</p>
+						</li>
+						<li>
+							<p>Formulate the following problems as optimization and decision problems: <strong>[6]</strong> [cite: 113, 114]</p>
+							<ol type="i">
+								<li>Traveling salesperson problem [cite: 115]</li>
+								<li>Graph coloring problem [cite: 116]</li>
+							</ol>
+						</li>
+					</ol>
+				</li>
+			</ol>
+			<footer></footer>
+		</div>
+
+		<div class="page" data-set="3" id="mcs211_2022december">
+			<header data-set="3">
+				<h2>MASTER IN COMPUTER APPLICATIONS (MCA-NEW)</h2>
+				<h3>Term-End Examination: December, 2022</h3>
+				<h4>MCS-211: DESIGN AND ANALYSIS OF ALGORITHMS</h4>
+				<p><strong>Time:</strong> 3 Hours | <strong>Maximum Marks:</strong> 100 (Weightage: 70%)[cite: 129, 130, 131]</p>
+				<p><em>Note: Question no. 1 is compulsory. Attempt any three questions from the rest.</em>[cite: 132, 133]</p>
+			</header>
+			<hr />
+
+			<ol type="1">
+				<li>
+					<ol type="a">
+						<li>
+							<p>Write a mathematical definition of big omega ($\Omega$). For the functions defined by $f(n)=3n^{3}+2n^{2}+1$ and $g(n)=2n^{2}+3$, verify that $f(n)=\Omega(g(n))$. <strong>[6]</strong>[cite: 135, 136]</p>
+						</li>
+						<li>
+							<p>Explain the principle of optimality in dynamic programming, with the help of an example. <strong>[6]</strong>[cite: 140, 146]</p>
+						</li>
+						<li>
+							<p>Apply a master method to give the tight asymptotic bounds of the following recurrences: <strong>[8]</strong>[cite: 141, 142, 147]</p>
+							<ol type="i">
+								<li>$T(n)=4T(n/2)+n^{2}$[cite: 144]</li>
+								<li>$T(n)=9T(n/3)+n$[cite: 145]</li>
+							</ol>
+						</li>
+						<li>
+							<p>Run the Prim's algorithm on the following graph. Assume that the root vertex is (a). Derive the complexity of the algorithm. <strong>[10]</strong>[cite: 150, 151, 169]</p>
+
+							<div style="margin: 20px 0">
+								<svg width="400" height="200" viewBox="0 0 400 200" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<circle cx="50" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="45" text-anchor="middle">a</text>
+
+									<circle cx="50" cy="160" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="165" text-anchor="middle">b</text>
+
+									<circle cx="150" cy="100" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="150" y="105" text-anchor="middle">e</text>
+
+									<circle cx="230" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="230" y="45" text-anchor="middle">d</text>
+
+									<circle cx="230" cy="160" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="230" y="165" text-anchor="middle">c</text>
+
+									<circle cx="310" cy="100" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="310" y="105" text-anchor="middle">f</text>
+
+									<circle cx="370" cy="160" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="370" y="165" text-anchor="middle">g</text>
+
+									<line x1="68" y1="40" x2="212" y2="40" stroke="#333" stroke-width="1.5" />
+									<line x1="50" y1="58" x2="50" y2="142" stroke="#333" stroke-width="1.5" />
+									<line x1="63" y1="147" x2="137" y2="113" stroke="#333" stroke-width="1.5" />
+									<line x1="68" y1="160" x2="212" y2="160" stroke="#333" stroke-width="1.5" />
+									<line x1="163" y1="113" x2="217" y2="147" stroke="#333" stroke-width="1.5" />
+									<line x1="230" y1="58" x2="230" y2="142" stroke="#333" stroke-width="1.5" />
+									<line x1="243" y1="53" x2="297" y2="87" stroke="#333" stroke-width="1.5" />
+									<line x1="243" y1="147" x2="297" y2="113" stroke="#333" stroke-width="1.5" />
+									<line x1="248" y1="160" x2="352" y2="160" stroke="#333" stroke-width="1.5" />
+									<line x1="323" y1="113" x2="357" y2="147" stroke="#333" stroke-width="1.5" />
+									<text x="140" y="35" font-size="13">1</text>
+									<text x="38" y="105" font-size="13">2</text>
+									<text x="95" y="125" font-size="13">3</text>
+									<text x="140" y="175" font-size="13">4</text>
+									<text x="195" y="125" font-size="13">5</text>
+									<text x="238" y="105" font-size="13">7</text>
+									<text x="275" y="65" font-size="13">6</text>
+									<text x="265" y="135" font-size="13">9</text>
+									<text x="300" y="175" font-size="13">2</text>
+									<text x="345" y="125" font-size="13">8</text>
+								</svg>
+							</div>
+						</li>
+						<li>
+							<p>Apply Huffman's algorithm to construct a Huffman's tree and optimal binary prefix code for the letters and its frequencies as given in the following table: <strong>[10]</strong>[cite: 170, 171]</p>
+							<table border="1" cellpadding="6" style="border-collapse: collapse; text-align: center; margin: 10px 0">
+								<tr style="background-color: #f2f2f2">
+									<th>Letter</th>
+									<th>Frequency</th>
+								</tr>
+								<tr>
+									<td>A</td>
+									<td>15</td>
+								</tr>
+								<tr>
+									<td>B</td>
+									<td>6</td>
+								</tr>
+								<tr>
+									<td>C</td>
+									<td>7</td>
+								</tr>
+								<tr>
+									<td>D</td>
+									<td>5</td>
+								</tr>
+								<tr>
+									<td>E</td>
+									<td>12</td>
+								</tr>
+								<tr>
+									<td>I</td>
+									<td>13</td>
+								</tr>
+								<tr>
+									<td>Z</td>
+									<td>2</td>
+								</tr>
+							</table>
+							[cite: 172]
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Explain Cook-Levin's theorem on CNF-Satisfiability problem, with the help of an example. <strong>[10]</strong>[cite: 173, 177, 181]</p>
+						</li>
+						<li>
+							<ol type="i">
+								<li>
+									<p>Apply Dijkstra's single source shortest path algorithm to the following graph with (a) as starting vertex. Show all the intermediate steps. <strong>[7]</strong>[cite: 183, 184, 185]</p>
+
+									<div style="margin: 20px 0">
+										<svg width="400" height="220" viewBox="0 0 400 220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+											<defs>
+												<marker id="arrow" viewBox="0 0 10 10" refX="20" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+													<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333" />
+												</marker>
+											</defs>
+											<circle cx="40" cy="100" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+											<text x="40" y="105" text-anchor="middle">a</text>
+
+											<circle cx="140" cy="30" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+											<text x="140" y="35" text-anchor="middle">b</text>
+
+											<circle cx="140" cy="130" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+											<text x="140" y="135" text-anchor="middle">c</text>
+
+											<circle cx="140" cy="200" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+											<text x="140" y="205" text-anchor="middle">e</text>
+
+											<circle cx="260" cy="30" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+											<text x="260" y="35" text-anchor="middle">d</text>
+
+											<circle cx="320" cy="110" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+											<text x="320" y="115" text-anchor="middle">f</text>
+
+											<circle cx="260" cy="200" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+											<text x="260" y="205" text-anchor="middle">g</text>
+
+											<line x1="40" y1="100" x2="140" y2="30" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="40" y1="100" x2="140" y2="130" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="40" y1="100" x2="140" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="140" y1="30" x2="260" y2="30" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="260" y1="30" x2="140" y2="130" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="260" y1="30" x2="320" y2="110" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="140" y1="130" x2="140" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="140" y1="130" x2="320" y2="110" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="140" y1="200" x2="260" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<line x1="320" y1="110" x2="260" y2="200" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<path d="M 140 200 Q 40 220 40 118" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+											<path d="M 260 200 Q 380 180 260 42" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrow)" />
+
+											<text x="85" y="55" font-size="12">2</text>
+											<text x="90" y="105" font-size="12">7</text>
+											<text x="75" y="160" font-size="12">12</text>
+											<text x="200" y="22" font-size="12">2</text>
+											<text x="185" y="75" font-size="12">-1</text>
+											<text x="295" y="65" font-size="12">2</text>
+											<text x="146" y="170" font-size="12">2</text>
+											<text x="220" y="110" font-size="12">9</text>
+											<text x="200" y="215" font-size="12">-7</text>
+											<text x="295" y="165" font-size="12">2</text>
+											<text x="65" y="215" font-size="12">-4</text>
+											<text x="355" y="115" font-size="12">1</text>
+										</svg>
+									</div>
+								</li>
+								<li>
+									<p>What is the significant feature of Bellman-Ford's algorithm which is not supported in Dijkstra's algorithm? <strong>[3]</strong>[cite: 205, 206]</p>
+								</li>
+							</ol>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Write and explain pseudocode for Ford-Fulkerson's algorithm for maximum bipartite matching. <strong>[10]</strong>[cite: 208, 209, 210]</p>
+						</li>
+						<li>
+							<p>
+								Apply the partition procedure of Quicksort algorithm to the following array: <br /><code>[35, 10, 40, 5, 60, 25, 45, 15]</code><br />
+								Show all the intermediate steps. <strong>[10]</strong>[cite: 212, 213, 214, 215]
+							</p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Apply DFS to the complete graph on four vertices. List the vertices in the order they would be visited. <strong>[7]</strong>[cite: 217, 218]</p>
+						</li>
+						<li>
+							<p>How many comparisons are needed for a binary search in a set of 512 elements? <strong>[3]</strong>[cite: 220, 221]</p>
+						</li>
+						<li>
+							<p>Apply Floyd-Warshall's algorithm to the following graph and show $D^{2}$. <strong>[10]</strong>[cite: 225, 236]</p>
+
+							<div style="margin: 20px 0">
+								<svg width="240" height="200" viewBox="0 0 240 200" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<defs>
+										<marker id="arrow2" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+											<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333" />
+										</marker>
+									</defs>
+									<circle cx="50" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="45" text-anchor="middle">A</text>
+
+									<circle cx="190" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="190" y="45" text-anchor="middle">B</text>
+
+									<circle cx="50" cy="160" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="165" text-anchor="middle">C</text>
+
+									<circle cx="190" cy="160" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="190" y="165" text-anchor="middle">D</text>
+
+									<path d="M 50 40 Q 120 20 190 40" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+									<path d="M 190 40 Q 120 60 50 40" fill="none" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+									<line x1="190" y1="40" x2="190" y2="160" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+									<line x1="190" y1="160" x2="50" y2="160" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+									<line x1="50" y1="160" x2="50" y2="40" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+									<line x1="50" y1="160" x2="190" y2="40" stroke="#333" stroke-width="1.5" marker-end="url(#arrow2)" />
+									<text x="120" y="20" font-size="12" text-anchor="middle">8</text>
+									<text x="120" y="68" font-size="12" text-anchor="middle">7</text>
+									<text x="196" y="105" font-size="12">3</text>
+									<text x="120" y="175" font-size="12" text-anchor="middle">2</text>
+									<text x="34" y="105" font-size="12">-3</text>
+									<text x="110" y="110" font-size="12">6</text>
+								</svg>
+							</div>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Describe the task scheduling algorithm as an optimization problem and calculate its complexity. Consider the following jobs and its service times and apply the task scheduling algorithm to minimize the total amount of time spent in the system. <strong>[10]</strong>[cite: 237, 238, 245]</p>
+							<table border="1" cellpadding="6" style="border-collapse: collapse; text-align: center; margin: 10px 0">
+								<tr style="background-color: #f2f2f2">
+									<th>Job</th>
+									<th>Service time</th>
+								</tr>
+								<tr>
+									<td>1</td>
+									<td>10</td>
+								</tr>
+								<tr>
+									<td>2</td>
+									<td>15</td>
+								</tr>
+								<tr>
+									<td>3</td>
+									<td>8</td>
+								</tr>
+								<tr>
+									<td>4</td>
+									<td>12</td>
+								</tr>
+								<tr>
+									<td>5</td>
+									<td>6</td>
+								</tr>
+							</table>
+							[cite: 240]
+						</li>
+						<li>
+							<p>Describe the basic principle of KMP algorithm for string matching. What is its advantage compared to Naive and Rabin-Karp's algorithm for string matching? Calculate the time complexity of KMP algorithm. <strong>[10]</strong>[cite: 241, 242]</p>
+						</li>
+					</ol>
+				</li>
+			</ol>
+			<footer></footer>
+		</div>
+
+		<div class="page" data-set="4" id="mcs211_2023june">
+			<header data-set="4">
+				<h2>MASTER OF COMPUTER APPLICATIONS (MCA-NEW)</h2>
+				<h3>Term-End Examination: June, 2023</h3>
+				<h4>MCS-211: DESIGN AND ANALYSIS OF ALGORITHMS</h4>
+				<p><strong>Time:</strong> 3 Hours | <strong>Maximum Marks:</strong> 100 (Weightage: 70%)</p>
+				<p><em>Note: Question No. 1 is compulsory and carries 40 marks. Attempt any three questions from the rest.</em></p>
+			</header>
+			<hr />
+
+			<ol type="1">
+				<li>
+					<ol type="a">
+						<li>
+							<p>What is an algorithm ? What are its desirable characteristics? <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>What are asymptotic notations? Explain any two asymptotic notations with suitable example for each. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Solve the following recurrence relation using substitution method : <strong>[5]</strong></p>
+							<p>$$T(n)=2T\left(\frac{n}{2}\right)+n$$</p>
+						</li>
+						<li>
+							<p>Write and explain binary search algorithm with a suitable example. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Explain Depth First Search (DFS) algorithm with a suitable example. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>What is Dynamic Programming approach of problem solving? Write the steps involved in dynamic programming. <strong>[6]</strong></p>
+						</li>
+						<li>
+							<p>What are Optimization and Decision problems? Give an example of each. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Design a state space tree for the given subset sum problem. $S=\{4,6,7,8\}$, $W=8$. <strong>[4]</strong></p>
+
+							<div style="margin: 20px 0">
+								<svg width="360" height="200" viewBox="0 0 360 200" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<defs>
+										<marker id="tree-arrow" viewBox="0 0 10 10" refX="15" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+											<path d="M 0 2 L 10 5 L 0 8 z" fill="#555" />
+										</marker>
+									</defs>
+									<circle cx="180" cy="30" r="14" fill="#f2f2f2" stroke="#333" stroke-width="1.5" />
+									<text x="180" y="34" text-anchor="middle" font-size="12">0</text>
+
+									<circle cx="90" cy="90" r="14" fill="#f2f2f2" stroke="#333" stroke-width="1.5" />
+									<text x="90" y="94" text-anchor="middle" font-size="12">4</text>
+
+									<circle cx="270" cy="90" r="14" fill="#f2f2f2" stroke="#333" stroke-width="1.5" />
+									<text x="270" y="94" text-anchor="middle" font-size="12">0</text>
+
+									<circle cx="220" cy="160" r="14" fill="#f2f2f2" stroke="#333" stroke-width="1.5" />
+									<text x="220" y="164" text-anchor="middle" font-size="12">6</text>
+
+									<circle cx="320" cy="160" r="14" fill="#d4edda" stroke="#28a745" stroke-width="2" />
+									<text x="320" y="164" text-anchor="middle" font-size="12" font-weight="bold">8</text>
+									<text x="320" y="190" text-anchor="middle" font-size="11" fill="#28a745" font-weight="bold">(Sol)</text>
+
+									<line x1="180" y1="30" x2="90" y2="90" stroke="#555" stroke-width="1.2" marker-end="url(#tree-arrow)" />
+									<text x="125" y="55" font-size="11" fill="#666">+4</text>
+
+									<line x1="180" y1="30" x2="270" y2="90" stroke="#555" stroke-width="1.2" marker-end="url(#tree-arrow)" />
+									<text x="235" y="55" font-size="11" fill="#666">-4</text>
+
+									<line x1="270" y1="90" x2="220" y2="160" stroke="#555" stroke-width="1.2" marker-end="url(#tree-arrow)" />
+									<text x="235" y="130" font-size="11" fill="#666">+6</text>
+
+									<line x1="270" y1="90" x2="320" y2="160" stroke="#555" stroke-width="1.2" marker-end="url(#tree-arrow)" />
+									<text x="305" y="130" font-size="11" fill="#666">+8</text>
+								</svg>
+							</div>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Explain all the three cases of Master's Theorem. Apply Master's theorem to solve the given recurrence relation : <strong>[8]</strong></p>
+							<p>$$T(n)=9T\left(\frac{n}{3}\right)+n$$</p>
+						</li>
+						<li>
+							<p>Evaluate : $$p(x)=3x^{4}+2x^{3}-5x+7 \text{ at } x=2$$ using Horner's rule. Show stepwise iterations. <strong>[6]</strong></p>
+						</li>
+						<li>
+							<p>Prove that for all non-negative integers 'n': <strong>[6]</strong></p>
+							<p>$$2^{0}+2^{1}+2^{2}+\dots+2^{n}=2^{n+1}-1$$</p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>What is Huffman coding? Write the steps for building the Huffman tree with an example. <strong>[6]</strong></p>
+						</li>
+						<li>
+							<p>Explain Quick sort algorithm using divide and conquer approach. <strong>[6]</strong></p>
+						</li>
+						<li>
+							<p>What are strongly connected components ? Explain how adjacency matrix and adjacency list are created for a connected graph with the help of a suitable diagram. <strong>[2+3+3=8]</strong></p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Show the step by step execution of Kruskal's algorithm for the following graph: <strong>[6]</strong></p>
+
+							<div style="margin: 20px 0">
+								<svg width="400" height="200" viewBox="0 0 400 200" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<circle cx="50" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="44" text-anchor="middle">a</text>
+
+									<circle cx="50" cy="160" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="164" text-anchor="middle">b</text>
+
+									<circle cx="200" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="200" y="44" text-anchor="middle">c</text>
+
+									<circle cx="200" cy="160" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="200" y="164" text-anchor="middle">d</text>
+
+									<circle cx="120" cy="100" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="120" y="104" text-anchor="middle">e</text>
+
+									<circle cx="300" cy="100" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="300" y="104" text-anchor="middle">f</text>
+
+									<circle cx="370" cy="160" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="370" y="164" text-anchor="middle">g</text>
+
+									<line x1="66" y1="40" x2="184" y2="40" stroke="#333" stroke-width="1.5" />
+									<line x1="50" y1="56" x2="50" y2="144" stroke="#333" stroke-width="1.5" />
+									<line x1="63" y1="149" x2="108" y2="111" stroke="#333" stroke-width="1.5" />
+									<line x1="66" y1="160" x2="184" y2="160" stroke="#333" stroke-width="1.5" />
+									<line x1="134" y1="111" x2="188" y2="149" stroke="#333" stroke-width="1.5" />
+									<line x1="200" y1="56" x2="200" y2="144" stroke="#333" stroke-width="1.5" />
+									<line x1="212" y1="51" x2="288" y2="89" stroke="#333" stroke-width="1.5" />
+									<line x1="212" y1="149" x2="288" y2="111" stroke="#333" stroke-width="1.5" />
+									<line x1="216" y1="160" x2="354" y2="160" stroke="#333" stroke-width="1.5" />
+									<line x1="312" y1="111" x2="358" y2="149" stroke="#333" stroke-width="1.5" />
+									<text x="125" y="34" font-size="12">1</text>
+									<text x="38" y="105" font-size="12">2</text>
+									<text x="90" y="125" font-size="12">3</text>
+									<text x="125" y="175" font-size="12">4</text>
+									<text x="170" y="125" font-size="12">5</text>
+									<text x="208" y="105" font-size="12">7</text>
+									<text x="260" y="65" font-size="12">6</text>
+									<text x="245" y="135" font-size="12">9</text>
+									<text x="285" y="175" font-size="12">2</text>
+									<text x="345" y="125" font-size="12">8</text>
+								</svg>
+							</div>
+						</li>
+						<li>
+							<p>What is Matrix chain multiplication problem? Find an optimal parenthesization of a matrix-chain product whose sequence of dimensions are as follows: <strong>[2+6=8]</strong></p>
+							<table border="1" cellpadding="6" style="border-collapse: collapse; margin: 10px 0">
+								<tr style="background-color: #f2f2f2">
+									<th>Matrix</th>
+									<th>Dimension</th>
+								</tr>
+								<tr>
+									<td>$A_{1}$</td>
+									<td>$30 \times 35$</td>
+								</tr>
+								<tr>
+									<td>$A_{2}$</td>
+									<td>$35 \times 15$</td>
+								</tr>
+								<tr>
+									<td>$A_{3}$</td>
+									<td>$15 \times 5$</td>
+								</tr>
+							</table>
+						</li>
+						<li>
+							<p>Explain Rabin Karp Algorithm for string matching with suitable example. <strong>[6]</strong></p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<p>Write short notes on any four of the following : <strong>[4 &times; 5 = 20]</strong></p>
+					<ol type="i">
+						<li>Deterministic vs. Non-deterministic algorithms</li>
+						<li>CLIQUE and vertex cover problem</li>
+						<li>Backtracking problem with example</li>
+						<li>Bellman-Ford algorithm</li>
+						<li>Fractional Knapsack problem</li>
+					</ol>
+				</li>
+			</ol>
+			<footer></footer>
+		</div>
+
+		<div class="page" data-set="5" id="mcs211_2023december">
+			<header data-set="5">
+				<h2>MASTER OF COMPUTER APPLICATIONS (MCA-NEW)</h2>
+				<h3>Term-End Examination: December, 2023</h3>
+				<h4>MCS-211: DESIGN AND ANALYSIS OF ALGORITHMS</h4>
+				<p><strong>Time:</strong> 3 Hours | <strong>Maximum Marks:</strong> 100 (Weightage: 70%)</p>
+				<p><em>Note: Question No. 1 is compulsory and carries 40 marks. Attempt any three questions from the rest.</em></p>
+			</header>
+			<hr />
+
+			<ol type="1">
+				<li>
+					<ol type="a">
+						<li>
+							<p>What is Euclid's algorithm to find GCD of two given integers? Write the steps involved in finding GCD of (a, b) using Euclid's algorithm. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>What are Big 'O' and Big '$\Omega$' notations? Explain with the help of representative diagram. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Write and explain linear search algorithm. Mention best case, worst case and average case scenarios of linear search. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Explain Breadth First Search (BFS) algorithm with a suitable example. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>What is Task Scheduling algorithm? Write pseudo code for task scheduling algorithm. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Solve the given recurrence relation using recursion tree method: <strong>[5]</strong></p>
+							<p>$$T(n)=2T\left(\frac{n}{2}\right)+n$$</p>
+						</li>
+						<li>
+							<p>What are P, NP and NP-complete problems? Give example of each. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>What is a Minimum Cost Spanning Tree (MCST)? Write Generic MCST algorithm. <strong>[5]</strong></p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>What are the building blocks of an algorithm? Explain how to judge an algorithm. <strong>[6]</strong></p>
+						</li>
+						<li>
+							<p>Solve the following recurrence relation using Master's Theorem: <strong>[6]</strong></p>
+							<p>$$T(n)=4T\left(\frac{n}{2}\right)+n^{2}$$</p>
+						</li>
+						<li>
+							<p>What is polynomial evaluation? What are its methods of evaluation? Evaluate $P(x)=3x^{2}+5x+6$ using Horner's rule at $x=3$. <strong>[2+2+4=8]</strong></p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>What is Greedy approach for problem solving? How does a Greedy algorithm work? Write the activities performed in Greedy method. <strong>[6]</strong></p>
+						</li>
+						<li>
+							<p>Explain merge sort algorithm using divide and conquer approach. Also mention its best case and worst case time complexities. <strong>[6+2=8]</strong></p>
+						</li>
+						<li>
+							<p>Explain any three of the following terms with the help of a suitable diagram: <strong>[3 &times; 2 = 6]</strong></p>
+							<ol type="i">
+								<li>Subgraph</li>
+								<li>Connected graph</li>
+								<li>Adjacency matrix</li>
+								<li>Directed acyclic graph</li>
+							</ol>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Show the step by step execution of Dijkstra's single source shortest path algorithm on the given directed graph from source vertex 'a': <strong>[6]</strong></p>
+
+							<div style="margin: 20px 0">
+								<svg width="360" height="220" viewBox="0 0 360 220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<defs>
+										<marker id="dijkstra-arrow-dec23" viewBox="0 0 10 10" refX="20" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+											<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333" />
+										</marker>
+									</defs>
+									<circle cx="40" cy="110" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="40" y="114" text-anchor="middle">a</text>
+
+									<circle cx="140" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="140" y="44" text-anchor="middle">b</text>
+
+									<circle cx="140" cy="180" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="140" y="184" text-anchor="middle">c</text>
+
+									<circle cx="280" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="280" y="44" text-anchor="middle">d</text>
+
+									<circle cx="280" cy="180" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="280" y="184" text-anchor="middle">e</text>
+
+									<line x1="54" y1="99" x2="126" y2="51" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow-dec23)" />
+									<line x1="54" y1="121" x2="126" y2="169" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow-dec23)" />
+									<line x1="156" y1="40" x2="264" y2="40" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow-dec23)" />
+									<line x1="140" y1="56" x2="140" y2="164" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow-dec23)" />
+									<line x1="152" y1="52" x2="268" y2="168" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow-dec23)" />
+									<line x1="156" y1="180" x2="264" y2="180" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow-dec23)" />
+									<line x1="280" y1="56" x2="280" y2="164" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow-dec23)" />
+									<text x="90" y="65" font-size="12">10</text>
+									<text x="90" y="155" font-size="12">5</text>
+									<text x="210" y="34" font-size="12" text-anchor="middle">1</text>
+									<text x="146" y="105" font-size="12">2</text>
+									<text x="190" y="90" font-size="12">3</text>
+									<text x="210" y="174" font-size="12" text-anchor="middle">9</text>
+									<text x="286" y="105" font-size="12">6</text>
+								</svg>
+							</div>
+						</li>
+						<li>
+							<p>What is string matching problem? Explain Knuth Morris Pratt algorithm of string matching with a suitable example. Explain the process of building LPS array for a pattern 'P'. <strong>[2+4+2=8]</strong></p>
+						</li>
+						<li>
+							<p>What is all pair shortest path problem? Write and explain Floyd Warshall algorithm for shortest paths with the help of a diagram. <strong>[6]</strong></p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<p>Write short notes on any four of the following: <strong>[4 &times; 5 = 20]</strong></p>
+					<ol type="i">
+						<li>Stassen's Matrix Multiplication</li>
+						<li>Chomsky's Normal Form</li>
+						<li>Graph Colouring Problem</li>
+						<li>Karatsuba's Method for Multiplication</li>
+						<li>Vertex Cover Problem</li>
+					</ol>
+				</li>
+			</ol>
+			<footer></footer>
+		</div>
+
+		<div class="page" data-set="6" id="mcs211_2024june">
+			<header data-set="6">
+				<h2>MASTER OF COMPUTER APPLICATION (MCA-NEW)</h2>
+				<h3>Term-End Examination: June, 2024</h3>
+				<h4>MCS-211: DESIGN AND ANALYSIS OF ALGORITHMS</h4>
+				<p><strong>Time:</strong> 3 Hours | <strong>Maximum Marks:</strong> 100 (Weightage: 70%)</p>
+				<p><em>Note: Question No. 1 is compulsory. Attempt any three questions from the rest.</em></p>
+			</header>
+			<hr />
+
+			<ol type="1">
+				<li>
+					<ol type="a">
+						<li>
+							<p>Use mathematical induction to prove that: <strong>[5]</strong></p>
+							<p>$$\sum_{i=1}^{n}i^{2}=\frac{n(n+1)(2n+1)}{6}$$</p>
+						</li>
+						<li>
+							<p>Write recursive binary search algorithms and analyse its complexity in worst case scenario. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>What is an algorithm? Explain characteristics of an algorithm with the help of an example. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Multiply the following two matrix using Strassen's algorithm: <strong>[5]</strong></p>
+							<p>$$\begin{bmatrix} 5 & 6 \\ 4 & 3 \end{bmatrix} \quad\text{and}\quad \begin{bmatrix} -7 & 6 \\ 5 & 9 \end{bmatrix}$$</p>
+						</li>
+						<li>
+							<p>What are P and NP class of problems? Differentiate between NP-Hard and NP-Complete problems. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Explain quick sort algorithm using suitable example. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>Multiply the following two numbers using Karatsuba's algorithm. <strong>[5]</strong></p>
+						</li>
+						<li>
+							<p>What is string matching algorithm? Derive its best case time complexity. <strong>[5]</strong></p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>What is Minimum Spanning Tree? Write Prim's algorithm for finding Minimum Spanning Tree and find its time complexity. Also find MST of the following graph using Prim's algorithm: <strong>[10]</strong></p>
+
+							<div style="margin: 20px 0">
+								<svg width="450" height="200" viewBox="0 0 450 200" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<circle cx="50" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="45" text-anchor="middle">A</text>
+
+									<circle cx="250" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="250" y="45" text-anchor="middle">B</text>
+
+									<circle cx="50" cy="160" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="50" y="165" text-anchor="middle">C</text>
+
+									<circle cx="250" cy="160" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="250" y="165" text-anchor="middle">D</text>
+
+									<circle cx="390" cy="100" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="390" y="105" text-anchor="middle">E</text>
+
+									<line x1="68" y1="40" x2="232" y2="40" stroke="#333" stroke-width="1.5" />
+									<line x1="50" y1="58" x2="50" y2="142" stroke="#333" stroke-width="1.5" />
+									<line x1="68" y1="160" x2="232" y2="160" stroke="#333" stroke-width="1.5" />
+									<line x1="250" y1="58" x2="250" y2="142" stroke="#333" stroke-width="1.5" />
+									<line x1="266" y1="152" x2="374" y2="108" stroke="#333" stroke-width="1.5" />
+									<text x="150" y="34" font-size="13" text-anchor="middle">7</text>
+									<text x="38" y="105" font-size="13">3</text>
+									<text x="150" y="175" font-size="13" text-anchor="middle">2</text>
+									<text x="256" y="105" font-size="13">1</text>
+									<text x="325" y="145" font-size="13">5</text>
+								</svg>
+							</div>
+						</li>
+						<li>
+							<p>Write an algorithm for topological sort. Obtain a topological ordering for the following graph: <strong>[10]</strong></p>
+
+							<div style="margin: 20px 0">
+								<svg width="450" height="220" viewBox="0 0 450 220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<defs>
+										<marker id="topo-arrow" viewBox="0 0 10 10" refX="20" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+											<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333" />
+										</marker>
+									</defs>
+									<circle cx="40" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="40" y="44" text-anchor="middle">1</text>
+
+									<circle cx="160" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="160" y="44" text-anchor="middle">2</text>
+
+									<circle cx="280" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="280" y="44" text-anchor="middle">3</text>
+
+									<circle cx="160" cy="110" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="160" y="114" text-anchor="middle">4</text>
+
+									<circle cx="280" cy="110" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="280" y="114" text-anchor="middle">5</text>
+
+									<circle cx="400" cy="110" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="400" y="114" text-anchor="middle">6</text>
+
+									<circle cx="280" cy="180" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="280" y="184" text-anchor="middle">7</text>
+
+									<circle cx="400" cy="180" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="400" y="184" text-anchor="middle">8</text>
+
+									<line x1="56" y1="40" x2="144" y2="40" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="54" y1="48" x2="146" y2="102" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="176" y1="40" x2="264" y2="40" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="160" y1="56" x2="160" y2="94" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="280" y1="56" x2="280" y2="94" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="176" y1="110" x2="264" y2="110" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="174" y1="118" x2="266" y2="172" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="296" y1="110" x2="384" y2="110" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="296" y1="180" x2="384" y2="180" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+									<line x1="400" y1="164" x2="400" y2="126" stroke="#333" stroke-width="1.5" marker-end="url(#topo-arrow)" />
+								</svg>
+							</div>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>"The best-case analysis is not as important as the worst-case analysis of an algorithm." Yes or No. Justify your answer with the help of an example. <strong>[10]</strong></p>
+						</li>
+						<li>
+							<p>Sort the following sequence of numbers, using selection sort. Also find the number of comparisons and copy operations required by the algorithm is sorting this list: <strong>[10]</strong></p>
+							<p><code>[28, 13, 12, 28, 35, 11, 15, 9, 36]</code></p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Explain the $0/1$ Knapsack problem. Solve the following $0/1$ Knapsack problem: <strong>[10]</strong></p>
+							<p>Given number of objects $n=6$<br />Capacity of Knapsack $(M)=12$</p>
+							<p>$$(P_1, P_2, P_3, P_4, P_5, P_6) = (1, 6, 18, 22, 28, 43)$$</p>
+							<p>$$(W_1, W_2, W_3, W_4, W_5, W_6) = (1, 2, 5, 6, 7, 10)$$</p>
+							<p>where $P_i$'s and $W_i$'s are the profit and weights of the corresponding objects.</p>
+						</li>
+						<li>
+							<p>Give a divide and conquer based algorithm to find the $i$-th smallest element in an array of size $n$. Trace your algorithm to find 3rd smallest in the array: <strong>[10]</strong></p>
+							<p>$$A = [10, 2, 5, 15, 50, 6, 20, 25]$$</p>
+						</li>
+					</ol>
+				</li>
+				<hr />
+
+				<li>
+					<ol type="a">
+						<li>
+							<p>Write Dijkstra's algorithm to find the shortest path in a graph. Apply Dijkstra's algorithm on the following graph: <strong>[10]</strong></p>
+
+							<div style="margin: 20px 0">
+								<svg width="400" height="220" viewBox="0 0 400 220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<defs>
+										<marker id="dijkstra-arrow" viewBox="0 0 10 10" refX="20" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+											<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333" />
+										</marker>
+									</defs>
+									<circle cx="40" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="40" y="44" text-anchor="middle">a</text>
+
+									<circle cx="180" cy="40" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="180" y="44" text-anchor="middle">b</text>
+
+									<circle cx="180" cy="110" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="180" y="114" text-anchor="middle">c</text>
+
+									<circle cx="340" cy="110" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="340" y="114" text-anchor="middle">d</text>
+
+									<circle cx="40" cy="110" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="40" y="114" text-anchor="middle">e</text>
+
+									<circle cx="280" cy="180" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="280" y="184" text-anchor="middle">f</text>
+
+									<circle cx="140" cy="180" r="16" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="140" y="184" text-anchor="middle">g</text>
+
+									<line x1="56" y1="40" x2="164" y2="40" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="54" y1="49" x2="166" y2="101" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="40" y1="56" x2="40" y2="94" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="180" y1="56" x2="180" y2="94" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="194" y1="46" x2="326" y2="104" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="196" y1="110" x2="324" y2="110" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="170" y1="122" x2="150" y2="164" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="334" y1="124" x2="286" y2="166" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="54" y1="118" x2="126" y2="172" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<line x1="264" y1="180" x2="156" y2="180" stroke="#333" stroke-width="1.5" marker-end="url(#dijkstra-arrow)" />
+									<text x="110" y="34" font-size="12" text-anchor="middle">2</text>
+									<text x="115" y="68" font-size="12">7</text>
+									<text x="28" y="80" font-size="12">10</text>
+									<text x="186" y="80" font-size="12">1</text>
+									<text x="260" y="65" font-size="12">2</text>
+									<text x="260" y="104" font-size="12" text-anchor="middle">2</text>
+									<text x="170" y="145" font-size="12">2</text>
+									<text x="320" y="150" font-size="12">2</text>
+									<text x="85" y="160" font-size="12">1</text>
+									<text x="210" y="195" font-size="12" text-anchor="middle">2</text>
+								</svg>
+							</div>
+						</li>
+						<li>
+							<p>Apply Floyd Warshall Algorithm (FWA) to find the shortest path distance between every pair of vertices in the following directed weighted graph: <strong>[10]</strong></p>
+
+							<div style="margin: 20px 0">
+								<svg width="340" height="220" viewBox="0 0 340 220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif">
+									<defs>
+										<marker id="fwa-arrow" viewBox="0 0 10 10" refX="20" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+											<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333" />
+										</marker>
+									</defs>
+									<circle cx="40" cy="110" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="40" y="115" text-anchor="middle">1</text>
+
+									<circle cx="170" cy="40" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="170" y="45" text-anchor="middle">2</text>
+
+									<circle cx="170" cy="180" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="170" y="185" text-anchor="middle">3</text>
+
+									<circle cx="300" cy="110" r="18" fill="none" stroke="#333" stroke-width="1.5" />
+									<text x="300" y="115" text-anchor="middle">4</text>
+
+									<line x1="54" y1="99" x2="156" y2="51" stroke="#333" stroke-width="1.5" marker-end="url(#fwa-arrow)" />
+									<line x1="54" y1="121" x2="156" y2="169" stroke="#333" stroke-width="1.5" marker-end="url(#fwa-arrow)" />
+									<line x1="170" y1="58" x2="170" y2="162" stroke="#333" stroke-width="1.5" marker-end="url(#fwa-arrow)" />
+									<line x1="286" y1="99" x2="184" y2="51" stroke="#333" stroke-width="1.5" marker-end="url(#fwa-arrow)" />
+									<line x1="286" y1="121" x2="184" y2="169" stroke="#333" stroke-width="1.5" marker-end="url(#fwa-arrow)" />
+									<text x="95" y="65" font-size="13">4</text>
+									<text x="90" y="160" font-size="13">-2</text>
+									<text x="178" y="115" font-size="13">3</text>
+									<text x="245" y="65" font-size="13">-1</text>
+									<text x="245" y="160" font-size="13">2</text>
+								</svg>
+							</div>
+							<p>Also, find the time complexity of an algorithm.</p>
+						</li>
+					</ol>
+				</li>
+			</ol>
+			<footer></footer>
+		</div>
+	
+	<script src="../../../../../js/pages/legacy-paper.js"></script>
+	</body>
+</html>
+

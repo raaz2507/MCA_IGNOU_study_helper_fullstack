@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="220" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif" viewbox="0 0 340 220" width="340">
+<defs>
+<marker id="fwa-arrow" markerheight="6" markerwidth="6" orient="auto-start-reverse" refx="20" refy="5" viewbox="0 0 10 10">
+<path d="M 0 1.5 L 10 5 L 0 8.5 z" fill="#333"></path>
+</marker>
+</defs>
+<circle cx="40" cy="110" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="40" y="115">1</text>
+<circle cx="170" cy="40" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="170" y="45">2</text>
+<circle cx="170" cy="180" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="170" y="185">3</text>
+<circle cx="300" cy="110" fill="none" r="18" stroke="#333" stroke-width="1.5"></circle>
+<text text-anchor="middle" x="300" y="115">4</text>
+<line marker-end="url(#fwa-arrow)" stroke="#333" stroke-width="1.5" x1="54" x2="156" y1="99" y2="51"></line>
+<line marker-end="url(#fwa-arrow)" stroke="#333" stroke-width="1.5" x1="54" x2="156" y1="121" y2="169"></line>
+<line marker-end="url(#fwa-arrow)" stroke="#333" stroke-width="1.5" x1="170" x2="170" y1="58" y2="162"></line>
+<line marker-end="url(#fwa-arrow)" stroke="#333" stroke-width="1.5" x1="286" x2="184" y1="99" y2="51"></line>
+<line marker-end="url(#fwa-arrow)" stroke="#333" stroke-width="1.5" x1="286" x2="184" y1="121" y2="169"></line>
+<text font-size="13" x="95" y="65">4</text>
+<text font-size="13" x="90" y="160">-2</text>
+<text font-size="13" x="178" y="115">3</text>
+<text font-size="13" x="245" y="65">-1</text>
+<text font-size="13" x="245" y="160">2</text>
+</svg>

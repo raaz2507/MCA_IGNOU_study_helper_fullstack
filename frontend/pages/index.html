@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>GyanPath | Learn, Revise, Succeed</title>
+	<meta name="description" content="GyanPath helps IGNOU MCA students find semester-wise study material, previous year question papers, question banks and video lectures." />
+	<link rel="canonical" href="https://raaz2507.github.io/MCA_IGNOU_study_helper/" />
+	<meta property="og:title" content="GyanPath | IGNOU MCA Study Helper" />
+	<meta property="og:description" content="Semester-wise IGNOU MCA study material, question papers, question banks and video lectures." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://raaz2507.github.io/MCA_IGNOU_study_helper/" />
+	<meta property="og:image" content="https://raaz2507.github.io/MCA_IGNOU_study_helper/assets/images/gyanpath-qr.png" />
+	<meta name="twitter:card" content="summary" />
+	<link rel="stylesheet" href="../assets/css/index.css?v=28" />
+	<link rel="stylesheet" href="../assets/css/pages/landing.css?v=1" />
+</head>
+<body data-page="home" data-header-title="GyanPath" data-header-subtitle="Your MCA study companion">
+	<div id="app-header"></div>
+
+	<main class="landing-page">
+		<section class="landing-hero">
+			<div class="landing-copy">
+				<p class="dashboard-label">IGNOU MCA Study Helper</p>
+				<h2>Everything you need to prepare, in one calm place.</h2>
+				<p>Question papers, study material, question banks, progress tracking and revision tools.</p>
+				<a class="primary-link" href="/resources">Browse Study Resources</a>
+			</div>
+
+			<section class="account-panel" aria-labelledby="accountPanelTitle">
+				<div class="account-tabs" role="tablist" aria-label="Account actions">
+					<button type="button" role="tab" aria-selected="true" data-account-tab="login">Login</button>
+					<button type="button" role="tab" aria-selected="false" data-account-tab="signup">Sign Up</button>
+					<button type="button" role="tab" aria-selected="false" data-account-tab="forgot">Forgot Password</button>
+				</div>
+
+				<h2 id="accountPanelTitle" class="sr-only">Account access</h2>
+
+				<form id="homeLoginForm" class="account-form is-active" data-account-panel="login">
+					<label>Username<input name="username" autocomplete="username" required /></label>
+					<label>Password<input name="password" type="password" autocomplete="current-password" required /></label>
+					<button type="submit">Login</button>
+				</form>
+
+				<form id="homeSignupForm" class="account-form" data-account-panel="signup" hidden>
+					<label>Full name<input name="displayName" autocomplete="name" required /></label>
+					<label>Username<input name="username" autocomplete="username" required /></label>
+					<label>Email<input name="email" type="email" autocomplete="email" required /></label>
+					<label>Password<input name="password" type="password" minlength="8" autocomplete="new-password" required /></label>
+					<button type="submit">Create Account</button>
+					<small>New accounts may require Admin approval before login.</small>
+				</form>
+
+				<form id="homeForgotForm" class="account-form" data-account-panel="forgot" hidden>
+					<label>Username or email<input name="identity" required /></label>
+					<button type="submit">Request Password Reset</button>
+					<small>Password-reset email delivery is being prepared.</small>
+				</form>
+
+				<p id="homeAccountMessage" class="login-message" aria-live="polite"></p>
+			</section>
+		</section>
+	</main>
+
+	<div id="app-footer"></div>
+	<script type="module" src="../assets/js/components/site-shell.js"></script>
+	<script src="../assets/js/utils/theme.js"></script>
+	<script type="module" src="../assets/js/pages/home-account.js?v=1"></script>
+</body>
+</html>

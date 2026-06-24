@@ -1,0 +1,224 @@
+@import url("./base.css");
+
+* {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--background);
+	color: var(--text);
+	font-family: var(--font-body);
+	transition: background-color 180ms ease, color 180ms ease;
+}
+
+button,
+a {
+	font: inherit;
+}
+
+.viewer-header {
+	position: relative;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--space-5);
+	padding: var(--space-3) var(--space-5);
+	background: var(--surface);
+	border-bottom: 1px solid var(--border);
+	box-shadow: var(--shadow);
+}
+
+.title-area,
+.controls,
+.control-group {
+	display: flex;
+	align-items: center;
+}
+
+.title-area {
+	min-width: 230px;
+	gap: var(--space-3);
+}
+
+.title-area h1 {
+	max-width: 520px;
+	margin: 2px 0 0;
+	overflow: hidden;
+	font-size: clamp(1rem, 2vw, 1.28rem);
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.eyebrow,
+.group-label {
+	margin: 0;
+	color: var(--muted);
+	font-size: 0.72rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+}
+
+.controls {
+	flex-wrap: wrap;
+	justify-content: flex-end;
+	gap: var(--space-2);
+}
+
+.control-group {
+	gap: 6px;
+	padding: var(--space-1);
+	background: var(--surface-soft);
+	border: 1px solid var(--border);
+	border-radius: var(--radius-lg);
+}
+
+.group-label {
+	padding: 0 5px;
+}
+
+.control-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 36px;
+	padding: 7px 11px;
+	color: var(--text);
+	text-decoration: none;
+	background: transparent;
+	border: 1px solid transparent;
+	border-radius: var(--radius-sm);
+	cursor: pointer;
+	transition: background-color 150ms ease, color 150ms ease, transform 150ms ease;
+}
+
+.control-button:hover:not(:disabled) {
+	background: var(--surface);
+	transform: translateY(-1px);
+}
+
+.control-button.active {
+	color: var(--accent-text);
+	background: var(--accent);
+}
+
+.control-button:focus-visible {
+	outline: 3px solid color-mix(in srgb, var(--accent) 45%, transparent);
+	outline-offset: 2px;
+}
+
+.control-button:disabled {
+	opacity: 0.42;
+	cursor: not-allowed;
+}
+
+.viewer-area {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	padding: 12px;
+}
+
+#pdfFrame {
+	width: 100%;
+	height: 100%;
+	background: #ffffff;
+	border: 0;
+	border-radius: 12px;
+	box-shadow: var(--shadow);
+	filter: var(--pdf-filter);
+	transition: filter 180ms ease;
+}
+
+.empty-state {
+	position: absolute;
+	inset: 50% auto auto 50%;
+	width: min(90%, 440px);
+	padding: 28px;
+	text-align: center;
+	background: var(--surface);
+	border: 1px solid var(--border);
+	border-radius: 16px;
+	box-shadow: var(--shadow);
+	transform: translate(-50%, -50%);
+}
+
+.empty-state h2 {
+	margin-top: 0;
+}
+
+body.is-fullscreen .viewer-header {
+	display: none;
+}
+
+body.is-fullscreen .viewer-area {
+	padding: 0;
+}
+
+body.is-fullscreen #pdfFrame {
+	border-radius: 0;
+}
+
+@media (max-width: 960px) {
+	body {
+		overflow: auto;
+	}
+
+	.viewer-header {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.title-area h1 {
+		max-width: calc(100vw - 120px);
+	}
+
+	.controls {
+		justify-content: flex-start;
+	}
+
+	.viewer-area {
+		flex: none;
+		height: calc(100vh - 190px);
+		min-height: 520px;
+	}
+}
+
+@media (max-width: 600px) {
+	.viewer-header {
+		padding: 10px;
+	}
+
+	.controls,
+	.control-group {
+		width: 100%;
+	}
+
+	.control-group {
+		flex-wrap: wrap;
+	}
+
+	.control-button {
+		flex: 1;
+	}
+
+	.group-label {
+		width: 100%;
+	}
+
+	.viewer-area {
+		height: calc(100vh - 330px);
+		min-height: 460px;
+		padding: 7px;
+	}
+}

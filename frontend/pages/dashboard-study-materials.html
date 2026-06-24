@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="robots" content="noindex, nofollow" />
+	<title>Study Materials | GyanPath Dashboard</title>
+	<link rel="stylesheet" href="../assets/css/index.css?v=25" />
+</head>
+<body class="auth-pending" data-allowed-roles="admin,editor" data-page="dashboard-study-materials" data-header-variant="dashboard" data-header-label="Resource Management" data-header-title="Study Materials" data-header-subtitle="Manage study material metadata, Hindi availability and checksums." data-header-action="dashboard">
+	<div id="app-header"></div>
+
+	<div class="dashboard-layout management-layout">
+		<aside class="dashboard-section-nav" aria-label="Dashboard sections">
+			<strong>Dashboard Sections</strong>
+			<nav>
+				<a href="#studyMaterialManagement">Editor</a>
+				<a href="#studyMaterialListSection">Study Material List</a>
+			</nav>
+		</aside>
+
+		<main class="dashboard-page management-page">
+			<section id="studyMaterialManagement" class="dashboard-panel management-editor-panel" aria-labelledby="studyMaterialTitle">
+				<div class="section-heading">
+					<p class="dashboard-label">Admin and Editor</p>
+					<h2 id="studyMaterialTitle">Study Material Management</h2>
+					<p>Manage study material metadata, Hindi availability and checksums without moving resource files.</p>
+				</div>
+				<form id="studyMaterialForm" class="contributor-form management-form">
+					<input id="studyMaterialId" type="hidden" />
+					<div class="banner-form-grid">
+						<label><span>Subject</span><select id="studyMaterialSubject" required></select></label>
+						<label><span>Status</span><select id="studyMaterialStatus"><option value="PUBLISHED">Published</option><option value="DRAFT">Draft</option><option value="ARCHIVED">Archived</option></select></label>
+					</div>
+					<label><span>Title</span><input id="studyMaterialTitleInput" type="text" maxlength="220" required /></label>
+					<label><span>Group / Block</span><input id="studyMaterialGroup" type="text" maxlength="160" required placeholder="Block-1 Introduction to Algorithms" /></label>
+					<label><span>English file path</span><input id="studyMaterialPath" type="text" maxlength="700" required /></label>
+					<div class="banner-form-grid">
+						<label><span>English checksum</span><input id="studyMaterialEnglishChecksum" type="text" maxlength="160" /></label>
+						<label><span>Hindi checksum</span><input id="studyMaterialHindiChecksum" type="text" maxlength="160" /></label>
+					</div>
+					<label class="banner-active-option">
+						<input id="studyMaterialHindiAvailable" type="checkbox" />
+						<span>Hindi version available</span>
+					</label>
+					<label id="studyMaterialHindiPathWrap" hidden><span>Hindi file path</span><input id="studyMaterialHindiPath" type="text" maxlength="700" /></label>
+					<div class="contributor-form-actions">
+						<button class="logout-button" type="submit">Save Study Material</button>
+						<button id="cancelStudyMaterialEdit" class="secondary-link" type="button" hidden>Cancel Edit</button>
+					</div>
+					<p id="studyMaterialMessage" class="contributor-message" aria-live="polite"></p>
+				</form>
+			</section>
+
+			<section id="studyMaterialListSection" class="dashboard-panel management-list-panel" aria-labelledby="studyMaterialListTitle">
+				<div class="section-heading">
+					<p class="dashboard-label">Study material library</p>
+					<h2 id="studyMaterialListTitle">Study Material List</h2>
+					<p>View, filter and edit saved study material records.</p>
+				</div>
+				<div class="admin-list-toolbar">
+					<label><span>View subject</span><select id="studyMaterialSubjectFilter"></select></label>
+					<label>
+						<span>Sort</span>
+						<select id="studyMaterialSort">
+							<option value="date-desc">Newest first</option>
+							<option value="date-asc">Oldest first</option>
+							<option value="subject">By subject</option>
+							<option value="title">By title</option>
+						</select>
+					</label>
+				</div>
+				<div class="admin-table-wrap management-table-wrap">
+					<table class="admin-user-table management-table">
+						<thead><tr><th>Subject</th><th>Material</th><th>Hindi</th><th>Checksums</th><th>Actions</th></tr></thead>
+						<tbody id="studyMaterialList"></tbody>
+					</table>
+				</div>
+			</section>
+		</main>
+	</div>
+
+	<div id="app-footer"></div>
+	<script type="module" src="../assets/js/components/site-shell.js"></script>
+	<script src="../assets/js/utils/theme.js"></script>
+	<script type="module" src="../assets/js/utils/protected-page.js"></script>
+	<script type="module" src="../assets/js/pages/resource-management.js"></script>
+	<script type="module" src="../assets/js/utils/page-preferences.js"></script>
+</body>
+</html>

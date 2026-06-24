@@ -1,0 +1,51 @@
+.breadcrumb {
+	max-width: 1600px;
+	margin: var(--space-2) auto var(--space-3);
+	padding: 0 var(--space-6);
+	font: 600 0.9rem/1.4 var(--font-ui);
+}
+
+.breadcrumb ol {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--space-2);
+	margin: 0;
+	padding: 10px var(--space-4);
+	list-style: none;
+	border: 1px solid color-mix(in srgb, var(--app-muted) 24%, transparent);
+	border-radius: var(--radius-lg);
+	background: color-mix(in srgb, var(--app-surface) 82%, transparent);
+	box-shadow: 0 var(--space-2) var(--space-6) color-mix(in srgb, var(--app-shadow-color), transparent 34%);
+}
+
+.breadcrumb li + li::before {
+	content: "/";
+	margin-right: var(--space-2);
+	color: var(--app-muted);
+	opacity: 0.75;
+}
+
+.breadcrumb a {
+	display: inline-flex;
+	padding: 3px var(--space-2);
+	border-radius: var(--radius-sm);
+	color: var(--app-primary);
+	text-decoration: none;
+}
+
+.breadcrumb a:hover {
+	background: color-mix(in srgb, var(--app-primary) 10%, transparent);
+}
+
+.breadcrumb [aria-current="page"] {
+	color: inherit;
+	opacity: 0.75;
+}
+
+@media (max-width: 700px) {
+	.breadcrumb {
+		margin: var(--space-2) auto var(--space-3);
+		padding: 0 var(--space-3);
+	}
+}

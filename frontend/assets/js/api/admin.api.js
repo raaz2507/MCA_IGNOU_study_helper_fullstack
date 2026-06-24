@@ -1,0 +1,78 @@
+import { apiRequest } from "./client.js";
+
+export const getAdminOverview = () => apiRequest("/admin/overview");
+export const getAdminUsers = () => apiRequest("/admin/users");
+export const getAdminSubjects = () => apiRequest("/admin/subjects");
+export const saveAdminSubject = (subject, id = "") =>
+	apiRequest(id ? `/admin/subjects/${encodeURIComponent(id)}` : "/admin/subjects", {
+		method: id ? "PUT" : "POST",
+		body: JSON.stringify(subject)
+	});
+export const deleteAdminSubject = (id) =>
+	apiRequest(`/admin/subjects/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getAdminSystemStatus = () => apiRequest("/admin/system");
+export const getAnalyticsRetention = () =>
+	apiRequest("/admin/settings/analytics-retention");
+export const saveAnalyticsRetention = (setting) =>
+	apiRequest("/admin/settings/analytics-retention", {
+		method: "PUT",
+		body: JSON.stringify(setting)
+	});
+export const updateAdminUserRole = (id, role) =>
+	apiRequest(`/admin/users/${encodeURIComponent(id)}/role`, {
+		method: "PATCH",
+		body: JSON.stringify({ role })
+	});
+export const updateAdminUserStatus = (id, status) =>
+	apiRequest(`/admin/users/${encodeURIComponent(id)}/status`, {
+		method: "PATCH",
+		body: JSON.stringify({ status })
+	});
+export const updateAdminUser = (id, changes) =>
+	apiRequest(`/admin/users/${encodeURIComponent(id)}`, {
+		method: "PUT",
+		body: JSON.stringify(changes)
+	});
+export const getNewUserDefaultStatus = () =>
+	apiRequest("/admin/settings/new-user-default-status");
+export const saveNewUserDefaultStatus = (status) =>
+	apiRequest("/admin/settings/new-user-default-status", {
+		method: "PUT",
+		body: JSON.stringify({ status })
+	});
+export const getAdminSemesters = () => apiRequest("/admin/semesters");
+export const saveAdminSemester = (semester, id = "") =>
+	apiRequest(id ? `/admin/semesters/${encodeURIComponent(id)}` : "/admin/semesters", {
+		method: id ? "PUT" : "POST",
+		body: JSON.stringify(semester)
+	});
+export const deleteAdminSemester = (id) =>
+	apiRequest(`/admin/semesters/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getAdminAssignments = () => apiRequest("/admin/assignments");
+export const saveAdminAssignment = (assignment, id = "") =>
+	apiRequest(id ? `/admin/assignments/${encodeURIComponent(id)}` : "/admin/assignments", {
+		method: id ? "PUT" : "POST",
+		body: JSON.stringify(assignment)
+	});
+export const deleteAdminAssignment = (id) =>
+	apiRequest(`/admin/assignments/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getAdminStudyMaterials = () => apiRequest("/admin/study-materials");
+export const saveAdminStudyMaterial = (material, id = "") =>
+	apiRequest(id ? `/admin/study-materials/${encodeURIComponent(id)}` : "/admin/study-materials", {
+		method: id ? "PUT" : "POST",
+		body: JSON.stringify(material)
+	});
+export const deleteAdminStudyMaterial = (id) =>
+	apiRequest(`/admin/study-materials/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getAdminPapers = () => apiRequest("/admin/papers");
+export const saveAdminPaper = (paper, id = "") =>
+	apiRequest(id ? `/admin/papers/${encodeURIComponent(id)}` : "/admin/papers", {
+		method: id ? "PUT" : "POST",
+		body: JSON.stringify(paper)
+	});
+export const deleteAdminPaper = (id) =>
+	apiRequest(`/admin/papers/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getAdminReports = () => apiRequest("/admin/reports");
+export const reviewAdminReport = (id, review) =>
+	apiRequest(`/admin/reports/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(review) });
+export const getAdminAuditLogs = () => apiRequest("/admin/audit-logs");

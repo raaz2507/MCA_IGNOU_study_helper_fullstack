@@ -1,0 +1,9 @@
+{
+	"name": "GyanPath - MCA Study Helper",
+	"short_name": "GyanPath",
+	"start_url": "/",
+	"display": "standalone",
+	"background_color": "#f8fafc",
+	"theme_color": "#1d4ed8",
+	"icons": []
+}

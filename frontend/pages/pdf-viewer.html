@@ -1,0 +1,64 @@
+﻿<!doctype html>
+<html lang="en" data-theme="light">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta name="robots" content="noindex, nofollow" />
+	<meta name="color-scheme" content="light dark" />
+	<title>PDF Reader</title>
+	<link rel="stylesheet" href="../assets/css/pdf-viewer.css" />
+	<link rel="stylesheet" href="../assets/css/breadcrumb.css" />
+</head>
+
+<body data-page="pdf-viewer">
+	<header class="viewer-header">
+		<div class="title-area">
+			<button id="backButton" class="control-button" type="button" aria-label="Go back">â† Back</button>
+			<div>
+				<p class="eyebrow">Study Reader</p>
+				<h1 id="documentTitle">PDF Reader</h1>
+			</div>
+		</div>
+
+		<div class="controls" aria-label="PDF reader controls">
+			<div class="control-group" aria-label="Language">
+				<span class="group-label">Language</span>
+				<button id="englishButton" class="control-button language-button active" type="button">English</button>
+				<button id="hindiButton" class="control-button language-button" type="button">à¤¹à¤¿à¤‚à¤¦à¥€</button>
+			</div>
+
+			<div class="control-group" aria-label="Reading theme">
+				<span class="group-label">Theme</span>
+				<button class="control-button theme-button active" data-theme="light" type="button">Light</button>
+				<button class="control-button theme-button" data-theme="dark" type="button">Dark</button>
+				<button class="control-button theme-button" data-theme="sepia" type="button">Sepia</button>
+			</div>
+
+			<div class="control-group actions" aria-label="Viewer actions">
+				<button id="fullscreenButton" class="control-button" type="button">â›¶ Fullscreen</button>
+				<a id="downloadButton" class="control-button" href="#" download>â†“ Download</a>
+			</div>
+		</div>
+	</header>
+	<script type="module">
+		import { renderBreadcrumb } from "../assets/js/components/breadcrumb.js";
+		renderBreadcrumb("pdf-viewer");
+	</script>
+
+	<main id="viewerArea" class="viewer-area">
+		<div id="emptyState" class="empty-state" hidden>
+			<h2>PDF à¤¨à¤¹à¥€à¤‚ à¤®à¤¿à¤²à¥€</h2>
+			<p>Viewer link à¤®à¥‡à¤‚ English à¤¯à¤¾ Hindi PDF à¤•à¤¾ à¤¸à¤¹à¥€ path à¤œà¥‹à¤¡à¤¼à¥‡à¤‚à¥¤</p>
+		</div>
+		<iframe id="pdfFrame" title="PDF document reader"></iframe>
+	</main>
+
+	<script src="../assets/js/utils/theme.js"></script>
+	<script src="../assets/js/pages/pdf-viewer.js"></script>
+</body>
+
+</html>
+
+
+

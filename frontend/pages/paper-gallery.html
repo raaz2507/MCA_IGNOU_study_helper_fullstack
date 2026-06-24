@@ -1,0 +1,74 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>IGNOU MCA Previous Year Question Papers | GyanPath</title>
+	<meta name="description" content="Browse IGNOU MCA previous year question papers by subject and exam session, including MCS and MCSL papers." />
+	<link rel="canonical" href="https://raaz2507.github.io/MCA_IGNOU_study_helper/paper-gallery" />
+	<meta property="og:title" content="IGNOU MCA Previous Year Question Papers | GyanPath" />
+	<meta property="og:description" content="Find semester-wise IGNOU MCA question papers for exam preparation and revision." />
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://raaz2507.github.io/MCA_IGNOU_study_helper/paper-gallery" />
+	<meta property="og:image" content="https://raaz2507.github.io/MCA_IGNOU_study_helper/assets/images/gyanpath-qr.png" />
+	<meta name="twitter:card" content="summary" />
+	<link rel="stylesheet" href="../assets/css/pdf-gallery.css" />
+	<link rel="stylesheet" href="../assets/css/breadcrumb.css" />
+</head>
+<body data-page="paper-gallery">
+	<header class="library-header">
+		<a class="back-link" href="/">â† Home</a>
+		<div>
+			<p class="eyebrow">IGNOU MCA Study Helper</p>
+			<h1 id="galleryTitle">Question Papers</h1>
+			<p>Select a card to open the question paper.</p>
+		</div>
+	</header>
+	<script type="module">
+		import { renderBreadcrumb } from "../assets/js/components/breadcrumb.js";
+		renderBreadcrumb("paper-gallery");
+	</script>
+	<main>
+		<section class="library-toolbar" aria-label="PDF library summary">
+			<div><strong id="fileCount">0</strong><span>PDF cards</span></div>
+			<label>
+				<span>Search files</span>
+				<input id="searchInput" type="search" placeholder="June 2024, December..." />
+			</label>
+		</section>
+		<section id="pdfGrid" class="pdf-grid" aria-live="polite"></section>
+		<div id="emptyLibrary" class="empty-library" hidden>
+			<h2>No PDF cards found</h2>
+		</div>
+	</main>
+	<template id="pdfCardTemplate">
+		<article class="pdf-card">
+			<a class="preview-link" target="_blank" rel="noopener">
+				<img class="pdf-preview" loading="lazy" alt="" />
+				<span class="open-overlay">Open in PDF Reader â†—</span>
+			</a>
+			<div class="card-content">
+				<div class="card-tags">
+					<span class="subject-tag"></span>
+					<span class="language-tag"></span>
+				</div>
+				<h2 class="pdf-title"></h2>
+				<p class="file-name"></p>
+				<dl class="file-details">
+					<div><dt>Exam</dt><dd class="exam-session"></dd></div>
+					<div><dt>Pages</dt><dd class="page-count"></dd></div>
+					<div><dt>Size</dt><dd class="file-size"></dd></div>
+					<div><dt>Updated</dt><dd class="updated-date"></dd></div>
+				</dl>
+				<a class="open-button" target="_blank" rel="noopener">Read PDF â†—</a>
+			</div>
+		</article>
+	</template>
+	<script>window.PDF_GALLERY_CONFIG = { viewer: "/pdf-viewer" };</script>
+	<script src="../assets/js/utils/theme.js"></script>
+	<script type="module" src="../assets/js/pages/paper-gallery.js"></script>
+</body>
+</html>
+
+
+

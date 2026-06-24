@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
+	<title id="title">Date sheet announcement illustration</title>
+	<desc id="desc">A schedule board and clock on a purple background.</desc>
+	<defs>
+		<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+			<stop stop-color="#42237c"/>
+			<stop offset="1" stop-color="#a64fd4"/>
+		</linearGradient>
+	</defs>
+	<rect width="1200" height="500" fill="url(#bg)"/>
+	<path d="M0 430C250 325 425 530 680 405s350-85 520-5v100H0z" fill="#26134f" opacity=".34"/>
+	<g transform="translate(680 70)">
+		<rect x="22" y="25" width="390" height="330" rx="26" fill="#251246" opacity=".32"/>
+		<rect width="390" height="330" rx="26" fill="#fff"/>
+		<rect width="390" height="78" rx="26" fill="#ffb12b"/>
+		<rect y="52" width="390" height="26" fill="#ffb12b"/>
+		<g fill="#7b3db5">
+			<rect x="45" y="115" width="120" height="18" rx="9"/>
+			<rect x="45" y="163" width="210" height="18" rx="9" opacity=".45"/>
+			<rect x="45" y="211" width="165" height="18" rx="9" opacity=".45"/>
+			<rect x="45" y="259" width="235" height="18" rx="9" opacity=".45"/>
+		</g>
+		<g fill="#ffb12b">
+			<circle cx="330" cy="124" r="11"/><circle cx="330" cy="172" r="11"/>
+			<circle cx="330" cy="220" r="11"/><circle cx="330" cy="268" r="11"/>
+		</g>
+	</g>
+	<g transform="translate(570 280)">
+		<circle cx="105" cy="105" r="103" fill="#1e123d" opacity=".32"/>
+		<circle cx="90" cy="90" r="88" fill="#f5f1ff"/>
+		<circle cx="90" cy="90" r="68" fill="#fff" stroke="#d9c7ee" stroke-width="4"/>
+		<path d="M90 90V43M90 90l37 22" fill="none" stroke="#65309a" stroke-width="11" stroke-linecap="round"/>
+		<circle cx="90" cy="90" r="9" fill="#ff9f1c"/>
+	</g>
+	<g fill="#fff" opacity=".55">
+		<circle cx="110" cy="105" r="8"/><circle cx="210" cy="405" r="12"/><circle cx="485" cy="105" r="6"/>
+	</g>
+</svg>

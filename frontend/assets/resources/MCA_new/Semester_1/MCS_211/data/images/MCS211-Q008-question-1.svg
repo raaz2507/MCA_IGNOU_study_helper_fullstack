@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" height="160" style="background: #fff; border: 1px solid #ccc; font-family: sans-serif" viewbox="0 0 420 160" width="420">
+<text font-weight="bold" x="20" y="30">A</text>
+<text font-weight="bold" x="200" y="30">B</text>
+<text font-weight="bold" x="380" y="30">E</text>
+<text font-weight="bold" x="20" y="140">C</text>
+<text font-weight="bold" x="200" y="140">D</text>
+<text font-weight="bold" x="380" y="140">F</text>
+<line stroke="#333" stroke-width="1.5" x1="35" x2="190" y1="25" y2="25"></line>
+<line stroke="#333" stroke-width="1.5" x1="215" x2="370" y1="25" y2="25"></line>
+<line stroke="#333" stroke-width="1.5" x1="35" x2="190" y1="135" y2="135"></line>
+<line stroke="#333" stroke-width="1.5" x1="215" x2="370" y1="135" y2="135"></line>
+<line stroke="#333" stroke-width="1.5" x1="25" x2="25" y1="40" y2="120"></line>
+<line stroke="#333" stroke-width="1.5" x1="205" x2="205" y1="40" y2="120"></line>
+<line stroke="#333" stroke-width="1.5" x1="385" x2="385" y1="40" y2="120"></line>
+<line stroke="#333" stroke-width="1.5" x1="35" x2="195" y1="135" y2="25"></line>
+<line stroke="#333" stroke-width="1.5" x1="215" x2="375" y1="135" y2="25"></line>
+<text font-size="14" x="110" y="20">5</text>
+<text font-size="14" x="290" y="20">2</text>
+<text font-size="14" x="110" y="130">7</text>
+<text font-size="14" x="290" y="130">3</text>
+<text font-size="14" x="12" y="85">3</text>
+<text font-size="14" x="212" y="85">5</text>
+<text font-size="14" x="392" y="85">9</text>
+<text font-size="14" x="100" y="75">8</text>
+<text font-size="14" x="280" y="75">3</text>
+</svg>
