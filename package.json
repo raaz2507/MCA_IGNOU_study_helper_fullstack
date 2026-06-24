@@ -6,7 +6,7 @@
 	"scripts": {
 		"dev": "tsx watch backend/src/server.ts",
 		"clean": "node -e \"require('node:fs').rmSync('backend/dist',{recursive:true,force:true})\"",
-		"build": "npm run clean && tsc -p backend/tsconfig.json",
+		"build": "npm run clean && npm run prisma:generate && tsc -p backend/tsconfig.json",
 		"start": "node backend/dist/src/server.js",
 		"test": "tsx --test backend/src/tests/*.test.ts",
 		"prisma:generate": "prisma generate --schema backend/prisma/schema.prisma",
