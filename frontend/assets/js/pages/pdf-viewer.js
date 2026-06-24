@@ -63,6 +63,11 @@
 		return `${pdfBaseUrl}/${source.slice(localPrefix.length)}`;
 	}
 
+	function viewerSource(source) {
+		if (!source.startsWith("http")) return source;
+		return `/api/pdf-proxy?url=${encodeURIComponent(source)}`;
+	}
+
 	documentTitle.textContent = title;
 	document.title = `${title} | PDF Reader`;
 	englishButton.disabled = !documents.en;
@@ -136,7 +141,7 @@
 		if (!source) return;
 
 		currentLanguage = language;
-		frame.src = source;
+		frame.src = viewerSource(source);
 		frame.hidden = false;
 		emptyState.hidden = true;
 		downloadButton.href = source;

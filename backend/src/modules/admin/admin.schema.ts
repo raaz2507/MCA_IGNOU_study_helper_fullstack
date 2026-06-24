@@ -18,6 +18,15 @@ export const shareSettingsSchema = z.object({
 	url: z.string().trim().url().max(300)
 });
 
+export const supportSettingsSchema = z.object({
+	enabled: z.boolean().default(false),
+	title: z.string().trim().min(2).max(80),
+	description: z.string().trim().min(2).max(300),
+	qrData: z.string().trim().max(700).optional().nullable(),
+	buttonText: z.string().trim().max(60).optional().nullable(),
+	buttonUrl: z.string().trim().url().max(300).optional().nullable()
+});
+
 export const userStatusSchema = z.object({
 	status: z.enum(["PENDING", "ACTIVE", "SUSPENDED", "BANNED"])
 });

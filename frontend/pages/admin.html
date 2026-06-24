@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
 	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,7 +8,10 @@
 	<title>Super Admin | GyanPath</title>
 	<link rel="stylesheet" href="../assets/css/index.css?v=27" />
 </head>
-<body class="auth-pending" data-allowed-roles="admin" data-page="admin" data-header-variant="dashboard" data-header-label="Admin Only" data-header-title="Super Admin Control Panel" data-header-subtitle="Platform overview, users, roles and system status." data-header-action="logout">
+
+<body class="auth-pending" data-allowed-roles="admin" data-page="admin" data-header-variant="dashboard"
+	data-header-label="Admin Only" data-header-title="Super Admin Control Panel"
+	data-header-subtitle="Platform overview, users, roles and system status." data-header-action="logout">
 	<div id="app-header"></div>
 
 	<div class="dashboard-layout admin-layout">
@@ -94,7 +98,12 @@
 				<div class="admin-table-wrap">
 					<table class="admin-user-table">
 						<thead>
-							<tr><th>User</th><th>Role &amp; Status</th><th>Activity</th><th>Joined</th></tr>
+							<tr>
+								<th>User</th>
+								<th>Role &amp; Status</th>
+								<th>Activity</th>
+								<th>Joined</th>
+							</tr>
 						</thead>
 						<tbody id="adminUsersBody"></tbody>
 					</table>
@@ -126,11 +135,13 @@
 					<form id="semesterForm" class="admin-retention-form">
 						<h3 id="semesterFormTitle">Add Semester</h3>
 						<input id="semesterEditId" type="hidden" />
-						<label><span>Number</span><input id="semesterNumber" type="number" min="1" max="20" required /></label>
+						<label><span>Number</span><input id="semesterNumber" type="number" min="1" max="20"
+								required /></label>
 						<label><span>Title</span><input id="semesterTitle" required /></label>
 						<div class="admin-form-actions">
 							<button class="logout-button" type="submit">Save Semester</button>
-							<button id="cancelSemesterEdit" class="secondary-button" type="button" hidden>Cancel</button>
+							<button id="cancelSemesterEdit" class="secondary-button" type="button"
+								hidden>Cancel</button>
 						</div>
 					</form>
 					<form id="subjectForm" class="admin-retention-form">
@@ -138,7 +149,8 @@
 						<input id="subjectEditId" type="hidden" />
 						<label><span>Code</span><input id="subjectCodeInput" placeholder="MCS-233" required /></label>
 						<label><span>Title</span><input id="subjectTitleInput" required /></label>
-						<label><span>Semester</span><input id="subjectSemesterInput" type="number" min="1" max="20" required /></label>
+						<label><span>Semester</span><input id="subjectSemesterInput" type="number" min="1" max="20"
+								required /></label>
 						<label>
 							<span>Type</span>
 							<select id="subjectTypeInput">
@@ -147,8 +159,10 @@
 								<option value="project">Project</option>
 							</select>
 						</label>
-						<label><span>Folder path</span><input id="subjectFolderInput" placeholder="Auto generated if blank" /></label>
-						<label class="admin-checkbox-field"><input id="subjectQuestionBankInput" type="checkbox" /><span>Enable question bank</span></label>
+						<label><span>Folder path</span><input id="subjectFolderInput"
+								placeholder="Auto generated if blank" /></label>
+						<label class="admin-checkbox-field"><input id="subjectQuestionBankInput"
+								type="checkbox" /><span>Enable question bank</span></label>
 						<div class="admin-form-actions">
 							<button class="logout-button" type="submit">Save Subject</button>
 							<button id="cancelSubjectEdit" class="secondary-button" type="button" hidden>Cancel</button>
@@ -170,11 +184,13 @@
 						</label>
 						<div class="admin-form-actions">
 							<button class="logout-button" type="submit">Save Assignment</button>
-							<button id="cancelAssignmentEdit" class="secondary-button" type="button" hidden>Cancel</button>
+							<button id="cancelAssignmentEdit" class="secondary-button" type="button"
+								hidden>Cancel</button>
 						</div>
 					</form>
 				</div>
-				<h3>Semesters</h3><div id="adminSemesters" class="admin-quick-links"></div>
+				<h3>Semesters</h3>
+				<div id="adminSemesters" class="admin-quick-links"></div>
 				<h3>Subjects</h3>
 				<div class="admin-list-toolbar">
 					<label>
@@ -190,14 +206,24 @@
 				<div class="admin-table-wrap">
 					<table class="admin-user-table admin-subject-table">
 						<thead>
-							<tr><th>Semester</th><th>Code</th><th>Name</th><th>Type</th><th>Question Bank</th><th>Actions</th></tr>
+							<tr>
+								<th>Semester</th>
+								<th>Code</th>
+								<th>Name</th>
+								<th>Type</th>
+								<th>Question Bank</th>
+								<th>Actions</th>
+							</tr>
 						</thead>
 						<tbody id="adminSubjects"></tbody>
 					</table>
 				</div>
-				<h3>Assignments</h3><div id="adminAssignments" class="admin-quick-links"></div>
-				<h3>Reports</h3><div id="adminReports" class="admin-quick-links"></div>
-				<h3>Recent Audit Log</h3><div id="adminAuditLogs" class="admin-system-grid"></div>
+				<h3>Assignments</h3>
+				<div id="adminAssignments" class="admin-quick-links"></div>
+				<h3>Reports</h3>
+				<div id="adminReports" class="admin-quick-links"></div>
+				<h3>Recent Audit Log</h3>
+				<div id="adminAuditLogs" class="admin-system-grid"></div>
 				<p id="adminOperationsMessage" class="admin-message" aria-live="polite"></p>
 			</section>
 
@@ -210,7 +236,8 @@
 				<form id="shareSettingsForm" class="admin-retention-form">
 					<label><span>Title</span><input id="shareTitle" required maxlength="80" /></label>
 					<label><span>Description</span><input id="shareDescription" required maxlength="220" /></label>
-					<label><span>Share text</span><textarea id="shareText" rows="3" required maxlength="500"></textarea></label>
+					<label><span>Share text</span><textarea id="shareText" rows="3" required
+							maxlength="500"></textarea></label>
 					<label><span>Share URL</span><input id="shareUrl" type="url" required /></label>
 					<div class="admin-form-actions">
 						<button class="logout-button" type="submit">Save Share Settings</button>
@@ -255,6 +282,28 @@
 				</form>
 			</section>
 
+			<section id="adminSupport" class="dashboard-panel">
+				<div class="section-heading">
+					<p class="dashboard-label">Donation settings</p>
+					<h2>Support GyanPath Settings</h2>
+					<p>Control the footer support QR, description and donation button.</p>
+				</div>
+				<form id="supportSettingsForm" class="admin-retention-form">
+					<label><span>Enabled</span><input id="supportEnabled" type="checkbox" /></label>
+					<label><span>Title</span><input id="supportTitle" required maxlength="80" /></label>
+					<label><span>Description</span><textarea id="supportDescription" rows="3" required
+							maxlength="300"></textarea></label>
+					<label><span>QR data / UPI link</span><input id="supportQrData" maxlength="700" /></label>
+					<label><span>Button text</span><input id="supportButtonText" maxlength="60" /></label>
+					<label><span>Button URL</span><input id="supportButtonUrl" type="url" /></label>
+					<div class="admin-form-actions">
+						<button class="logout-button" type="submit">Save Support Settings</button>
+						<button id="resetSupportSettings" class="secondary-button" type="button">Reset</button>
+					</div>
+					<p id="supportSettingsMessage" class="admin-message" aria-live="polite"></p>
+				</form>
+			</section>
+
 			<section id="adminSystem" class="dashboard-panel">
 				<div class="section-heading">
 					<p class="dashboard-label">Read-only diagnostics</p>
@@ -272,4 +321,5 @@
 	<script type="module" src="../assets/js/utils/protected-page.js"></script>
 	<script type="module" src="../assets/js/pages/admin.js"></script>
 </body>
+
 </html>

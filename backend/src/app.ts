@@ -64,6 +64,27 @@ export function createApp() {
 			pdfResourceBaseUrl: env.pdfResourceBaseUrl
 		});
 	});
+	app.get("/api/pdf-proxy", async (request, response) => {
+		const source = String(request.query.url || "");
+		const pdfBaseUrl = env.pdfResourceBaseUrl.replace(/\/$/, "");
+
+		if (!source.startsWith(`${pdfBaseUrl}/`) || !source.toLowerCase().includes(".pdf")) {
+			response.status(400).json({ code: "INVALID_PDF_URL", message: "PDF URL is not allowed." });
+			return;
+		}
+
+		const upstream = await fetch(source);
+		if (!upstream.ok || !upstream.body) {
+			response.status(upstream.status).json({ code: "PDF_NOT_FOUND", message: "PDF file could not be loaded." });
+			return;
+		}
+
+		const fileName = decodeURIComponent(source.split("/").pop() || "document.pdf").replace(/[^\w .()-]+/g, "_");
+		response.setHeader("Content-Type", "application/pdf");
+		response.setHeader("Content-Disposition", `inline; filename="${fileName}"`);
+		response.setHeader("Cache-Control", "public, max-age=3600");
+		response.send(Buffer.from(await upstream.arrayBuffer()));
+	});
 	app.use("/api/auth", authRouter);
 	app.use("/api", catalogRouter);
 	app.use("/api/questions", questionsRouter);
