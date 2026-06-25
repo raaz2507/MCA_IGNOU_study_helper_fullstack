@@ -3,6 +3,7 @@ import {
 	deleteAdminSemester,
 	deleteAdminSubject,
 	deleteShareSettings,
+	deleteSupportSettings,
 	getAnalyticsRetention,
 	getAdminAssignments,
 	getAdminAuditLogs,
@@ -14,14 +15,18 @@ import {
 	getAdminUsers,
 	getNewUserDefaultStatus,
 	getShareSettings,
+	getSupportSettings,
 	reviewAdminReport,
+	restoreDatabaseBackup,
 	saveAdminAssignment,
 	saveAdminSemester,
 	saveAdminSubject,
 	saveAnalyticsRetention,
 	saveNewUserDefaultStatus,
 	saveShareSettings,
-	updateAdminUser
+	saveSupportSettings,
+	updateAdminUser,
+	uploadSettingQrImage
 } from "../api/admin.api.js";
 import { getAnalyticsSummary } from "../api/analytics.api.js";
 
@@ -41,16 +46,37 @@ const retentionMessage = document.getElementById("analyticsRetentionMessage");
 const subjectSort = document.getElementById("subjectSort");
 const shareSettingsForm = document.getElementById("shareSettingsForm");
 const shareSettingsMessage = document.getElementById("shareSettingsMessage");
+const supportSettingsForm = document.getElementById("supportSettingsForm");
+const supportSettingsMessage = document.getElementById("supportSettingsMessage");
+const databaseBackupMessage = document.getElementById("databaseBackupMessage");
 
 const defaultShareSettings = {
 	title: "Share GyanPath",
 	description: "Scan the QR code or share it with another MCA student.",
 	shareText: "GyanPath - IGNOU MCA study resources",
-	url: "https://mcaignoustudyhelperfullstck-production.up.railway.app/"
+	url: "https://mcaignoustudyhelperfullstck-production.up.railway.app/",
+	qrImageSource: "generated",
+	qrImageUrl: "",
+	qrImagePath: "",
+	qrImageMeta: null
+};
+const defaultSupportSettings = {
+	enabled: false,
+	title: "Support GyanPath",
+	description: "Your donation helps keep IGNOU MCA resources organized, updated and free for students.",
+	qrData: "",
+	qrImageSource: "generated",
+	qrImageUrl: "",
+	qrImagePath: "",
+	qrImageMeta: null,
+	buttonText: "Donation details coming soon",
+	buttonUrl: ""
 };
 
 let users = [];
 let adminSubjects = [];
+let shareQrUpload = { path: "", meta: null, file: null };
+let supportQrUpload = { path: "", meta: null, file: null };
 
 const roleLabels = {
 	USER: "User",
@@ -231,10 +257,219 @@ function renderSystem(data) {
 }
 
 function fillShareSettings(setting = defaultShareSettings) {
-	document.getElementById("shareTitle").value = setting.title;
-	document.getElementById("shareDescription").value = setting.description;
-	document.getElementById("shareText").value = setting.shareText;
-	document.getElementById("shareUrl").value = setting.url;
+	const share = { ...defaultShareSettings, ...setting };
+	document.getElementById("shareTitle").value = share.title;
+	document.getElementById("shareDescription").value = share.description;
+	document.getElementById("shareText").value = share.shareText;
+	document.getElementById("shareUrl").value = share.url;
+	document.getElementById("shareQrImageUrl").value = share.qrImageUrl || "";
+	shareQrUpload = { path: share.qrImagePath || "", meta: share.qrImageMeta || null, file: null };
+	setQrSource("share", share.qrImageSource || "generated");
+	updateShareQrPreview();
+}
+
+function fillSupportSettings(setting = defaultSupportSettings) {
+	const support = { ...defaultSupportSettings, ...setting };
+	document.getElementById("supportEnabled").checked = Boolean(support.enabled);
+	document.getElementById("supportTitle").value = support.title;
+	document.getElementById("supportDescription").value = support.description;
+	document.getElementById("supportQrData").value = support.qrData || "";
+	document.getElementById("supportQrImageUrl").value = support.qrImageUrl || "";
+	supportQrUpload = { path: support.qrImagePath || "", meta: support.qrImageMeta || null, file: null };
+	document.getElementById("supportButtonText").value = support.buttonText || "";
+	document.getElementById("supportButtonUrl").value = support.buttonUrl || "";
+	setQrSource("support", support.qrImageSource || "generated");
+	updateSupportQrPreview();
+}
+
+function qrCodeImageUrl(data) {
+	return `https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=${encodeURIComponent(data)}`;
+}
+
+function formatBytes(size = 0) {
+	if (!size) return "0 B";
+	const units = ["B", "KB", "MB"];
+	let value = size;
+	let unit = 0;
+	while (value >= 1024 && unit < units.length - 1) {
+		value /= 1024;
+		unit += 1;
+	}
+	return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
+}
+
+function formatQrMeta(meta) {
+	if (!meta) return "";
+	const parts = [];
+	if (meta.type) parts.push(meta.type);
+	if (meta.size) parts.push(formatBytes(meta.size));
+	if (meta.width && meta.height) parts.push(`${meta.width} x ${meta.height}px`);
+	if (meta.name) parts.push(meta.name);
+	return parts.join(" | ");
+}
+
+function selectedQrSource(prefix) {
+	return document.querySelector(`input[name="${prefix}QrImageSource"]:checked`)?.value || "generated";
+}
+
+function setQrSource(prefix, value) {
+	const checked = document.querySelector(`input[name="${prefix}QrImageSource"][value="${value}"]`);
+	if (checked) checked.checked = true;
+	updateQrSourceFields(prefix);
+}
+
+function updateQrSourceFields(prefix) {
+	const source = selectedQrSource(prefix);
+	document.querySelectorAll(`[data-${prefix}-source]`).forEach((element) => {
+		element.hidden = element.dataset[`${prefix}Source`] !== source;
+	});
+}
+
+function updateQrPreview(imageId, textId, metaId, value, emptyText, options = {}) {
+	const image = document.getElementById(imageId);
+	const text = document.getElementById(textId);
+	const meta = document.getElementById(metaId);
+	const data = value.trim();
+	if (!image || !text) return;
+	if (!data) {
+		image.removeAttribute("src");
+		image.hidden = true;
+		text.textContent = emptyText;
+		if (meta) meta.textContent = "";
+		return;
+	}
+	image.src = options.directImage ? data : qrCodeImageUrl(data);
+	image.hidden = false;
+	text.textContent = data;
+	if (meta) meta.textContent = formatQrMeta(options.meta);
+}
+
+function updateShareQrPreview() {
+	updateQrSourceFields("share");
+	const source = selectedQrSource("share");
+	if (source === "url") {
+		updateQrPreview(
+			"shareQrPreview",
+			"shareQrPreviewText",
+			"shareQrPreviewMeta",
+			document.getElementById("shareQrImageUrl")?.value || "",
+			"Enter a Share QR image URL to preview.",
+			{ directImage: true }
+		);
+		return;
+	}
+	if (source === "upload") {
+		updateQrPreview(
+			"shareQrPreview",
+			"shareQrPreviewText",
+			"shareQrPreviewMeta",
+			shareQrUpload.path,
+			"Choose and save a Share QR image to preview.",
+			{ directImage: true, meta: shareQrUpload.meta }
+		);
+		return;
+	}
+	updateQrPreview(
+		"shareQrPreview",
+		"shareQrPreviewText",
+		"shareQrPreviewMeta",
+		document.getElementById("shareUrl")?.value || "",
+		"Enter a Share URL to preview its QR code."
+	);
+}
+
+function updateSupportQrPreview() {
+	updateQrSourceFields("support");
+	const source = selectedQrSource("support");
+	if (source === "url") {
+		updateQrPreview(
+			"supportQrPreview",
+			"supportQrPreviewText",
+			"supportQrPreviewMeta",
+			document.getElementById("supportQrImageUrl")?.value || "",
+			"Enter a Support QR image URL to preview.",
+			{ directImage: true }
+		);
+		return;
+	}
+	if (source === "upload") {
+		updateQrPreview(
+			"supportQrPreview",
+			"supportQrPreviewText",
+			"supportQrPreviewMeta",
+			supportQrUpload.path,
+			"Choose and save a Support QR image to preview.",
+			{ directImage: true, meta: supportQrUpload.meta }
+		);
+		return;
+	}
+	updateQrPreview(
+		"supportQrPreview",
+		"supportQrPreviewText",
+		"supportQrPreviewMeta",
+		document.getElementById("supportQrData")?.value || "",
+		"Enter a QR image URL or QR data / UPI link to preview."
+	);
+}
+
+function readImageDimensions(file) {
+	return new Promise((resolve, reject) => {
+		const image = new Image();
+		const url = URL.createObjectURL(file);
+		image.onload = () => {
+			URL.revokeObjectURL(url);
+			resolve({ width: image.naturalWidth, height: image.naturalHeight });
+		};
+		image.onerror = () => {
+			URL.revokeObjectURL(url);
+			reject(new Error("Selected image could not be previewed."));
+		};
+		image.src = url;
+	});
+}
+
+async function handleQrFileChange(prefix, file) {
+	if (!file) return;
+	const dimensions = await readImageDimensions(file);
+	const state = {
+		path: URL.createObjectURL(file),
+		file,
+		meta: {
+			name: file.name,
+			type: file.type,
+			size: file.size,
+			...dimensions
+		}
+	};
+	if (prefix === "share") {
+		if (shareQrUpload.path.startsWith("blob:")) URL.revokeObjectURL(shareQrUpload.path);
+		shareQrUpload = state;
+		updateShareQrPreview();
+	} else {
+		if (supportQrUpload.path.startsWith("blob:")) URL.revokeObjectURL(supportQrUpload.path);
+		supportQrUpload = state;
+		updateSupportQrPreview();
+	}
+}
+
+async function ensureUploadedQr(prefix) {
+	const state = prefix === "share" ? shareQrUpload : supportQrUpload;
+	if (!state.file) return state;
+	const uploaded = await uploadSettingQrImage(state.file, `${prefix}-qr`);
+	const next = {
+		path: uploaded.path,
+		file: null,
+		meta: {
+			name: state.meta?.name || uploaded.name,
+			type: uploaded.type,
+			size: uploaded.size,
+			width: state.meta?.width || null,
+			height: state.meta?.height || null
+		}
+	};
+	if (prefix === "share") shareQrUpload = next;
+	else supportQrUpload = next;
+	return next;
 }
 
 function emptyCard(text) {
@@ -476,21 +711,54 @@ async function initialize() {
 	}
 
 	try {
-		await loadOperations();
+		fillSupportSettings(await getSupportSettings());
 	} catch (error) {
-		setMessage(operationsMessage, `Admin operations could not be loaded: ${error.message}`, "error");
+		fillSupportSettings();
+		setMessage(supportSettingsMessage, `Support settings could not be loaded: ${error.message}`, "error");
+	}
+
+	if (document.getElementById("adminOperations")) {
+		try {
+			await loadOperations();
+		} catch (error) {
+			setMessage(operationsMessage, `Admin operations could not be loaded: ${error.message}`, "error");
+		}
 	}
 }
 
 userSearch.addEventListener("input", renderUsers);
 roleFilter.addEventListener("change", renderUsers);
-subjectSort.addEventListener("change", renderSubjectRows);
+subjectSort?.addEventListener("change", renderSubjectRows);
+document.getElementById("shareUrl")?.addEventListener("input", updateShareQrPreview);
+document.getElementById("shareQrImageUrl")?.addEventListener("input", updateShareQrPreview);
+document.getElementById("shareQrImageFile")?.addEventListener("change", async (event) => {
+	try {
+		await handleQrFileChange("share", event.target.files?.[0]);
+	} catch (error) {
+		setMessage(shareSettingsMessage, error.message, "error");
+	}
+});
+document.querySelectorAll('input[name="shareQrImageSource"]').forEach((input) => {
+	input.addEventListener("change", updateShareQrPreview);
+});
+document.getElementById("supportQrImageUrl")?.addEventListener("input", updateSupportQrPreview);
+document.getElementById("supportQrImageFile")?.addEventListener("change", async (event) => {
+	try {
+		await handleQrFileChange("support", event.target.files?.[0]);
+	} catch (error) {
+		setMessage(supportSettingsMessage, error.message, "error");
+	}
+});
+document.getElementById("supportQrData")?.addEventListener("input", updateSupportQrPreview);
+document.querySelectorAll('input[name="supportQrImageSource"]').forEach((input) => {
+	input.addEventListener("change", updateSupportQrPreview);
+});
 document.getElementById("saveNewUserDefaultStatus").addEventListener("click", async () => {
 	const status = document.getElementById("newUserDefaultStatus").value;
 	await saveNewUserDefaultStatus(status);
 	setMessage(userMessage, `New accounts will default to ${status}.`, "success");
 });
-document.getElementById("semesterForm").addEventListener("submit", async (event) => {
+document.getElementById("semesterForm")?.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	const id = document.getElementById("semesterEditId").value;
 	await saveAdminSemester({
@@ -503,7 +771,7 @@ document.getElementById("semesterForm").addEventListener("submit", async (event)
 	setMessage(operationsMessage, id ? "Semester updated." : "Semester created.", "success");
 	await loadOperations();
 });
-document.getElementById("subjectForm").addEventListener("submit", async (event) => {
+document.getElementById("subjectForm")?.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	const id = document.getElementById("subjectEditId").value;
 	const folderPath = document.getElementById("subjectFolderInput").value.trim();
@@ -519,7 +787,7 @@ document.getElementById("subjectForm").addEventListener("submit", async (event) 
 	setMessage(operationsMessage, id ? "Subject updated." : "Subject created.", "success");
 	await loadOperations();
 });
-document.getElementById("assignmentForm").addEventListener("submit", async (event) => {
+document.getElementById("assignmentForm")?.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	const id = document.getElementById("assignmentEditId").value;
 	const dueDate = document.getElementById("assignmentDueDate").value;
@@ -533,9 +801,9 @@ document.getElementById("assignmentForm").addEventListener("submit", async (even
 	setMessage(operationsMessage, id ? "Assignment updated." : "Assignment created.", "success");
 	await loadOperations();
 });
-document.getElementById("cancelSemesterEdit").addEventListener("click", resetSemesterForm);
-document.getElementById("cancelSubjectEdit").addEventListener("click", resetSubjectForm);
-document.getElementById("cancelAssignmentEdit").addEventListener("click", resetAssignmentForm);
+document.getElementById("cancelSemesterEdit")?.addEventListener("click", resetSemesterForm);
+document.getElementById("cancelSubjectEdit")?.addEventListener("click", resetSubjectForm);
+document.getElementById("cancelAssignmentEdit")?.addEventListener("click", resetAssignmentForm);
 retentionForm.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	try {
@@ -556,11 +824,16 @@ retentionForm.addEventListener("submit", async (event) => {
 shareSettingsForm.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	try {
+		const uploaded = selectedQrSource("share") === "upload" ? await ensureUploadedQr("share") : shareQrUpload;
 		const saved = await saveShareSettings({
 			title: document.getElementById("shareTitle").value,
 			description: document.getElementById("shareDescription").value,
 			shareText: document.getElementById("shareText").value,
-			url: document.getElementById("shareUrl").value
+			url: document.getElementById("shareUrl").value,
+			qrImageSource: selectedQrSource("share"),
+			qrImageUrl: document.getElementById("shareQrImageUrl").value || null,
+			qrImagePath: selectedQrSource("share") === "upload" ? uploaded.path : null,
+			qrImageMeta: selectedQrSource("share") === "upload" ? uploaded.meta : null
 		});
 		fillShareSettings(saved);
 		setMessage(shareSettingsMessage, "Share settings saved.", "success");
@@ -575,6 +848,83 @@ document.getElementById("resetShareSettings").addEventListener("click", async ()
 		setMessage(shareSettingsMessage, "Share settings reset to default.", "success");
 	} catch (error) {
 		setMessage(shareSettingsMessage, error.message, "error");
+	}
+});
+supportSettingsForm.addEventListener("submit", async (event) => {
+	event.preventDefault();
+	try {
+		const uploaded = selectedQrSource("support") === "upload" ? await ensureUploadedQr("support") : supportQrUpload;
+		const saved = await saveSupportSettings({
+			enabled: document.getElementById("supportEnabled").checked,
+			title: document.getElementById("supportTitle").value,
+			description: document.getElementById("supportDescription").value,
+			qrImageSource: selectedQrSource("support"),
+			qrData: document.getElementById("supportQrData").value || null,
+			qrImageUrl: document.getElementById("supportQrImageUrl").value || null,
+			qrImagePath: selectedQrSource("support") === "upload" ? uploaded.path : null,
+			qrImageMeta: selectedQrSource("support") === "upload" ? uploaded.meta : null,
+			buttonText: document.getElementById("supportButtonText").value || null,
+			buttonUrl: document.getElementById("supportButtonUrl").value || null
+		});
+		fillSupportSettings(saved);
+		setMessage(supportSettingsMessage, "Support settings saved.", "success");
+	} catch (error) {
+		setMessage(supportSettingsMessage, error.message, "error");
+	}
+});
+document.getElementById("resetSupportSettings").addEventListener("click", async () => {
+	try {
+		await deleteSupportSettings();
+		fillSupportSettings();
+		setMessage(supportSettingsMessage, "Support settings reset to default.", "success");
+	} catch (error) {
+		setMessage(supportSettingsMessage, error.message, "error");
+	}
+});
+document.getElementById("downloadDatabaseBackup")?.addEventListener("click", async () => {
+	const button = document.getElementById("downloadDatabaseBackup");
+	button.disabled = true;
+	try {
+		const response = await fetch("/api/admin/database/backup", { credentials: "include" });
+		if (!response.ok) {
+			const payload = await response.json().catch(() => ({}));
+			throw new Error(payload.message || `Backup failed with status ${response.status}`);
+		}
+		const blob = await response.blob();
+		const fallbackName = `gyanpath-database-backup-${new Date().toISOString().slice(0, 10)}.json`;
+		const disposition = response.headers.get("Content-Disposition") || "";
+		const fileName = disposition.match(/filename="([^"]+)"/)?.[1] || fallbackName;
+		const url = URL.createObjectURL(blob);
+		const link = document.createElement("a");
+		link.href = url;
+		link.download = fileName;
+		document.body.append(link);
+		link.click();
+		link.remove();
+		URL.revokeObjectURL(url);
+		setMessage(databaseBackupMessage, "Database backup downloaded.", "success");
+	} catch (error) {
+		setMessage(databaseBackupMessage, error.message, "error");
+	} finally {
+		button.disabled = false;
+	}
+});
+document.getElementById("databaseRestoreForm")?.addEventListener("submit", async (event) => {
+	event.preventDefault();
+	const fileInput = document.getElementById("databaseRestoreFile");
+	const confirmInput = document.getElementById("databaseRestoreConfirm");
+	const file = fileInput.files?.[0];
+	if (!file || !confirmInput.checked) return;
+	try {
+		const text = await file.text();
+		const backup = JSON.parse(text);
+		await restoreDatabaseBackup(backup);
+		fileInput.value = "";
+		confirmInput.checked = false;
+		setMessage(databaseBackupMessage, "Database restored from backup. Reloading page...", "success");
+		window.setTimeout(() => window.location.reload(), 1200);
+	} catch (error) {
+		setMessage(databaseBackupMessage, error.message, "error");
 	}
 });
 

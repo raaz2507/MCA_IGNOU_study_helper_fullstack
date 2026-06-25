@@ -13,7 +13,7 @@ import { progressRouter } from "./modules/progress/progress.routes.js";
 import { contentRouter } from "./modules/content/content.routes.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
 import { analyticsRouter } from "./modules/analytics/analytics.routes.js";
-import { readShareSettings } from "./modules/admin/admin.controller.js";
+import { readShareSettings, readSupportSettings } from "./modules/admin/admin.controller.js";
 import { errorHandler } from "./shared/middleware/error-handler.js";
 
 const prettyLoggerStream = {
@@ -59,6 +59,9 @@ export function createApp() {
 	app.get("/api/share-settings", async (_request, response) => {
 		response.json(await readShareSettings());
 	});
+	app.get("/api/support-settings", async (_request, response) => {
+		response.json(await readSupportSettings());
+	});
 	app.get("/api/runtime-config", (_request, response) => {
 		response.json({
 			pdfResourceBaseUrl: env.pdfResourceBaseUrl
@@ -94,6 +97,7 @@ export function createApp() {
 	app.use("/api/admin", adminRouter);
 
 	app.use("/assets", express.static(path.join(env.frontendRoot, "assets")));
+	app.use("/uploads", express.static(path.join(env.projectRoot, "uploads")));
 	app.use("/local-resources", express.static(env.localResourcesRoot));
 	app.use("/frontend", express.static(env.frontendRoot));
 	app.get("/robots.txt", (_request, response) => {
@@ -134,6 +138,9 @@ export function createApp() {
 	);
 	app.get("/dashboard/question-papers", (_request, response) =>
 		response.sendFile(path.join(env.pagesRoot, "dashboard-question-papers.html"))
+	);
+	app.get("/dashboard/academic-operations", (_request, response) =>
+		response.sendFile(path.join(env.pagesRoot, "dashboard-academic-operations.html"))
 	);
 	for (const page of pages) {
 		app.get(`/${page}`, (_request, response) =>

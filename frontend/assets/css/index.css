@@ -1133,6 +1133,62 @@ html[data-theme="dark"] .contributor-card-topbar {
 	font-size: 0.55rem;
 }
 
+html:not([data-theme]) .contributor-card,
+html[data-theme="light"] .contributor-card {
+	background: #ffffff;
+	border-color: color-mix(in srgb, var(--app-primary), transparent 72%);
+	box-shadow:
+		0 18px 44px rgba(15, 23, 42, 0.14),
+		0 4px 12px rgba(15, 23, 42, 0.08),
+		inset 0 0 0 1px rgba(255, 255, 255, 0.92);
+}
+
+html:not([data-theme]) .contributor-card[style*="--contributor-photo"],
+html[data-theme="light"] .contributor-card[style*="--contributor-photo"] {
+	background:
+		linear-gradient(rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.94)),
+		var(--contributor-photo) center / cover;
+}
+
+html:not([data-theme]) .contributor-card::before,
+html[data-theme="light"] .contributor-card::before {
+	background:
+		linear-gradient(
+			125deg,
+			rgba(255, 255, 255, 0.72),
+			transparent 34%,
+			color-mix(in srgb, var(--app-primary), transparent 88%) 64%,
+			transparent
+		);
+	border-color: color-mix(in srgb, var(--app-primary), transparent 82%);
+}
+
+html:not([data-theme]) .contributor-card:hover,
+html[data-theme="light"] .contributor-card:hover {
+	border-color: color-mix(in srgb, var(--app-primary), transparent 48%);
+	box-shadow:
+		0 24px 58px rgba(15, 23, 42, 0.18),
+		0 8px 20px rgba(37, 99, 235, 0.12),
+		inset 0 0 0 1px rgba(255, 255, 255, 0.96);
+}
+
+html:not([data-theme]) .contributor-card-topbar,
+html[data-theme="light"] .contributor-card-topbar,
+html:not([data-theme]) .contributor-content,
+html[data-theme="light"] .contributor-content {
+	background: #ffffff;
+	border-color: color-mix(in srgb, var(--app-primary), transparent 84%);
+	box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+html:not([data-theme]) .contributor-card > .contributor-avatar,
+html[data-theme="light"] .contributor-card > .contributor-avatar {
+	border-color: color-mix(in srgb, var(--app-primary), transparent 76%);
+	box-shadow:
+		inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+		0 10px 24px rgba(15, 23, 42, 0.13);
+}
+
 
 .contributors-empty {
 	padding: 24px;
@@ -1304,6 +1360,9 @@ html[data-theme="dark"] .contributor-card-topbar {
 #adminUsers,
 #adminContent,
 #adminOperations,
+#adminShare,
+#adminSupport,
+#adminDatabase,
 #adminPrivacy,
 #adminSystem {
 	scroll-margin-top: 20px;
@@ -1324,6 +1383,134 @@ html[data-theme="dark"] .contributor-card-topbar {
 	margin: 0 0 4px;
 	color: var(--heading-text);
 	font-size: .96rem;
+}
+
+.admin-retention-form label {
+	display: grid;
+	gap: 7px;
+	color: var(--heading-text);
+	font-size: var(--label-font-size);
+	font-weight: 800;
+}
+
+.admin-retention-form textarea {
+	min-height: 96px;
+	resize: vertical;
+}
+
+#adminShare .admin-retention-form,
+#adminSupport .admin-retention-form {
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 14px;
+	margin-top: 20px;
+}
+
+#adminShare .admin-retention-form label:has(textarea),
+#adminSupport .admin-retention-form label:has(textarea),
+#adminShare .admin-retention-form label:has(input[type="url"]),
+#adminSupport .admin-retention-form label:has(input[type="url"]),
+#adminShare .admin-retention-form label:has(input[type="file"]),
+#adminSupport .admin-retention-form label:has(input[type="file"]),
+#adminShare .admin-source-toggle,
+#adminSupport .admin-source-toggle,
+#adminShare .admin-qr-preview,
+#adminSupport .admin-qr-preview,
+#adminShare .admin-form-actions,
+#adminSupport .admin-form-actions,
+#shareSettingsMessage,
+#supportSettingsMessage {
+	grid-column: 1 / -1;
+}
+
+#adminSupport .admin-retention-form label:has(input[type="checkbox"]) {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 14px;
+	padding: 12px 14px;
+	background: var(--item-background);
+	border: 1px solid var(--item-border);
+	border-radius: var(--field-radius);
+}
+
+#adminSupport .admin-retention-form input[type="checkbox"] {
+	width: 19px;
+	height: 19px;
+	accent-color: var(--app-primary);
+}
+
+.admin-source-toggle {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	padding: 8px;
+	background: var(--item-background);
+	border: 1px solid var(--item-border);
+	border-radius: var(--field-radius);
+}
+
+.admin-source-toggle label {
+	display: inline-flex;
+	align-items: center;
+	gap: 7px;
+	min-height: 36px;
+	padding: 8px 12px;
+	background: var(--panel-background);
+	border: 1px solid var(--item-border);
+	border-radius: 8px;
+	color: var(--body-text);
+	cursor: pointer;
+	font-size: .82rem;
+	font-weight: 800;
+}
+
+.admin-source-toggle input {
+	accent-color: var(--app-primary);
+}
+
+.admin-source-toggle label:has(input:checked) {
+	background: color-mix(in srgb, var(--app-primary), transparent 88%);
+	border-color: color-mix(in srgb, var(--app-primary), transparent 42%);
+	color: var(--heading-text);
+}
+
+.admin-qr-preview {
+	display: flex;
+	align-items: center;
+	gap: 14px;
+	padding: 12px;
+	background: var(--item-background);
+	border: 1px solid var(--item-border);
+	border-radius: var(--field-radius);
+}
+
+.admin-qr-preview img {
+	flex: 0 0 auto;
+	width: 112px;
+	height: 112px;
+	padding: 5px;
+	background: #fff;
+	border: 1px solid var(--item-border);
+	border-radius: 10px;
+	object-fit: contain;
+}
+
+.admin-qr-preview strong,
+.admin-qr-preview small {
+	display: block;
+}
+
+.admin-qr-preview strong {
+	color: var(--heading-text);
+	font-size: .88rem;
+}
+
+.admin-qr-preview small {
+	margin-top: 5px;
+	color: var(--muted-text);
+	font-size: .74rem;
+	line-height: 1.45;
+	word-break: break-word;
 }
 
 .admin-toggle-row {
@@ -1375,6 +1562,9 @@ html[data-theme="dark"] .contributor-card-topbar {
 }
 
 .form-control,
+.admin-retention-form input,
+.admin-retention-form textarea,
+.admin-retention-form select,
 .admin-retention-options input,
 .admin-retention-options select,
 .admin-user-toolbar input,
@@ -1395,6 +1585,9 @@ html[data-theme="dark"] .contributor-card-topbar {
 }
 
 .form-control:focus,
+.admin-retention-form input:focus,
+.admin-retention-form textarea:focus,
+.admin-retention-form select:focus,
 .admin-retention-options input:focus,
 .admin-retention-options select:focus,
 .admin-user-toolbar input:focus,
@@ -2908,8 +3101,8 @@ html[data-theme="sepia"] .card {
 
 .questionPapers span {
 	display: inline-block;
-	background: #0066cc;
-	color: #fff;
+	background: var(--app-primary);
+	color: var(--app-primary-text);
 	padding: 7px 14px;
 	border-radius: 999px;
 	font-size: 0.88rem;
@@ -2971,8 +3164,8 @@ html[data-theme="sepia"] .card {
 	text-align: center;
 	text-decoration: none;
 	font-family: var(--font-ui);
-	background: #0066cc;
-	color: #fff;
+	background: var(--app-primary);
+	color: var(--app-primary-text);
 	padding: 11px 12px;
 	border-radius: 10px;
 	font-size: 12px;
@@ -2984,8 +3177,26 @@ html[data-theme="sepia"] .card {
 }
 
 .btn:hover {
-	background: #004c99;
+	background: var(--app-primary-dark);
 	transform: translateY(-2px);
+}
+
+html:not([data-theme]),
+html[data-theme="light"] {
+	--resource-button-bg: color-mix(in srgb, var(--app-primary) 82%, #334155);
+	--resource-button-hover-bg: color-mix(in srgb, var(--app-primary-dark) 84%, #1e293b);
+	--resource-video-button-bg: color-mix(in srgb, var(--app-danger) 76%, var(--app-primary));
+	--resource-video-button-hover-bg: color-mix(in srgb, var(--app-danger-dark) 78%, var(--app-primary-dark));
+}
+
+html:not([data-theme]) .btn,
+html[data-theme="light"] .btn {
+	background: var(--resource-button-bg);
+}
+
+html:not([data-theme]) .btn:hover,
+html[data-theme="light"] .btn:hover {
+	background: var(--resource-button-hover-bg);
 }
 
 .video-lecture-button {
@@ -2993,12 +3204,12 @@ html[data-theme="sepia"] .card {
 	z-index: 1;
 	width: 100%;
 	margin-bottom: 4px;
-	background: #dc2626;
-	box-shadow: 0 8px 15px rgba(185, 28, 28, .25);
+	background: var(--resource-video-button-bg, color-mix(in srgb, var(--app-danger) 62%, var(--app-primary)));
+	box-shadow: 0 8px 15px color-mix(in srgb, var(--resource-video-button-bg, color-mix(in srgb, var(--app-danger) 62%, var(--app-primary))), transparent 72%);
 }
 
 .video-lecture-button:hover {
-	background: #b91c1c;
+	background: var(--resource-video-button-hover-bg, color-mix(in srgb, var(--app-danger-dark) 64%, var(--app-primary-dark)));
 }
 
 .lecture-page-header,
@@ -3610,6 +3821,11 @@ html[data-theme="sepia"] .card {
 
 	.dashboard-panel {
 		padding: var(--panel-padding-compact);
+	}
+
+	#adminShare .admin-retention-form,
+	#adminSupport .admin-retention-form {
+		grid-template-columns: 1fr;
 	}
 
 	.site-footer {

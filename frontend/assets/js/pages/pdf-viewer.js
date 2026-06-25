@@ -71,9 +71,9 @@
 	documentTitle.textContent = title;
 	document.title = `${title} | PDF Reader`;
 	englishButton.disabled = !documents.en;
-	englishButton.title = documents.en ? "Read English PDF" : "English PDF उपलब्ध नहीं है";
+	englishButton.title = documents.en ? "Read English PDF" : "English PDF is not available";
 	hindiButton.disabled = true;
-	hindiButton.title = "हिंदी PDF खोजी जा रही है…";
+	hindiButton.title = "Checking Hindi PDF...";
 
 	function createHindiPath(englishPath) {
 		if (!englishPath) return "";
@@ -116,7 +116,7 @@
 
 		if (!hindiPath) {
 			hindiButton.disabled = true;
-			hindiButton.title = "हिंदी PDF अभी उपलब्ध नहीं है";
+			hindiButton.title = "Hindi PDF is not available";
 			return;
 		}
 
@@ -124,7 +124,7 @@
 		if (exists) {
 			documents.hi = hindiPath;
 			hindiButton.disabled = false;
-			hindiButton.title = "हिंदी PDF पढ़ें";
+			hindiButton.title = "Read Hindi PDF";
 
 			if (requestedLanguage === "hi") {
 				loadDocument("hi");
@@ -132,7 +132,7 @@
 		} else {
 			documents.hi = "";
 			hindiButton.disabled = true;
-			hindiButton.title = "इस unit की -hi.pdf file नहीं मिली";
+			hindiButton.title = "Hindi -hi.pdf file was not found for this unit";
 		}
 	}
 
@@ -184,7 +184,7 @@
 	document.addEventListener("fullscreenchange", () => {
 		const isFullscreen = Boolean(document.fullscreenElement);
 		document.body.classList.toggle("is-fullscreen", isFullscreen);
-		fullscreenButton.textContent = isFullscreen ? "⛶ Exit Fullscreen" : "⛶ Fullscreen";
+		fullscreenButton.textContent = isFullscreen ? "Exit Fullscreen" : "Fullscreen";
 	});
 
 	setTheme(savedTheme || "light");

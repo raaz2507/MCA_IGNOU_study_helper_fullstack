@@ -25,8 +25,26 @@ export const saveShareSettings = (setting) =>
 		method: "PUT",
 		body: JSON.stringify(setting)
 	});
+export const uploadSettingQrImage = (file, category) => {
+	const body = new FormData();
+	body.append("image", file);
+	body.append("category", category);
+	return apiRequest("/admin/settings/qr-image", {
+		method: "POST",
+		body
+	});
+};
 export const deleteShareSettings = () =>
 	apiRequest("/admin/settings/share", { method: "DELETE" });
+export const getSupportSettings = () =>
+	apiRequest("/admin/settings/support");
+export const saveSupportSettings = (setting) =>
+	apiRequest("/admin/settings/support", {
+		method: "PUT",
+		body: JSON.stringify(setting)
+	});
+export const deleteSupportSettings = () =>
+	apiRequest("/admin/settings/support", { method: "DELETE" });
 export const updateAdminUserRole = (id, role) =>
 	apiRequest(`/admin/users/${encodeURIComponent(id)}/role`, {
 		method: "PATCH",
@@ -85,3 +103,8 @@ export const getAdminReports = () => apiRequest("/admin/reports");
 export const reviewAdminReport = (id, review) =>
 	apiRequest(`/admin/reports/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(review) });
 export const getAdminAuditLogs = () => apiRequest("/admin/audit-logs");
+export const restoreDatabaseBackup = (backup) =>
+	apiRequest("/admin/database/restore", {
+		method: "POST",
+		body: JSON.stringify(backup)
+	});

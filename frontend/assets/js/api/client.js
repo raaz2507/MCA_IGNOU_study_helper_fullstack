@@ -2,14 +2,17 @@ const API_BASE_URL = window.GYANPATH_API_URL || "/api";
 
 export async function apiRequest(path, options = {}) {
 	let response;
+	const headers = options.body instanceof FormData
+		? { ...(options.headers || {}) }
+		: {
+			"Content-Type": "application/json",
+			...(options.headers || {})
+		};
 	try {
 		response = await fetch(`${API_BASE_URL}${path}`, {
+			...options,
 			credentials: "include",
-			headers: {
-				"Content-Type": "application/json",
-				...(options.headers || {})
-			},
-			...options
+			headers
 		});
 	} catch {
 		throw new Error("Application server is offline. Start it with npm start and reload this page.");
@@ -27,12 +30,9 @@ export async function apiRequest(path, options = {}) {
 		});
 		if (refreshed.ok) {
 			response = await fetch(`${API_BASE_URL}${path}`, {
+				...options,
 				credentials: "include",
-				headers: {
-					"Content-Type": "application/json",
-					...(options.headers || {})
-				},
-				...options
+				headers
 			});
 		}
 	}

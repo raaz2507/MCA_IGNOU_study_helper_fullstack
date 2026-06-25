@@ -11,11 +11,28 @@ export const analyticsRetentionSchema = z.object({
 	action: z.enum(["delete", "anonymize"])
 });
 
+const optionalUrl = z.preprocess(
+	(value) => typeof value === "string" && value.trim() === "" ? null : value,
+	z.string().trim().url().max(500).optional().nullable()
+);
+
+const qrImageMetaSchema = z.object({
+	name: z.string().max(260).optional().nullable(),
+	type: z.string().max(80).optional().nullable(),
+	size: z.number().int().nonnegative().optional().nullable(),
+	width: z.number().int().positive().optional().nullable(),
+	height: z.number().int().positive().optional().nullable()
+});
+
 export const shareSettingsSchema = z.object({
 	title: z.string().trim().min(2).max(80),
 	description: z.string().trim().min(2).max(220),
 	shareText: z.string().trim().min(2).max(500),
-	url: z.string().trim().url().max(300)
+	url: z.string().trim().url().max(300),
+	qrImageSource: z.enum(["generated", "url", "upload"]).default("generated"),
+	qrImageUrl: optionalUrl,
+	qrImagePath: z.string().trim().max(500).optional().nullable(),
+	qrImageMeta: qrImageMetaSchema.optional().nullable()
 });
 
 export const supportSettingsSchema = z.object({
@@ -23,8 +40,12 @@ export const supportSettingsSchema = z.object({
 	title: z.string().trim().min(2).max(80),
 	description: z.string().trim().min(2).max(300),
 	qrData: z.string().trim().max(700).optional().nullable(),
+	qrImageSource: z.enum(["generated", "url", "upload"]).default("generated"),
+	qrImageUrl: optionalUrl,
+	qrImagePath: z.string().trim().max(500).optional().nullable(),
+	qrImageMeta: qrImageMetaSchema.optional().nullable(),
 	buttonText: z.string().trim().max(60).optional().nullable(),
-	buttonUrl: z.string().trim().url().max(300).optional().nullable()
+	buttonUrl: optionalUrl
 });
 
 export const userStatusSchema = z.object({

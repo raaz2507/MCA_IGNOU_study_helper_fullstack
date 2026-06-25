@@ -22,6 +22,8 @@
 				<a href="#adminUsers">👥 Users &amp; Roles</a>
 				<a href="#adminContent">📚 Content Control</a>
 				<a href="#adminShare">Share &amp; QR</a>
+				<a href="#adminSupport">Support</a>
+				<a href="#adminDatabase">Database Backup</a>
 				<a href="#adminPrivacy">🛡 Privacy &amp; Retention</a>
 				<a href="#adminSystem">⚙ System Status</a>
 			</nav>
@@ -125,107 +127,6 @@
 				</div>
 			</section>
 
-			<section id="adminOperations" class="dashboard-panel">
-				<div class="section-heading">
-					<p class="dashboard-label">Database-backed management</p>
-					<h2>Admin Operations</h2>
-					<p>Manage semesters and assignments, review reports, and inspect audit history.</p>
-				</div>
-				<div class="admin-retention-options admin-operation-forms">
-					<form id="semesterForm" class="admin-retention-form">
-						<h3 id="semesterFormTitle">Add Semester</h3>
-						<input id="semesterEditId" type="hidden" />
-						<label><span>Number</span><input id="semesterNumber" type="number" min="1" max="20"
-								required /></label>
-						<label><span>Title</span><input id="semesterTitle" required /></label>
-						<div class="admin-form-actions">
-							<button class="logout-button" type="submit">Save Semester</button>
-							<button id="cancelSemesterEdit" class="secondary-button" type="button"
-								hidden>Cancel</button>
-						</div>
-					</form>
-					<form id="subjectForm" class="admin-retention-form">
-						<h3 id="subjectFormTitle">Add Subject</h3>
-						<input id="subjectEditId" type="hidden" />
-						<label><span>Code</span><input id="subjectCodeInput" placeholder="MCS-233" required /></label>
-						<label><span>Title</span><input id="subjectTitleInput" required /></label>
-						<label><span>Semester</span><input id="subjectSemesterInput" type="number" min="1" max="20"
-								required /></label>
-						<label>
-							<span>Type</span>
-							<select id="subjectTypeInput">
-								<option value="theory">Theory</option>
-								<option value="practical">Practical</option>
-								<option value="project">Project</option>
-							</select>
-						</label>
-						<label><span>Folder path</span><input id="subjectFolderInput"
-								placeholder="Auto generated if blank" /></label>
-						<label class="admin-checkbox-field"><input id="subjectQuestionBankInput"
-								type="checkbox" /><span>Enable question bank</span></label>
-						<div class="admin-form-actions">
-							<button class="logout-button" type="submit">Save Subject</button>
-							<button id="cancelSubjectEdit" class="secondary-button" type="button" hidden>Cancel</button>
-						</div>
-					</form>
-					<form id="assignmentForm" class="admin-retention-form">
-						<h3 id="assignmentFormTitle">Add Assignment</h3>
-						<input id="assignmentEditId" type="hidden" />
-						<label><span>Subject</span><select id="assignmentSubject" required></select></label>
-						<label><span>Title</span><input id="assignmentTitle" required /></label>
-						<label><span>Due date</span><input id="assignmentDueDate" type="datetime-local" /></label>
-						<label>
-							<span>Status</span>
-							<select id="assignmentStatus">
-								<option value="DRAFT">Draft</option>
-								<option value="PUBLISHED">Published</option>
-								<option value="ARCHIVED">Archived</option>
-							</select>
-						</label>
-						<div class="admin-form-actions">
-							<button class="logout-button" type="submit">Save Assignment</button>
-							<button id="cancelAssignmentEdit" class="secondary-button" type="button"
-								hidden>Cancel</button>
-						</div>
-					</form>
-				</div>
-				<h3>Semesters</h3>
-				<div id="adminSemesters" class="admin-quick-links"></div>
-				<h3>Subjects</h3>
-				<div class="admin-list-toolbar">
-					<label>
-						<span>Sort subjects</span>
-						<select id="subjectSort">
-							<option value="semester">Semester</option>
-							<option value="code">Code</option>
-							<option value="name">Name</option>
-							<option value="type">Type</option>
-						</select>
-					</label>
-				</div>
-				<div class="admin-table-wrap">
-					<table class="admin-user-table admin-subject-table">
-						<thead>
-							<tr>
-								<th>Semester</th>
-								<th>Code</th>
-								<th>Name</th>
-								<th>Type</th>
-								<th>Question Bank</th>
-								<th>Actions</th>
-							</tr>
-						</thead>
-						<tbody id="adminSubjects"></tbody>
-					</table>
-				</div>
-				<h3>Assignments</h3>
-				<div id="adminAssignments" class="admin-quick-links"></div>
-				<h3>Reports</h3>
-				<div id="adminReports" class="admin-quick-links"></div>
-				<h3>Recent Audit Log</h3>
-				<div id="adminAuditLogs" class="admin-system-grid"></div>
-				<p id="adminOperationsMessage" class="admin-message" aria-live="polite"></p>
-			</section>
 
 			<section id="adminShare" class="dashboard-panel">
 				<div class="section-heading">
@@ -239,6 +140,21 @@
 					<label><span>Share text</span><textarea id="shareText" rows="3" required
 							maxlength="500"></textarea></label>
 					<label><span>Share URL</span><input id="shareUrl" type="url" required /></label>
+					<div class="admin-source-toggle" role="radiogroup" aria-label="Share QR source">
+						<label><input name="shareQrImageSource" type="radio" value="generated" checked /><span>Generated</span></label>
+						<label><input name="shareQrImageSource" type="radio" value="url" /><span>Image URL</span></label>
+						<label><input name="shareQrImageSource" type="radio" value="upload" /><span>Upload</span></label>
+					</div>
+					<label data-share-source="url"><span>Share QR image URL</span><input id="shareQrImageUrl" type="url" maxlength="500" /></label>
+					<label data-share-source="upload"><span>Upload Share QR image</span><input id="shareQrImageFile" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+					<div class="admin-qr-preview" aria-live="polite">
+						<img id="shareQrPreview" alt="Share QR preview" width="112" height="112" hidden />
+						<div>
+							<strong>QR Preview</strong>
+							<small id="shareQrPreviewText">Updates from the Share URL.</small>
+							<small id="shareQrPreviewMeta"></small>
+						</div>
+					</div>
 					<div class="admin-form-actions">
 						<button class="logout-button" type="submit">Save Share Settings</button>
 						<button id="resetShareSettings" class="secondary-button" type="button">Reset</button>
@@ -293,7 +209,22 @@
 					<label><span>Title</span><input id="supportTitle" required maxlength="80" /></label>
 					<label><span>Description</span><textarea id="supportDescription" rows="3" required
 							maxlength="300"></textarea></label>
+					<div class="admin-source-toggle" role="radiogroup" aria-label="Support QR source">
+						<label><input name="supportQrImageSource" type="radio" value="generated" checked /><span>Generated</span></label>
+						<label><input name="supportQrImageSource" type="radio" value="url" /><span>Image URL</span></label>
+						<label><input name="supportQrImageSource" type="radio" value="upload" /><span>Upload</span></label>
+					</div>
+					<label data-support-source="url"><span>QR image URL</span><input id="supportQrImageUrl" type="url" maxlength="500" /></label>
+					<label data-support-source="upload"><span>Upload Support QR image</span><input id="supportQrImageFile" type="file" accept="image/png,image/jpeg,image/webp" /></label>
 					<label><span>QR data / UPI link</span><input id="supportQrData" maxlength="700" /></label>
+					<div class="admin-qr-preview" aria-live="polite">
+						<img id="supportQrPreview" alt="Support QR preview" width="112" height="112" hidden />
+						<div>
+							<strong>QR Preview</strong>
+							<small id="supportQrPreviewText">Use QR image URL first, otherwise QR data / UPI link.</small>
+							<small id="supportQrPreviewMeta"></small>
+						</div>
+					</div>
 					<label><span>Button text</span><input id="supportButtonText" maxlength="60" /></label>
 					<label><span>Button URL</span><input id="supportButtonUrl" type="url" /></label>
 					<div class="admin-form-actions">
@@ -302,6 +233,33 @@
 					</div>
 					<p id="supportSettingsMessage" class="admin-message" aria-live="polite"></p>
 				</form>
+			</section>
+
+			<section id="adminDatabase" class="dashboard-panel">
+				<div class="section-heading">
+					<p class="dashboard-label">Admin only</p>
+					<h2>Database Backup and Restore</h2>
+					<p>Export the full database as JSON or restore from a previously exported backup file.</p>
+				</div>
+				<div class="admin-retention-options">
+					<form id="databaseBackupForm" class="admin-retention-form">
+						<h3>Export JSON Backup</h3>
+						<p class="field-help">Downloads users, resources, settings, progress, discussions and analytics records.</p>
+						<div class="admin-form-actions">
+							<button id="downloadDatabaseBackup" class="logout-button" type="button">Download Backup</button>
+						</div>
+					</form>
+					<form id="databaseRestoreForm" class="admin-retention-form">
+						<h3>Restore JSON Backup</h3>
+						<p class="field-help">Restore replaces the current database content. Use only a trusted GyanPath backup JSON file.</p>
+						<label><span>Backup JSON file</span><input id="databaseRestoreFile" type="file" accept="application/json,.json" required /></label>
+						<label class="admin-checkbox-field"><input id="databaseRestoreConfirm" type="checkbox" required /><span>I understand this will replace current database records.</span></label>
+						<div class="admin-form-actions">
+							<button class="admin-danger-button" type="submit">Restore Backup</button>
+						</div>
+					</form>
+				</div>
+				<p id="databaseBackupMessage" class="admin-message" aria-live="polite"></p>
 			</section>
 
 			<section id="adminSystem" class="dashboard-panel">
@@ -320,6 +278,7 @@
 	<script src="../assets/js/utils/theme.js"></script>
 	<script type="module" src="../assets/js/utils/protected-page.js"></script>
 	<script type="module" src="../assets/js/pages/admin.js"></script>
+	<script type="module" src="../assets/js/utils/page-preferences.js"></script>
 </body>
 
 </html>

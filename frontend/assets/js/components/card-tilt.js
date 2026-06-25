@@ -65,7 +65,7 @@
 	}
 
 	function initializeCards() {
-		document.querySelectorAll("#semesterContainer .card").forEach(initialize);
+		document.querySelectorAll("#semesterContainer .card, .program-guide .card, .assignments .card").forEach(initialize);
 	}
 
 	document.addEventListener("study-helper:subjects-rendered", initializeCards);

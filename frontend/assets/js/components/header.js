@@ -12,43 +12,47 @@ function navigation(activePage) {
 	}).join("");
 }
 
-function actionMarkup(action, variant) {
-	if (action === "dashboard") {
-		return `
-			<div class="protected-actions">
-				<a href="/admin" data-visible-for="admin">Admin Page</a>
-				<button type="button" class="logout-button" data-logout>Logout</button>
-			</div>`;
-	}
-
-	if (action === "logout") {
-		return '<button type="button" class="logout-button" data-logout>Logout</button>';
-	}
-
-	if (action === "subjects") {
-		return '<a class="primary-link" href="/resources">← Back to Subjects</a>';
-	}
-
-	if (variant === "dashboard") return "";
-
+function themedActionsMarkup(content = "") {
 	return `
 		<div class="header-actions">
 			<div class="theme-switcher" role="group" aria-label="Choose page theme"></div>
-			<div class="header-account" data-account-guest>
-				<span>Welcome, <strong>Guest</strong></span>
-				<a class="primary-link" href="/login">Login</a>
-			</div>
-			<div class="header-account" data-account-user hidden>
-				<a class="header-profile-link" href="/profile">
-					<span class="header-avatar" aria-hidden="true" data-user-initial></span>
-					<span><small>Welcome</small><strong data-user-name></strong><em data-user-role></em></span>
-				</a>
-				<a href="/admin" data-visible-for="admin" hidden>Admin</a>
-				<button type="button" class="logout-button" data-logout>Logout</button>
-			</div>
+			${content}
 		</div>`;
 }
 
+function actionMarkup(action, variant) {
+	if (action === "dashboard") {
+		return themedActionsMarkup(`
+			<div class="protected-actions">
+				<a href="/admin" data-visible-for="admin">Admin Page</a>
+				<button type="button" class="logout-button" data-logout>Logout</button>
+			</div>`);
+	}
+
+	if (action === "logout") {
+		return themedActionsMarkup('<button type="button" class="logout-button" data-logout>Logout</button>');
+	}
+
+	if (action === "subjects") {
+		return themedActionsMarkup('<a class="primary-link" href="/resources">&larr; Back to Subjects</a>');
+	}
+
+	if (variant === "dashboard") return themedActionsMarkup();
+
+	return themedActionsMarkup(`
+		<div class="header-account" data-account-guest>
+			<span>Welcome, <strong>Guest</strong></span>
+			<a class="primary-link" href="/login">Login</a>
+		</div>
+		<div class="header-account" data-account-user hidden>
+			<a class="header-profile-link" href="/profile">
+				<span class="header-avatar" aria-hidden="true" data-user-initial></span>
+				<span><small>Welcome</small><strong data-user-name></strong><em data-user-role></em></span>
+			</a>
+			<a href="/admin" data-visible-for="admin" hidden>Admin</a>
+			<button type="button" class="logout-button" data-logout>Logout</button>
+		</div>`);
+}
 function titleMarkup(title) {
 	if (title !== "GyanPath") return title;
 

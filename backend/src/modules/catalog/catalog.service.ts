@@ -47,6 +47,35 @@ function publicManifestPdfResource(relative: string) {
 	return `${env.pdfResourceBaseUrl}/${relative.split("\\").join("/")}`;
 }
 
+function titleFromFile(file: string) {
+	return path.parse(file).name
+		.replace(/[_-]+/g, " ")
+		.replace(/\s+/g, " ")
+		.trim();
+}
+
+function formatUpdated(date: Date) {
+	return new Intl.DateTimeFormat("en-GB", { day: "2-digit", month: "short", year: "numeric" }).format(date);
+}
+
+function pdfFolderResources(folderName: string) {
+	const folder = path.join(pdfContentRoot, folderName);
+	return files(folder, ".pdf", true)
+		.map((file) => {
+			const stat = statSync(file);
+			const relativeFolder = path.relative(folder, path.dirname(file)).split(path.sep).filter(Boolean).join(" / ");
+			return {
+				title: titleFromFile(file),
+				group: relativeFolder || "",
+				path: publicPdfResource(file),
+				fileName: path.basename(file),
+				size: stat.size,
+				updated: formatUpdated(stat.mtime)
+			};
+		})
+		.sort((a, b) => a.title.localeCompare(b.title));
+}
+
 function sessionFromName(name: string) {
 	const date = name.match(/\b(June|December|Dec)\s+(\d{4})\b/i);
 	if (date) return `${date[1].toLowerCase() === "dec" ? "December" : date[1][0].toUpperCase() + date[1].slice(1).toLowerCase()} ${date[2]}`;
@@ -184,3 +213,9 @@ export function papers() {
 	return result.sort((a, b) => b.session.localeCompare(a.session));
 }
 
+export function resourceCollections() {
+	return {
+		programGuide: pdfFolderResources("program_guide"),
+		assignments: pdfFolderResources("assignments")
+	};
+}
