@@ -1,12 +1,18 @@
 import type { RequestHandler } from "express";
 import crypto from "node:crypto";
+import { execFile } from "node:child_process";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { promisify } from "node:util";
 import bcrypt from "bcryptjs";
 import { asyncHandler } from "../../shared/middleware/async-handler.js";
+import { env } from "../../config/env.js";
 import { adminService } from "./admin.service.js";
 import { prisma } from "../../config/prisma.js";
 import {
 	analyticsRetentionSchema,
 	assignmentSchema,
+	linkPreviewSettingsSchema,
 	paperSchema,
 	reportReviewSchema,
 	semesterSchema,
@@ -26,6 +32,10 @@ async function audit(actorId: string | null | undefined, action: string, entityT
 
 const shareSettingsKey = "share-settings";
 const supportSettingsKey = "support-settings";
+const linkPreviewSettingsKey = "link-preview-settings";
+const execFileAsync = promisify(execFile);
+const pdfPreviewCacheDir = path.join(env.frontendRoot, "assets", "images", "pdf-gallery-cache");
+const resourceCatalogScript = path.join(env.frontendRoot, "tools", "generate-resource-catalog.py");
 const defaultShareSettings = {
 	title: "Share GyanPath",
 	description: "Scan the QR code or share it with another MCA student.",
@@ -47,6 +57,16 @@ const defaultSupportSettings = {
 	qrImageMeta: null,
 	buttonText: "Donation details coming soon",
 	buttonUrl: null
+};
+const defaultLinkPreviewSettings = {
+	enabled: true,
+	title: "GyanPath | IGNOU MCA Study Helper",
+	description: "Semester-wise IGNOU MCA study material, question papers, question banks and video lectures.",
+	url: "https://mcaignoustudyhelperfullstck-production.up.railway.app/",
+	imageSource: "url",
+	imageUrl: "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=https%3A%2F%2Fmcaignoustudyhelperfullstck-production.up.railway.app%2F",
+	imagePath: null,
+	imageMeta: null
 };
 const backupVersion = 1;
 const backupModelNames = [
@@ -83,6 +103,62 @@ type DatabaseBackup = {
 const emptyBackupModels = () => Object.fromEntries(
 	backupModelNames.map((name) => [name, []])
 ) as unknown as Record<BackupModelName, unknown[]>;
+
+function pythonCandidates() {
+	const candidates = [
+		process.env.PYTHON,
+		process.env.PYTHON_PATH,
+		process.env.USERPROFILE
+			? path.join(process.env.USERPROFILE, ".cache", "codex-runtimes", "codex-primary-runtime", "dependencies", "python", "python.exe")
+			: "",
+		"python",
+		"python3"
+	];
+	return candidates.filter(Boolean) as string[];
+}
+
+async function cacheFiles() {
+	await fs.mkdir(pdfPreviewCacheDir, { recursive: true });
+	const entries = await fs.readdir(pdfPreviewCacheDir, { withFileTypes: true });
+	const files = await Promise.all(entries
+		.filter((entry) => entry.isFile() && entry.name.toLowerCase().endsWith(".webp"))
+		.map(async (entry) => {
+			const filePath = path.join(pdfPreviewCacheDir, entry.name);
+			const stat = await fs.stat(filePath);
+			return { name: entry.name, path: filePath, size: stat.size, updatedAt: stat.mtime };
+		}));
+	return files;
+}
+
+async function previewCacheSummary(extra: Record<string, unknown> = {}) {
+	const files = await cacheFiles();
+	return {
+		count: files.length,
+		size: files.reduce((total, file) => total + file.size, 0),
+		updatedAt: files.length
+			? new Date(Math.max(...files.map((file) => file.updatedAt.getTime()))).toISOString()
+			: null,
+		cachePath: pdfPreviewCacheDir,
+		...extra
+	};
+}
+
+async function runPreviewGenerator() {
+	let lastError = "";
+	for (const candidate of pythonCandidates()) {
+		try {
+			const { stdout, stderr } = await execFileAsync(candidate, [resourceCatalogScript], {
+				cwd: env.projectRoot,
+				timeout: 180000,
+				maxBuffer: 1024 * 1024 * 8
+			});
+			return { python: candidate, output: [stdout, stderr].filter(Boolean).join("\n").trim() };
+		} catch (error: any) {
+			lastError = error?.stderr || error?.stdout || error?.message || String(error);
+		}
+	}
+	throw new Error(`Preview generator could not run. ${lastError}`.trim());
+}
 
 export async function readShareSettings() {
 	const setting = await prisma.appSetting.findUnique({ where: { key: shareSettingsKey } });
@@ -140,6 +216,34 @@ export const deleteSupportSettings: RequestHandler = asyncHandler(async (request
 	response.status(204).end();
 });
 
+export async function readLinkPreviewSettings() {
+	const setting = await prisma.appSetting.findUnique({ where: { key: linkPreviewSettingsKey } });
+	const parsed = linkPreviewSettingsSchema.safeParse(setting?.value);
+	return parsed.success ? { ...defaultLinkPreviewSettings, ...parsed.data } : defaultLinkPreviewSettings;
+}
+
+export const getLinkPreviewSettings: RequestHandler = asyncHandler(async (_request, response) => {
+	response.json(await readLinkPreviewSettings());
+});
+
+export const saveLinkPreviewSettings: RequestHandler = asyncHandler(async (request, response) => {
+	const input = linkPreviewSettingsSchema.parse(request.body);
+	const setting = { ...defaultLinkPreviewSettings, ...input };
+	await prisma.appSetting.upsert({
+		where: { key: linkPreviewSettingsKey },
+		update: { value: setting },
+		create: { key: linkPreviewSettingsKey, value: setting }
+	});
+	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_UPDATED", "AppSetting", linkPreviewSettingsKey, setting);
+	response.json(setting);
+});
+
+export const deleteLinkPreviewSettings: RequestHandler = asyncHandler(async (request, response) => {
+	await prisma.appSetting.deleteMany({ where: { key: linkPreviewSettingsKey } });
+	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_RESET", "AppSetting", linkPreviewSettingsKey);
+	response.status(204).end();
+});
+
 export const uploadSettingQrImage: RequestHandler = asyncHandler(async (request, response) => {
 	if (!request.file) {
 		response.status(400).json({ code: "QR_IMAGE_REQUIRED", message: "Please choose a QR image to upload." });
@@ -169,6 +273,31 @@ export const uploadSettingQrImage: RequestHandler = asyncHandler(async (request,
 		type: asset.mimeType,
 		size: asset.size
 	});
+});
+
+export const getPaperPreviewCache: RequestHandler = asyncHandler(async (_request, response) => {
+	response.json(await previewCacheSummary());
+});
+
+export const generatePaperPreviewCache: RequestHandler = asyncHandler(async (request, response) => {
+	const result = await runPreviewGenerator();
+	await audit(String(request.user?.id), "PAPER_PREVIEW_CACHE_GENERATED", "PdfPreviewCache", undefined, {
+		python: result.python
+	});
+	response.json(await previewCacheSummary({
+		generated: true,
+		python: result.python,
+		output: result.output
+	}));
+});
+
+export const cleanPaperPreviewCache: RequestHandler = asyncHandler(async (request, response) => {
+	const files = await cacheFiles();
+	await Promise.all(files.map((file) => fs.unlink(file.path)));
+	await audit(String(request.user?.id), "PAPER_PREVIEW_CACHE_CLEANED", "PdfPreviewCache", undefined, {
+		deleted: files.length
+	});
+	response.json(await previewCacheSummary({ deleted: files.length }));
 });
 
 export const exportDatabaseBackup: RequestHandler = asyncHandler(async (request, response) => {

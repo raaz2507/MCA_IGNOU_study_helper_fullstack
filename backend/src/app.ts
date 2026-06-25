@@ -1,4 +1,5 @@
 ﻿import path from "node:path";
+import { readFile } from "node:fs/promises";
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -13,7 +14,7 @@ import { progressRouter } from "./modules/progress/progress.routes.js";
 import { contentRouter } from "./modules/content/content.routes.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
 import { analyticsRouter } from "./modules/analytics/analytics.routes.js";
-import { readShareSettings, readSupportSettings } from "./modules/admin/admin.controller.js";
+import { readLinkPreviewSettings, readShareSettings, readSupportSettings } from "./modules/admin/admin.controller.js";
 import { errorHandler } from "./shared/middleware/error-handler.js";
 
 const prettyLoggerStream = {
@@ -25,6 +26,38 @@ const prettyLoggerStream = {
 		}
 	}
 };
+
+function escapeHtml(value: string) {
+	return value
+		.replaceAll("&", "&amp;")
+		.replaceAll("\"", "&quot;")
+		.replaceAll("<", "&lt;")
+		.replaceAll(">", "&gt;");
+}
+
+function absoluteUrl(value: string) {
+	if (/^https?:\/\//i.test(value)) return value;
+	return `${env.siteUrl}${value.startsWith("/") ? "" : "/"}${value}`;
+}
+
+async function sendPage(response: express.Response, filePath: string) {
+	let html = await readFile(filePath, "utf8");
+	const settings = await readLinkPreviewSettings();
+	if (settings.enabled) {
+		const image = settings.imageSource === "upload" && settings.imagePath
+			? absoluteUrl(settings.imagePath)
+			: settings.imageUrl;
+		const replacements: [RegExp, string][] = [
+			[/<meta\s+property="og:title"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:title" content="${escapeHtml(settings.title)}" />`],
+			[/<meta\s+property="og:description"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:description" content="${escapeHtml(settings.description)}" />`],
+			[/<meta\s+property="og:url"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:url" content="${escapeHtml(settings.url)}" />`],
+			[/<meta\s+property="og:image"\s+content="[^"]*"\s*\/?>/i, `<meta property="og:image" content="${escapeHtml(image || "")}" />`],
+			[/<meta\s+name="twitter:card"\s+content="[^"]*"\s*\/?>/i, '<meta name="twitter:card" content="summary_large_image" />']
+		];
+		for (const [pattern, replacement] of replacements) html = html.replace(pattern, replacement);
+	}
+	response.type("html").send(html);
+}
 
 export function createApp() {
 	const app = express();
@@ -61,6 +94,9 @@ export function createApp() {
 	});
 	app.get("/api/support-settings", async (_request, response) => {
 		response.json(await readSupportSettings());
+	});
+	app.get("/api/link-preview-settings", async (_request, response) => {
+		response.json(await readLinkPreviewSettings());
 	});
 	app.get("/api/runtime-config", (_request, response) => {
 		response.json({
@@ -132,22 +168,22 @@ export function createApp() {
 			"</urlset>"
 		].join("\n"));
 	});
-	app.get("/", (_request, response) => response.sendFile(path.join(env.pagesRoot, "index.html")));
+	app.get("/", (_request, response) => sendPage(response, path.join(env.pagesRoot, "index.html")));
 	app.get("/dashboard/study-materials", (_request, response) =>
-		response.sendFile(path.join(env.pagesRoot, "dashboard-study-materials.html"))
+		sendPage(response, path.join(env.pagesRoot, "dashboard-study-materials.html"))
 	);
 	app.get("/dashboard/question-papers", (_request, response) =>
-		response.sendFile(path.join(env.pagesRoot, "dashboard-question-papers.html"))
+		sendPage(response, path.join(env.pagesRoot, "dashboard-question-papers.html"))
 	);
 	app.get("/dashboard/academic-operations", (_request, response) =>
-		response.sendFile(path.join(env.pagesRoot, "dashboard-academic-operations.html"))
+		sendPage(response, path.join(env.pagesRoot, "dashboard-academic-operations.html"))
 	);
 	app.get("/admin/users", (_request, response) =>
-		response.sendFile(path.join(env.pagesRoot, "admin-users.html"))
+		sendPage(response, path.join(env.pagesRoot, "admin-users.html"))
 	);
 	for (const page of pages) {
 		app.get(`/${page}`, (_request, response) =>
-			response.sendFile(path.join(env.pagesRoot, `${page}.html`))
+			sendPage(response, path.join(env.pagesRoot, `${page}.html`))
 		);
 	}
 	app.get("/index.html", (request, response) => {

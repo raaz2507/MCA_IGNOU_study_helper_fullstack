@@ -5,11 +5,11 @@ import { env } from "../../config/env.js";
 const contentRoot = path.join(env.frontendRoot, "assets", "resources", "MCA_new");
 const pdfContentRoot = path.join(env.localResourcesRoot, "MCA_new");
 const pdfManifestPath = path.join(env.frontendRoot, "pdf-resources.manifest.json");
-const previewRoot = path.join(env.frontendRoot, "assets", "images", "pdf-gallery-cache");
+const fallbackPreview = "/assets/images/bckgruound.svg";
 const config = JSON.parse(readFileSync(path.join(env.frontendRoot, "resource-paths.json"), "utf8"));
 const pdfManifest = existsSync(pdfManifestPath)
 	? JSON.parse(readFileSync(pdfManifestPath, "utf8"))
-	: { examPapers: [], studyMaterial: [] };
+	: { examPapers: [], studyMaterial: [], resourceCollections: {} };
 
 function directories(folder: string) {
 	if (!existsSync(folder)) return [];
@@ -60,7 +60,7 @@ function formatUpdated(date: Date) {
 
 function pdfFolderResources(folderName: string) {
 	const folder = path.join(pdfContentRoot, folderName);
-	return files(folder, ".pdf", true)
+	const localResources = files(folder, ".pdf", true)
 		.map((file) => {
 			const stat = statSync(file);
 			const relativeFolder = path.relative(folder, path.dirname(file)).split(path.sep).filter(Boolean).join(" / ");
@@ -74,11 +74,28 @@ function pdfFolderResources(folderName: string) {
 			};
 		})
 		.sort((a, b) => a.title.localeCompare(b.title));
+	if (localResources.length) return localResources;
+	return (pdfManifest.resourceCollections?.[folderName] || [])
+		.map((item: any) => ({
+			title: item.title || titleFromFile(item.path || item.fileName || ""),
+			group: item.group || "",
+			path: publicManifestPdfResource(item.path),
+			fileName: item.fileName || path.basename(item.path || ""),
+			size: item.size || 0,
+			updated: item.updated || ""
+		}))
+		.sort((a: any, b: any) => a.title.localeCompare(b.title));
+}
+
+function shortMonth(month: string) {
+	return month.toLowerCase().startsWith("dec") ? "Dec" : "June";
 }
 
 function sessionFromName(name: string) {
-	const date = name.match(/\b(June|December|Dec)\s+(\d{4})\b/i);
-	if (date) return `${date[1].toLowerCase() === "dec" ? "December" : date[1][0].toUpperCase() + date[1].slice(1).toLowerCase()} ${date[2]}`;
+	const monthYear = name.match(/\b(June|December|Dec)\s+(\d{4})\b/i);
+	if (monthYear) return `${monthYear[2]} ${shortMonth(monthYear[1])}`;
+	const yearMonth = name.match(/\b(\d{4})\s+(June|December|Dec)\b/i);
+	if (yearMonth) return `${yearMonth[1]} ${shortMonth(yearMonth[2])}`;
 	const set = name.match(/\bSet[-\s]*(\d+)\b/i);
 	return set ? `Set ${set[1]}` : "Question Paper";
 }
@@ -87,11 +104,8 @@ function slug(value: string) {
 	return value.toLowerCase().replace(/-hi$/i, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 55);
 }
 
-function previewFor(file: string) {
-	if (!existsSync(previewRoot)) return "/assets/images/bckgruound.svg";
-	const prefix = `${slug(path.parse(file).name)}-`;
-	const match = readdirSync(previewRoot).find((name) => name.startsWith(prefix) && name.endsWith(".webp"));
-	return match ? `/assets/images/pdf-gallery-cache/${match}` : "/assets/images/bckgruound.svg";
+function previewFor(_file: string) {
+	return fallbackPreview;
 }
 
 function htmlViewer(examFolder: string) {
@@ -202,7 +216,7 @@ export function papers() {
 				session: item.session,
 				english: publicManifestPdfResource(item.path),
 				hindi: hindi ? publicManifestPdfResource(hindi.path) : "",
-				preview: "/assets/images/bckgruound.svg",
+				preview: fallbackPreview,
 				fileName: item.fileName,
 				pages: null,
 				size: item.size || 0,

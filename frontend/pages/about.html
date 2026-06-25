@@ -34,6 +34,50 @@
 			<p>This study helper is developed and maintained by <strong>Rajaanha</strong>.</p>
 		</article>
 
+		<section class="feedback-section" aria-labelledby="feedbackTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Student feedback</p>
+				<h2 id="feedbackTitle">How was your visit?</h2>
+			</div>
+			<form id="feedbackForm" class="feedback-card">
+				<div class="feedback-moods" role="radiogroup" aria-label="Select your mood">
+					<label class="feedback-mood">
+						<input type="radio" name="mood" value="very-happy" />
+						<span aria-hidden="true">😄</span>
+						<strong>Great</strong>
+					</label>
+					<label class="feedback-mood">
+						<input type="radio" name="mood" value="happy" />
+						<span aria-hidden="true">🙂</span>
+						<strong>Good</strong>
+					</label>
+					<label class="feedback-mood">
+						<input type="radio" name="mood" value="neutral" />
+						<span aria-hidden="true">😐</span>
+						<strong>Okay</strong>
+					</label>
+					<label class="feedback-mood">
+						<input type="radio" name="mood" value="confused" />
+						<span aria-hidden="true">😕</span>
+						<strong>Confusing</strong>
+					</label>
+					<label class="feedback-mood">
+						<input type="radio" name="mood" value="sad" />
+						<span aria-hidden="true">🙁</span>
+						<strong>Needs work</strong>
+					</label>
+				</div>
+				<label class="feedback-note">
+					<span>Message</span>
+					<textarea id="feedbackMessage" rows="4" maxlength="400" placeholder="Tell us what should improve."></textarea>
+				</label>
+				<div class="feedback-actions">
+					<button class="btn" type="submit">Save Feedback</button>
+					<p id="feedbackStatus" role="status" aria-live="polite"></p>
+				</div>
+			</form>
+		</section>
+
 		<section class="contributors-section" aria-labelledby="contributorsTitle">
 			<div class="section-heading">
 				<p class="dashboard-label">People behind the resources</p>
@@ -49,6 +93,7 @@
 <script src="../assets/js/utils/theme.js"></script>
 	<script type="module" src="../assets/js/utils/page-preferences.js"></script>
 	<script type="module" src="../assets/js/components/contributors.js"></script>
+	<script type="module" src="../assets/js/pages/about.js?v=1"></script>
 </body>
 
 </html>

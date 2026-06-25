@@ -24,13 +24,18 @@ import {
 	listStudyMaterials,
 	getShareSettings,
 	getSupportSettings,
+	getLinkPreviewSettings,
 	deleteAssignment,
 	deleteSemester,
 	deleteSubject,
 	deleteUser,
 	deleteShareSettings,
 	deleteSupportSettings,
+	deleteLinkPreviewSettings,
 	exportDatabaseBackup,
+	cleanPaperPreviewCache,
+	generatePaperPreviewCache,
+	getPaperPreviewCache,
 	reviewReport,
 	restoreDatabaseBackup,
 	saveAssignment,
@@ -39,6 +44,7 @@ import {
 	savePaper,
 	saveShareSettings,
 	saveSupportSettings,
+	saveLinkPreviewSettings,
 	saveStudyMaterial,
 	saveNewUserDefaultStatus,
 	updateUser,
@@ -72,6 +78,7 @@ adminRouter.use(
 		"/study-materials/:id",
 		"/papers",
 		"/papers/:id",
+		"/paper-preview-cache",
 		"/subjects",
 		"/subjects/:id",
 		"/semesters",
@@ -92,6 +99,9 @@ adminRouter.get("/papers", listPapers);
 adminRouter.post("/papers", savePaper);
 adminRouter.put("/papers/:id", savePaper);
 adminRouter.delete("/papers/:id", deletePaper);
+adminRouter.get("/paper-preview-cache", getPaperPreviewCache);
+adminRouter.post("/paper-preview-cache/generate", generatePaperPreviewCache);
+adminRouter.delete("/paper-preview-cache", cleanPaperPreviewCache);
 adminRouter.get("/subjects", getSubjects);
 adminRouter.post("/subjects", saveSubject);
 adminRouter.put("/subjects/:id", saveSubject);
@@ -127,6 +137,9 @@ adminRouter.delete("/settings/share", deleteShareSettings);
 adminRouter.get("/settings/support", getSupportSettings);
 adminRouter.put("/settings/support", saveSupportSettings);
 adminRouter.delete("/settings/support", deleteSupportSettings);
+adminRouter.get("/settings/link-preview", getLinkPreviewSettings);
+adminRouter.put("/settings/link-preview", saveLinkPreviewSettings);
+adminRouter.delete("/settings/link-preview", deleteLinkPreviewSettings);
 adminRouter.post("/settings/qr-image", settingImageUpload.single("image"), uploadSettingQrImage);
 adminRouter.get("/database/backup", exportDatabaseBackup);
 adminRouter.post("/database/restore", restoreDatabaseBackup);

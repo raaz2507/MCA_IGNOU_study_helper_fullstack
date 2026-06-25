@@ -11,13 +11,30 @@ from PIL import Image
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = PROJECT_ROOT.parent
 CONFIG_FILE = PROJECT_ROOT / "resource-paths.json"
 GALLERY_DATA_FILE = PROJECT_ROOT / "tools" / "generated" / "papers.data.js"
 GALLERY_CACHE_DIR = PROJECT_ROOT / "assets" / "images" / "pdf-gallery-cache"
 
 
+def resolve_resource_root(config: dict) -> Path:
+    configured = config.get("localContentRoot")
+    if configured:
+        root = (REPO_ROOT / configured).resolve()
+        if root.exists():
+            return root
+    local_root = REPO_ROOT / "local-resources" / "MCA_new"
+    if local_root.exists():
+        return local_root
+    return PROJECT_ROOT / config["contentRoot"]
+
+
 def web_path(path: Path) -> str:
-    return "../" + path.relative_to(PROJECT_ROOT).as_posix()
+    resolved = path.resolve()
+    local_root = (REPO_ROOT / "local-resources").resolve()
+    if resolved.is_relative_to(local_root):
+        return "/local-resources/" + resolved.relative_to(local_root).as_posix()
+    return "../" + resolved.relative_to(PROJECT_ROOT).as_posix()
 
 
 def natural_key(value: str) -> list[object]:
@@ -45,16 +62,22 @@ def english_name_for(path: Path) -> str:
 
 def preview_name(path: Path) -> str:
     readable = re.sub(r"[^a-z0-9]+", "-", path.stem.lower()).strip("-")[:55]
-    source = path.relative_to(PROJECT_ROOT).as_posix()
+    source = path.resolve().relative_to(REPO_ROOT).as_posix()
     digest = hashlib.sha1(source.encode("utf-8")).hexdigest()[:8]
     return f"{readable}-{digest}.webp"
+
+
+def short_month(value: str) -> str:
+    return "Dec" if value.lower().startswith("dec") else "June"
 
 
 def exam_session(filename: str) -> str:
     match = re.search(r"\b(June|December|Dec)\s+(\d{4})\b", filename, re.IGNORECASE)
     if match:
-        month = "December" if match.group(1).lower() == "dec" else match.group(1).title()
-        return f"{month} {match.group(2)}"
+        return f"{match.group(2)} {short_month(match.group(1))}"
+    match = re.search(r"\b(\d{4})\s+(June|December|Dec)\b", filename, re.IGNORECASE)
+    if match:
+        return f"{match.group(1)} {short_month(match.group(2))}"
     set_match = re.search(r"\bSet[-\s]*(\d+)\b", filename, re.IGNORECASE)
     return f"Set {set_match.group(1)}" if set_match else "Question Paper"
 
@@ -64,6 +87,10 @@ def session_sort_value(filename: str) -> int:
     if match:
         month = 12 if match.group(1).lower() in {"december", "dec"} else 6
         return int(match.group(2)) * 100 + month
+    match = re.search(r"\b(\d{4})\s+(June|December|Dec)\b", filename, re.IGNORECASE)
+    if match:
+        month = 12 if match.group(2).lower() in {"december", "dec"} else 6
+        return int(match.group(1)) * 100 + month
     set_match = re.search(r"\bSet[-\s]*(\d+)\b", filename, re.IGNORECASE)
     return int(set_match.group(1)) if set_match else 0
 
@@ -168,7 +195,7 @@ def gallery_cards(exam_dir: Path, subject_code: str) -> list[dict]:
 
 
 def build_catalog(config: dict) -> tuple[dict, list[dict]]:
-    content_root = PROJECT_ROOT / config["contentRoot"]
+    content_root = resolve_resource_root(config)
     semester_prefix = config.get("semesterPrefix", "Semester_")
     exam_folder = config.get("examFolder", "exam_papers")
     study_folder = config.get("studyFolder", "study_material")

@@ -819,6 +819,114 @@ html {
 	margin-top: 28px;
 }
 
+.feedback-section {
+	margin-top: 28px;
+}
+
+.feedback-card {
+	display: grid;
+	gap: 18px;
+	padding: 24px;
+	background: var(--card-background);
+	border: 1px solid var(--card-border);
+	border-radius: 20px;
+	box-shadow: 0 10px 28px var(--theme-shadow);
+}
+
+.feedback-moods {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: 10px;
+}
+
+.feedback-mood {
+	position: relative;
+	display: grid;
+	place-items: center;
+	gap: 8px;
+	min-height: 112px;
+	padding: 14px 10px;
+	color: var(--main-text);
+	background: var(--soft-background);
+	border: 1px solid var(--card-border);
+	border-radius: 14px;
+	cursor: pointer;
+	transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+}
+
+.feedback-mood:hover,
+.feedback-mood:focus-within {
+	border-color: color-mix(in srgb, var(--app-primary), transparent 30%);
+	box-shadow: 0 10px 24px color-mix(in srgb, var(--app-primary), transparent 82%);
+	transform: translateY(-2px);
+}
+
+.feedback-mood input {
+	position: absolute;
+	opacity: 0;
+	pointer-events: none;
+}
+
+.feedback-mood span {
+	font-size: 2.2rem;
+	line-height: 1;
+}
+
+.feedback-mood strong {
+	color: var(--heading-text);
+	font-family: var(--font-ui);
+	font-size: .82rem;
+	text-align: center;
+}
+
+.feedback-mood:has(input:checked) {
+	color: var(--app-primary);
+	background: color-mix(in srgb, var(--app-primary), transparent 88%);
+	border-color: var(--app-primary);
+	box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--app-primary), transparent 42%);
+}
+
+.feedback-note {
+	display: grid;
+	gap: 8px;
+	color: var(--heading-text);
+	font-family: var(--font-ui);
+	font-size: .9rem;
+	font-weight: 800;
+}
+
+.feedback-note textarea {
+	width: 100%;
+	min-height: 110px;
+	padding: 12px 14px;
+	color: var(--main-text);
+	background: var(--soft-background);
+	border: 1px solid var(--card-border);
+	border-radius: 12px;
+	resize: vertical;
+	font: inherit;
+	font-family: var(--font-body);
+	line-height: 1.5;
+}
+
+.feedback-note textarea:focus {
+	border-color: var(--app-primary);
+	outline: 3px solid color-mix(in srgb, var(--app-primary), transparent 72%);
+}
+
+.feedback-actions {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 12px;
+}
+
+.feedback-actions p {
+	color: var(--muted-text);
+	font-size: .88rem;
+	font-weight: 700;
+}
+
 .section-heading {
 	margin-bottom: 20px;
 }
@@ -1848,6 +1956,77 @@ body[data-page="admin-users"] .dashboard-section-nav {
 	margin-top: 2px;
 	color: var(--muted-text);
 	font-size: .78rem;
+	font-weight: 700;
+}
+
+.cache-tool-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 14px;
+	margin-bottom: 18px;
+}
+
+.cache-tool-stat {
+	box-shadow: none;
+}
+
+.cache-tool-output {
+	max-height: 220px;
+	margin-top: 14px;
+	padding: 14px;
+	overflow: auto;
+	color: var(--main-text);
+	background: var(--soft-background);
+	border: 1px solid var(--card-border);
+	border-radius: 12px;
+	font-family: Consolas, "Courier New", monospace;
+	font-size: .78rem;
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+.link-preview-card {
+	display: grid;
+	grid-template-columns: 140px minmax(0, 1fr);
+	align-items: stretch;
+	gap: 14px;
+	padding: 14px;
+	background: var(--soft-background);
+	border: 1px solid var(--card-border);
+	border-radius: 14px;
+}
+
+.link-preview-card img {
+	width: 140px;
+	height: 90px;
+	object-fit: cover;
+	background: var(--soft-background-2);
+	border: 1px solid var(--item-border);
+	border-radius: 10px;
+}
+
+.link-preview-card strong,
+.link-preview-card p,
+.link-preview-card small {
+	display: block;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.link-preview-card strong {
+	color: var(--heading-text);
+	font-size: 1rem;
+}
+
+.link-preview-card p {
+	margin-top: 6px;
+	color: var(--main-text);
+	line-height: 1.5;
+}
+
+.link-preview-card small {
+	margin-top: 7px;
+	color: var(--muted-text);
 	font-weight: 700;
 }
 
@@ -4098,6 +4277,28 @@ html[data-theme="light"] .btn:hover {
 @media (max-width: 600px) {
 	body {
 		padding: 15px;
+	}
+
+	.feedback-card {
+		padding: 18px;
+	}
+
+	.feedback-moods {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.feedback-mood {
+		min-height: 98px;
+	}
+
+	.link-preview-card {
+		grid-template-columns: 1fr;
+	}
+
+	.link-preview-card img {
+		width: 100%;
+		height: auto;
+		aspect-ratio: 1.91 / 1;
 	}
 
 	.toast-region {

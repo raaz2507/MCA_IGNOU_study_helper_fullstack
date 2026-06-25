@@ -1,0 +1,24 @@
+{
+  "examPapers": [],
+  "studyMaterial": [],
+  "resourceCollections": {
+    "program_guide": [
+      {
+        "title": "Programme Guide",
+        "path": "program_guide/ProgrammeGuide-21-66.pdf",
+        "fileName": "ProgrammeGuide-21-66.pdf",
+        "size": 928856,
+        "updated": "24 Jun 2026"
+      }
+    ],
+    "assignments": [
+      {
+        "title": "MCS-214 Jan-Jul 2026",
+        "path": "assignments/MCS-214-Jan-Jul-2026.pdf",
+        "fileName": "MCS-214-Jan-Jul-2026.pdf",
+        "size": 969723,
+        "updated": "25 Jun 2026"
+      }
+    ]
+  }
+}

@@ -116,6 +116,20 @@
 	filter: brightness(1.06);
 }
 
+.account-guest-link {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 40px;
+	color: var(--accent);
+	font-weight: 900;
+	text-decoration: none;
+}
+
+.account-guest-link:hover {
+	text-decoration: underline;
+}
+
 .account-form small {
 	line-height: 1.5;
 	color: var(--muted);

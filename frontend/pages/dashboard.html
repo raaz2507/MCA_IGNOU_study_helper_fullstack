@@ -20,6 +20,8 @@
 				<a href="#bannerManagement">Banner Management</a>
 				<a href="#studyMaterialManagement">Study Materials</a>
 				<a href="#paperManagement">Question Papers</a>
+				<a href="#paperPreviewCache">Paper Preview Cache</a>
+				<a href="#linkPreviewManagement">Link Preview</a>
 				<a href="#adminOperations">Academic Operations</a>
 				<a href="#contributorManagement">Contributors</a>
 			</nav>
@@ -210,6 +212,89 @@
 			</div>
 		</section>
 
+		<section id="paperPreviewCache" class="dashboard-panel management-shortcut-panel" aria-labelledby="paperPreviewCacheTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Admin and Editor</p>
+				<h2 id="paperPreviewCacheTitle">Question Paper Image Cache</h2>
+				<p>Create or clear cached preview images generated from local question-paper PDFs.</p>
+			</div>
+			<div class="cache-tool-grid">
+				<article class="admin-stat-card cache-tool-stat">
+					<span aria-hidden="true">Img</span>
+					<div>
+						<strong id="paperPreviewCacheCount">--</strong>
+						<p>Cached preview images</p>
+					</div>
+				</article>
+				<article class="admin-stat-card cache-tool-stat">
+					<span aria-hidden="true">MB</span>
+					<div>
+						<strong id="paperPreviewCacheSize">--</strong>
+						<p>Total cache size</p>
+					</div>
+				</article>
+			</div>
+			<div class="contributor-form-actions">
+				<button id="generatePaperPreviewCache" class="logout-button" type="button">Create Image Cache</button>
+				<button id="cleanPaperPreviewCache" class="secondary-link" type="button">Clean Image Cache</button>
+			</div>
+			<p id="paperPreviewCacheMessage" class="contributor-message" aria-live="polite"></p>
+			<pre id="paperPreviewCacheOutput" class="cache-tool-output" hidden></pre>
+		</section>
+
+		<section id="linkPreviewManagement" class="dashboard-panel management-shortcut-panel" aria-labelledby="linkPreviewTitle">
+			<div class="section-heading">
+				<p class="dashboard-label">Admin</p>
+				<h2 id="linkPreviewTitle">Link Preview Management</h2>
+				<p>Customize the WhatsApp and social sharing card title, description, URL and thumbnail.</p>
+			</div>
+			<form id="linkPreviewForm" class="contributor-form">
+				<label class="banner-active-option">
+					<input id="linkPreviewEnabled" type="checkbox" checked />
+					<span>Use custom link preview metadata</span>
+				</label>
+				<label>
+					<span>Title</span>
+					<input id="linkPreviewTitleInput" type="text" maxlength="90" required />
+				</label>
+				<label>
+					<span>Description / Snippet</span>
+					<textarea id="linkPreviewDescription" rows="3" maxlength="220" required></textarea>
+				</label>
+				<label>
+					<span>URL</span>
+					<input id="linkPreviewUrl" type="url" maxlength="300" required />
+				</label>
+				<div class="qr-source-options" role="radiogroup" aria-label="Thumbnail image source">
+					<label><input type="radio" name="linkPreviewImageSource" value="url" checked /> Image URL</label>
+					<label><input type="radio" name="linkPreviewImageSource" value="upload" /> Browse image</label>
+				</div>
+				<label data-link-preview-source="url">
+					<span>Thumbnail URL</span>
+					<input id="linkPreviewImageUrl" type="url" maxlength="500" placeholder="https://example.com/preview.jpg" />
+				</label>
+				<label data-link-preview-source="upload" hidden>
+					<span>Thumbnail image</span>
+					<input id="linkPreviewImageFile" type="file" accept="image/png,image/jpeg,image/webp" />
+					<small class="field-help">Recommended: 1200 x 630 px JPG, PNG or WebP.</small>
+				</label>
+				<div class="link-preview-card">
+					<img id="linkPreviewImagePreview" hidden alt="Link preview thumbnail" />
+					<div>
+						<strong id="linkPreviewPreviewTitle">Preview title</strong>
+						<p id="linkPreviewPreviewDescription">Preview description will appear here.</p>
+						<small id="linkPreviewPreviewUrl">https://example.com</small>
+						<small id="linkPreviewImageMeta"></small>
+					</div>
+				</div>
+				<div class="contributor-form-actions">
+					<button class="logout-button" type="submit">Save Link Preview</button>
+					<button id="resetLinkPreviewSettings" class="secondary-link" type="button">Reset</button>
+				</div>
+				<p id="linkPreviewMessage" class="contributor-message" aria-live="polite"></p>
+			</form>
+		</section>
+
 		<section id="adminOperations" class="dashboard-panel management-shortcut-panel" aria-labelledby="adminOperationsTitle">
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
@@ -271,6 +356,8 @@
 	<script type="module" src="../assets/js/utils/protected-page.js"></script>
 	<script type="module" src="../assets/js/pages/video-lectures-admin.js"></script>
 	<script type="module" src="../assets/js/pages/banner-admin.js"></script>
+	<script type="module" src="../assets/js/pages/paper-preview-cache-admin.js"></script>
+	<script type="module" src="../assets/js/pages/link-preview-admin.js?v=2"></script>
 	<script type="module" src="../assets/js/pages/contributors-admin.js"></script>
 	<script type="module" src="../assets/js/utils/page-preferences.js"></script>
 </body>

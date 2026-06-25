@@ -48,6 +48,17 @@ export const supportSettingsSchema = z.object({
 	buttonUrl: optionalUrl
 });
 
+export const linkPreviewSettingsSchema = z.object({
+	enabled: z.boolean().default(true),
+	title: z.string().trim().min(2).max(90),
+	description: z.string().trim().min(2).max(220),
+	url: z.string().trim().url().max(300),
+	imageSource: z.enum(["url", "upload"]).default("url"),
+	imageUrl: optionalUrl,
+	imagePath: z.string().trim().max(500).optional().nullable(),
+	imageMeta: qrImageMetaSchema.optional().nullable()
+});
+
 export const userStatusSchema = z.object({
 	status: z.enum(["PENDING", "ACTIVE", "SUSPENDED", "BANNED"])
 });

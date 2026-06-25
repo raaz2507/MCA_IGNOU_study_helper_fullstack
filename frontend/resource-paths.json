@@ -1,5 +1,6 @@
 {
   "contentRoot": "assets/resources/MCA_new",
+  "localContentRoot": "local-resources/MCA_new",
   "semesterPrefix": "Semester_",
   "examFolder": "exam_papers",
   "studyFolder": "study_material",

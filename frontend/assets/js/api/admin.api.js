@@ -45,6 +45,15 @@ export const saveSupportSettings = (setting) =>
 	});
 export const deleteSupportSettings = () =>
 	apiRequest("/admin/settings/support", { method: "DELETE" });
+export const getLinkPreviewSettings = () =>
+	apiRequest("/admin/settings/link-preview");
+export const saveLinkPreviewSettings = (setting) =>
+	apiRequest("/admin/settings/link-preview", {
+		method: "PUT",
+		body: JSON.stringify(setting)
+	});
+export const deleteLinkPreviewSettings = () =>
+	apiRequest("/admin/settings/link-preview", { method: "DELETE" });
 export const updateAdminUserRole = (id, role) =>
 	apiRequest(`/admin/users/${encodeURIComponent(id)}/role`, {
 		method: "PATCH",
@@ -103,6 +112,11 @@ export const saveAdminPaper = (paper, id = "") =>
 	});
 export const deleteAdminPaper = (id) =>
 	apiRequest(`/admin/papers/${encodeURIComponent(id)}`, { method: "DELETE" });
+export const getPaperPreviewCache = () => apiRequest("/admin/paper-preview-cache");
+export const generatePaperPreviewCache = () =>
+	apiRequest("/admin/paper-preview-cache/generate", { method: "POST" });
+export const cleanPaperPreviewCache = () =>
+	apiRequest("/admin/paper-preview-cache", { method: "DELETE" });
 export const getAdminReports = () => apiRequest("/admin/reports");
 export const reviewAdminReport = (id, review) =>
 	apiRequest(`/admin/reports/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(review) });

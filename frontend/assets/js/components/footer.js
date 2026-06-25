@@ -109,7 +109,6 @@ export function renderFooter(container) {
 				<a href="/about">About</a>
 				<a href="/user-guide">User Guide</a>
 				<a href="/dashboard">Dashboard</a>
-				<a href="/login">Login</a>
 			</nav>
 			<div class="footer-credit-strip">Developed by <strong>Rajaanha</strong>.</div>
 		</footer>`;

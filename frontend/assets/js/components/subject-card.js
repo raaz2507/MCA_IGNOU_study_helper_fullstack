@@ -46,20 +46,28 @@ import { getSubjects } from "../api/subjects.api.js";
 		return books;
 	}
 
+	function shortSession(value) {
+		const text = String(value || "").trim();
+		const monthYear = text.match(/\b(June|December|Dec)\s+(\d{4})\b/i);
+		if (monthYear) {
+			return `${monthYear[2]} ${monthYear[1].toLowerCase().startsWith("dec") ? "Dec" : "June"}`;
+		}
+		const yearMonth = text.match(/\b(\d{4})\s+(June|December|Dec)\b/i);
+		if (yearMonth) {
+			return `${yearMonth[1]} ${yearMonth[2].toLowerCase().startsWith("dec") ? "Dec" : "June"}`;
+		}
+		return text;
+	}
+
 	function questionPaperSessions(subjectCode) {
 		const sessions = galleryData
 			.filter((paper) => paper.subject === subjectCode)
 			.map((paper) => {
-				const savedSession = String(paper.session || "").trim();
+				const savedSession = shortSession(paper.session);
 				if (savedSession && savedSession !== "Question Paper") return savedSession;
 				const fileName = String(paper.fileName || paper.title || "");
-				const dateMatch = fileName.match(/\b(June|December|Dec)\s+(\d{4})\b/i);
-				if (dateMatch) {
-					const month = dateMatch[1].toLowerCase() === "dec"
-						? "December"
-						: dateMatch[1][0].toUpperCase() + dateMatch[1].slice(1).toLowerCase();
-					return `${month} ${dateMatch[2]}`;
-				}
+				const fileSession = shortSession(fileName);
+				if (fileSession && fileSession !== fileName) return fileSession;
 				const setMatch = fileName.match(/\bSet[-\s]*(\d+)\b/i);
 				return setMatch ? `Set ${setMatch[1]}` : savedSession;
 			})
