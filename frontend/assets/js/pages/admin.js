@@ -17,7 +17,6 @@ import {
 	getShareSettings,
 	getSupportSettings,
 	reviewAdminReport,
-	restoreDatabaseBackup,
 	saveAdminAssignment,
 	saveAdminSemester,
 	saveAdminSubject,
@@ -49,7 +48,6 @@ const shareSettingsForm = document.getElementById("shareSettingsForm");
 const shareSettingsMessage = document.getElementById("shareSettingsMessage");
 const supportSettingsForm = document.getElementById("supportSettingsForm");
 const supportSettingsMessage = document.getElementById("supportSettingsMessage");
-const databaseBackupMessage = document.getElementById("databaseBackupMessage");
 
 const defaultShareSettings = {
 	title: "Share GyanPath",
@@ -894,51 +892,4 @@ document.getElementById("resetSupportSettings").addEventListener("click", async 
 		setMessage(supportSettingsMessage, error.message, "error");
 	}
 });
-document.getElementById("downloadDatabaseBackup")?.addEventListener("click", async () => {
-	const button = document.getElementById("downloadDatabaseBackup");
-	button.disabled = true;
-	try {
-		const response = await fetch("/api/admin/database/backup", { credentials: "include" });
-		if (!response.ok) {
-			const payload = await response.json().catch(() => ({}));
-			throw new Error(payload.message || `Backup failed with status ${response.status}`);
-		}
-		const blob = await response.blob();
-		const fallbackName = `gyanpath-database-backup-${new Date().toISOString().slice(0, 10)}.json`;
-		const disposition = response.headers.get("Content-Disposition") || "";
-		const fileName = disposition.match(/filename="([^"]+)"/)?.[1] || fallbackName;
-		const url = URL.createObjectURL(blob);
-		const link = document.createElement("a");
-		link.href = url;
-		link.download = fileName;
-		document.body.append(link);
-		link.click();
-		link.remove();
-		URL.revokeObjectURL(url);
-		setMessage(databaseBackupMessage, "Database backup downloaded.", "success");
-	} catch (error) {
-		setMessage(databaseBackupMessage, error.message, "error");
-	} finally {
-		button.disabled = false;
-	}
-});
-document.getElementById("databaseRestoreForm")?.addEventListener("submit", async (event) => {
-	event.preventDefault();
-	const fileInput = document.getElementById("databaseRestoreFile");
-	const confirmInput = document.getElementById("databaseRestoreConfirm");
-	const file = fileInput.files?.[0];
-	if (!file || !confirmInput.checked) return;
-	try {
-		const text = await file.text();
-		const backup = JSON.parse(text);
-		await restoreDatabaseBackup(backup);
-		fileInput.value = "";
-		confirmInput.checked = false;
-		setMessage(databaseBackupMessage, "Database restored from backup. Reloading page...", "success");
-		window.setTimeout(() => window.location.reload(), 1200);
-	} catch (error) {
-		setMessage(databaseBackupMessage, error.message, "error");
-	}
-});
-
 initialize();

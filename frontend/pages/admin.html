@@ -23,7 +23,7 @@
 				<a href="#adminContent">📚 Content Control</a>
 				<a href="#adminShare">Share &amp; QR</a>
 				<a href="#adminSupport">Support</a>
-				<a href="#adminDatabase">Database Backup</a>
+				<a href="/admin/database">Database Backup</a>
 				<a href="#adminPrivacy">🛡 Privacy &amp; Retention</a>
 				<a href="#adminSystem">⚙ System Status</a>
 			</nav>
@@ -198,33 +198,6 @@
 					</div>
 					<p id="supportSettingsMessage" class="admin-message" aria-live="polite"></p>
 				</form>
-			</section>
-
-			<section id="adminDatabase" class="dashboard-panel">
-				<div class="section-heading">
-					<p class="dashboard-label">Admin only</p>
-					<h2>Database Backup and Restore</h2>
-					<p>Export the full database as JSON or restore from a previously exported backup file.</p>
-				</div>
-				<div class="admin-retention-options">
-					<form id="databaseBackupForm" class="admin-retention-form">
-						<h3>Export JSON Backup</h3>
-						<p class="field-help">Downloads users, resources, settings, progress, discussions and analytics records.</p>
-						<div class="admin-form-actions">
-							<button id="downloadDatabaseBackup" class="logout-button" type="button">Download Backup</button>
-						</div>
-					</form>
-					<form id="databaseRestoreForm" class="admin-retention-form">
-						<h3>Restore JSON Backup</h3>
-						<p class="field-help">Restore replaces the current database content. Use only a trusted GyanPath backup JSON file.</p>
-						<label><span>Backup JSON file</span><input id="databaseRestoreFile" type="file" accept="application/json,.json" required /></label>
-						<label class="admin-checkbox-field"><input id="databaseRestoreConfirm" type="checkbox" required /><span>I understand this will replace current database records.</span></label>
-						<div class="admin-form-actions">
-							<button class="admin-danger-button" type="submit">Restore Backup</button>
-						</div>
-					</form>
-				</div>
-				<p id="databaseBackupMessage" class="admin-message" aria-live="polite"></p>
 			</section>
 
 			<section id="adminSystem" class="dashboard-panel">

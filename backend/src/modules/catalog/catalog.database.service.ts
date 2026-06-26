@@ -2,7 +2,7 @@ import { env } from "../../config/env.js";
 import { catalogRepository } from "./catalog.repository.js";
 import { papers as localPapers } from "./catalog.service.js";
 
-const fallbackPreview = "/assets/images/bckgruound.svg";
+const fallbackPreview = "/assets/images/pdf-preview-fallback.svg";
 
 function pdfPath(filePath: string | null) {
 	if (!filePath) return "";

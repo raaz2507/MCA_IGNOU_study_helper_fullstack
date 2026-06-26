@@ -121,8 +121,25 @@ export const getAdminReports = () => apiRequest("/admin/reports");
 export const reviewAdminReport = (id, review) =>
 	apiRequest(`/admin/reports/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(review) });
 export const getAdminAuditLogs = () => apiRequest("/admin/audit-logs");
-export const restoreDatabaseBackup = (backup) =>
-	apiRequest("/admin/database/restore", {
+export const previewDatabaseRestore = (backup) => {
+	const body = new FormData();
+	body.append("backup", backup);
+	return apiRequest("/admin/database/restore/preview", {
+		method: "POST",
+		body
+	});
+};
+export const restoreDatabaseBackup = (backup) => {
+	if (backup instanceof File) {
+		const body = new FormData();
+		body.append("backup", backup);
+		return apiRequest("/admin/database/restore", {
+			method: "POST",
+			body
+		});
+	}
+	return apiRequest("/admin/database/restore", {
 		method: "POST",
 		body: JSON.stringify(backup)
 	});
+};

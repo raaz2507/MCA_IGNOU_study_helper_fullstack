@@ -181,6 +181,9 @@ export function createApp() {
 	app.get("/admin/users", (_request, response) =>
 		sendPage(response, path.join(env.pagesRoot, "admin-users.html"))
 	);
+	app.get("/admin/database", (_request, response) =>
+		sendPage(response, path.join(env.pagesRoot, "admin-database.html"))
+	);
 	for (const page of pages) {
 		app.get(`/${page}`, (_request, response) =>
 			sendPage(response, path.join(env.pagesRoot, `${page}.html`))

@@ -36,6 +36,7 @@ import {
 	cleanPaperPreviewCache,
 	generatePaperPreviewCache,
 	getPaperPreviewCache,
+	previewDatabaseBackupRestore,
 	reviewReport,
 	restoreDatabaseBackup,
 	saveAssignment,
@@ -69,6 +70,14 @@ const settingImageUpload = multer({
 	fileFilter: (_request, file, callback) => {
 		const allowed = new Set(["image/png", "image/jpeg", "image/webp"]);
 		callback(null, allowed.has(file.mimetype));
+	}
+});
+const databaseRestoreUpload = multer({
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 50 * 1024 * 1024 },
+	fileFilter: (_request, file, callback) => {
+		const name = file.originalname.toLowerCase();
+		callback(null, name.endsWith(".json") || name.endsWith(".zip"));
 	}
 });
 
@@ -142,4 +151,5 @@ adminRouter.put("/settings/link-preview", saveLinkPreviewSettings);
 adminRouter.delete("/settings/link-preview", deleteLinkPreviewSettings);
 adminRouter.post("/settings/qr-image", settingImageUpload.single("image"), uploadSettingQrImage);
 adminRouter.get("/database/backup", exportDatabaseBackup);
-adminRouter.post("/database/restore", restoreDatabaseBackup);
+adminRouter.post("/database/restore/preview", databaseRestoreUpload.single("backup"), previewDatabaseBackupRestore);
+adminRouter.post("/database/restore", databaseRestoreUpload.single("backup"), restoreDatabaseBackup);

@@ -4,6 +4,7 @@ import { execFile } from "node:child_process";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { promisify } from "node:util";
+import zlib from "node:zlib";
 import bcrypt from "bcryptjs";
 import { asyncHandler } from "../../shared/middleware/async-handler.js";
 import { env } from "../../config/env.js";
@@ -92,12 +93,70 @@ const backupModelNames = [
 	"auditLogs",
 	"analyticsVisits"
 ] as const;
+const backupModelDelegates = {
+	users: "user",
+	semesters: "semester",
+	subjects: "subject",
+	sessions: "session",
+	studyMaterials: "studyMaterial",
+	papers: "paper",
+	questions: "question",
+	answers: "answer",
+	progress: "progress",
+	notes: "note",
+	banners: "banner",
+	lectures: "lecture",
+	contributors: "contributor",
+	discussions: "discussion",
+	comments: "comment",
+	appSettings: "appSetting",
+	assignments: "assignment",
+	reports: "report",
+	fileAssets: "fileAsset",
+	auditLogs: "auditLog",
+	analyticsVisits: "analyticsVisit"
+} as const;
+const backupIdentityFields: Partial<Record<BackupModelName, string[]>> = {
+	users: ["id", "username", "email"],
+	semesters: ["id", "number"],
+	subjects: ["id", "code", "folderPath"],
+	studyMaterials: ["id", "filePath"],
+	papers: ["id", "englishPath"],
+	questions: ["id"],
+	answers: ["id"],
+	banners: ["id"],
+	lectures: ["id"],
+	contributors: ["id"],
+	discussions: ["id"],
+	comments: ["id"],
+	appSettings: ["key"],
+	assignments: ["id"],
+	reports: ["id"],
+	fileAssets: ["id", "path"],
+	auditLogs: ["id"],
+	analyticsVisits: ["id"]
+};
 
 type BackupModelName = typeof backupModelNames[number];
 type DatabaseBackup = {
 	version: number;
 	exportedAt: string;
 	models: Record<BackupModelName, unknown[]>;
+	files?: DatabaseBackupFile[];
+};
+type DatabaseBackupFile = {
+	path: string;
+	size: number;
+	source: "fileAsset";
+};
+type BackupAnalysisRow = {
+	model: BackupModelName;
+	backup: number;
+	current: number;
+	newRows: number;
+	existingRows: number;
+	duplicateRows: number;
+	conflictRows: number;
 };
 
 const emptyBackupModels = () => Object.fromEntries(
@@ -158,6 +217,373 @@ async function runPreviewGenerator() {
 		}
 	}
 	throw new Error(`Preview generator could not run. ${lastError}`.trim());
+}
+
+function normalizeBackupFilePath(value: string) {
+	const normalized = value.replace(/\\/g, "/").replace(/^\/+/, "");
+	const withoutFilesPrefix = normalized.startsWith("files/") ? normalized.slice("files/".length) : normalized;
+	if (!withoutFilesPrefix.startsWith("uploads/")) return "";
+	if (withoutFilesPrefix.includes("..")) return "";
+	return withoutFilesPrefix;
+}
+
+function crc32(buffer: Buffer) {
+	let crc = 0xffffffff;
+	for (const byte of buffer) {
+		crc ^= byte;
+		for (let bit = 0; bit < 8; bit += 1) {
+			crc = (crc >>> 1) ^ (0xedb88320 & -(crc & 1));
+		}
+	}
+	return (crc ^ 0xffffffff) >>> 0;
+}
+
+function dosDateTime(date = new Date()) {
+	const year = Math.max(1980, date.getFullYear());
+	const time = (date.getHours() << 11) | (date.getMinutes() << 5) | Math.floor(date.getSeconds() / 2);
+	const day = ((year - 1980) << 9) | ((date.getMonth() + 1) << 5) | date.getDate();
+	return { time, day };
+}
+
+function createZip(entries: { name: string; data: Buffer }[]) {
+	const localParts: Buffer[] = [];
+	const centralParts: Buffer[] = [];
+	let offset = 0;
+	const { time, day } = dosDateTime();
+
+	for (const entry of entries) {
+		const name = Buffer.from(entry.name.replace(/\\/g, "/"), "utf8");
+		const checksum = crc32(entry.data);
+		const local = Buffer.alloc(30);
+		local.writeUInt32LE(0x04034b50, 0);
+		local.writeUInt16LE(20, 4);
+		local.writeUInt16LE(0x0800, 6);
+		local.writeUInt16LE(0, 8);
+		local.writeUInt16LE(time, 10);
+		local.writeUInt16LE(day, 12);
+		local.writeUInt32LE(checksum, 14);
+		local.writeUInt32LE(entry.data.length, 18);
+		local.writeUInt32LE(entry.data.length, 22);
+		local.writeUInt16LE(name.length, 26);
+		local.writeUInt16LE(0, 28);
+		localParts.push(local, name, entry.data);
+
+		const central = Buffer.alloc(46);
+		central.writeUInt32LE(0x02014b50, 0);
+		central.writeUInt16LE(20, 4);
+		central.writeUInt16LE(20, 6);
+		central.writeUInt16LE(0x0800, 8);
+		central.writeUInt16LE(0, 10);
+		central.writeUInt16LE(time, 12);
+		central.writeUInt16LE(day, 14);
+		central.writeUInt32LE(checksum, 16);
+		central.writeUInt32LE(entry.data.length, 20);
+		central.writeUInt32LE(entry.data.length, 24);
+		central.writeUInt16LE(name.length, 28);
+		central.writeUInt16LE(0, 30);
+		central.writeUInt16LE(0, 32);
+		central.writeUInt16LE(0, 34);
+		central.writeUInt16LE(0, 36);
+		central.writeUInt32LE(0, 38);
+		central.writeUInt32LE(offset, 42);
+		centralParts.push(central, name);
+		offset += local.length + name.length + entry.data.length;
+	}
+
+	const centralSize = centralParts.reduce((sum, part) => sum + part.length, 0);
+	const end = Buffer.alloc(22);
+	end.writeUInt32LE(0x06054b50, 0);
+	end.writeUInt16LE(0, 4);
+	end.writeUInt16LE(0, 6);
+	end.writeUInt16LE(entries.length, 8);
+	end.writeUInt16LE(entries.length, 10);
+	end.writeUInt32LE(centralSize, 12);
+	end.writeUInt32LE(offset, 16);
+	end.writeUInt16LE(0, 20);
+	return Buffer.concat([...localParts, ...centralParts, end]);
+}
+
+function readZip(buffer: Buffer) {
+	const entries = new Map<string, Buffer>();
+	const endSignature = 0x06054b50;
+	let end = -1;
+	for (let index = buffer.length - 22; index >= 0; index -= 1) {
+		if (buffer.readUInt32LE(index) === endSignature) {
+			end = index;
+			break;
+		}
+	}
+	if (end < 0) throw new Error("Backup ZIP is not valid.");
+	const count = buffer.readUInt16LE(end + 10);
+	let centralOffset = buffer.readUInt32LE(end + 16);
+	for (let entryIndex = 0; entryIndex < count; entryIndex += 1) {
+		if (buffer.readUInt32LE(centralOffset) !== 0x02014b50) throw new Error("Backup ZIP directory is not valid.");
+		const method = buffer.readUInt16LE(centralOffset + 10);
+		const compressedSize = buffer.readUInt32LE(centralOffset + 20);
+		const fileNameLength = buffer.readUInt16LE(centralOffset + 28);
+		const extraLength = buffer.readUInt16LE(centralOffset + 30);
+		const commentLength = buffer.readUInt16LE(centralOffset + 32);
+		const localOffset = buffer.readUInt32LE(centralOffset + 42);
+		const name = buffer.subarray(centralOffset + 46, centralOffset + 46 + fileNameLength).toString("utf8");
+		if (buffer.readUInt32LE(localOffset) !== 0x04034b50) throw new Error(`Backup ZIP entry is not valid: ${name}`);
+		const localNameLength = buffer.readUInt16LE(localOffset + 26);
+		const localExtraLength = buffer.readUInt16LE(localOffset + 28);
+		const dataStart = localOffset + 30 + localNameLength + localExtraLength;
+		const compressed = buffer.subarray(dataStart, dataStart + compressedSize);
+		if (method === 0) entries.set(name, Buffer.from(compressed));
+		else if (method === 8) entries.set(name, zlib.inflateRawSync(compressed));
+		else throw new Error(`Unsupported ZIP compression method for ${name}.`);
+		centralOffset += 46 + fileNameLength + extraLength + commentLength;
+	}
+	return entries;
+}
+
+async function databaseBackup() {
+	const models: DatabaseBackup["models"] = {
+		users: await prisma.user.findMany(),
+		semesters: await prisma.semester.findMany(),
+		subjects: await prisma.subject.findMany(),
+		sessions: await prisma.session.findMany(),
+		studyMaterials: await prisma.studyMaterial.findMany(),
+		papers: await prisma.paper.findMany(),
+		questions: await prisma.question.findMany(),
+		answers: await prisma.answer.findMany(),
+		progress: await prisma.progress.findMany(),
+		notes: await prisma.note.findMany(),
+		banners: await prisma.banner.findMany(),
+		lectures: await prisma.lecture.findMany(),
+		contributors: await prisma.contributor.findMany(),
+		discussions: await prisma.discussion.findMany(),
+		comments: await prisma.comment.findMany(),
+		appSettings: await prisma.appSetting.findMany(),
+		assignments: await prisma.assignment.findMany(),
+		reports: await prisma.report.findMany(),
+		fileAssets: await prisma.fileAsset.findMany(),
+		auditLogs: await prisma.auditLog.findMany(),
+		analyticsVisits: await prisma.analyticsVisit.findMany()
+	};
+	const files = (models.fileAssets as { path?: string; size?: number }[])
+		.map((asset) => ({
+			path: normalizeBackupFilePath(String(asset.path || "")),
+			size: Number(asset.size || 0),
+			source: "fileAsset" as const
+		}))
+		.filter((file) => file.path);
+	return {
+		version: backupVersion,
+		exportedAt: new Date().toISOString(),
+		models,
+		files
+	};
+}
+
+async function backupZip(backup: DatabaseBackup) {
+	const entries: { name: string; data: Buffer }[] = [{
+		name: "backup.json",
+		data: Buffer.from(JSON.stringify(backup, null, 2), "utf8")
+	}];
+	for (const file of backup.files || []) {
+		const normalized = normalizeBackupFilePath(file.path);
+		if (!normalized) continue;
+		const source = path.resolve(env.projectRoot, normalized);
+		if (!source.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) continue;
+		try {
+			entries.push({
+				name: `files/${normalized}`,
+				data: await fs.readFile(source)
+			});
+		} catch {
+			// Missing upload files are recorded in backup.json but skipped from the archive.
+		}
+	}
+	return createZip(entries);
+}
+
+async function restoreBackupFiles(entries: Map<string, Buffer>, backup: DatabaseBackup) {
+	let restored = 0;
+	for (const file of backup.files || []) {
+		const normalized = normalizeBackupFilePath(file.path);
+		if (!normalized) continue;
+		const data = entries.get(`files/${normalized}`);
+		if (!data) continue;
+		const target = path.resolve(env.projectRoot, normalized);
+		if (!target.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) continue;
+		await fs.mkdir(path.dirname(target), { recursive: true });
+		await fs.writeFile(target, data);
+		restored += 1;
+	}
+	return restored;
+}
+
+function parseBackupJson(data: Buffer | string) {
+	return JSON.parse(Buffer.isBuffer(data) ? data.toString("utf8") : data) as DatabaseBackup;
+}
+
+async function parseUploadedBackup(request: Parameters<RequestHandler>[0]) {
+	if (request.file) {
+		const originalName = request.file.originalname.toLowerCase();
+		if (originalName.endsWith(".zip")) {
+			const entries = readZip(request.file.buffer);
+			const backupJson = entries.get("backup.json");
+			if (!backupJson) throw new Error("Backup ZIP does not contain backup.json.");
+			return { backup: parseBackupJson(backupJson), entries };
+		}
+		return { backup: parseBackupJson(request.file.buffer), entries: null };
+	}
+	if ((request.body as any)?.archiveBase64) {
+		const entries = readZip(Buffer.from(String((request.body as any).archiveBase64), "base64"));
+		const backupJson = entries.get("backup.json");
+		if (!backupJson) throw new Error("Backup ZIP does not contain backup.json.");
+		return { backup: parseBackupJson(backupJson), entries };
+	}
+	return { backup: request.body as DatabaseBackup, entries: null };
+}
+
+async function restoreBackupModels(body: Partial<DatabaseBackup>) {
+	if (body.version !== backupVersion || !body.models || typeof body.models !== "object") {
+		throw new Error("Backup JSON is not valid for this application version.");
+	}
+	const models = { ...emptyBackupModels(), ...body.models };
+
+	await prisma.$transaction(async (tx) => {
+		await tx.analyticsVisit.deleteMany();
+		await tx.auditLog.deleteMany();
+		await tx.fileAsset.deleteMany();
+		await tx.report.deleteMany();
+		await tx.assignment.deleteMany();
+		await tx.appSetting.deleteMany();
+		await tx.comment.deleteMany();
+		await tx.discussion.deleteMany();
+		await tx.contributor.deleteMany();
+		await tx.lecture.deleteMany();
+		await tx.banner.deleteMany();
+		await tx.note.deleteMany();
+		await tx.progress.deleteMany();
+		await tx.answer.deleteMany();
+		await tx.question.deleteMany();
+		await tx.paper.deleteMany();
+		await tx.studyMaterial.deleteMany();
+		await tx.session.deleteMany();
+		await tx.subject.deleteMany();
+		await tx.semester.deleteMany();
+		await tx.user.deleteMany();
+
+		if (models.users.length) await tx.user.createMany({ data: models.users as never[] });
+		if (models.semesters.length) await tx.semester.createMany({ data: models.semesters as never[] });
+		if (models.subjects.length) await tx.subject.createMany({ data: models.subjects as never[] });
+		if (models.sessions.length) await tx.session.createMany({ data: models.sessions as never[] });
+		if (models.studyMaterials.length) await tx.studyMaterial.createMany({ data: models.studyMaterials as never[] });
+		if (models.papers.length) await tx.paper.createMany({ data: models.papers as never[] });
+		if (models.questions.length) await tx.question.createMany({ data: models.questions as never[] });
+		if (models.answers.length) await tx.answer.createMany({ data: models.answers as never[] });
+		if (models.progress.length) await tx.progress.createMany({ data: models.progress as never[] });
+		if (models.notes.length) await tx.note.createMany({ data: models.notes as never[] });
+		if (models.banners.length) await tx.banner.createMany({ data: models.banners as never[] });
+		if (models.lectures.length) await tx.lecture.createMany({ data: models.lectures as never[] });
+		if (models.contributors.length) await tx.contributor.createMany({ data: models.contributors as never[] });
+		if (models.discussions.length) await tx.discussion.createMany({ data: models.discussions as never[] });
+		if (models.comments.length) await tx.comment.createMany({ data: models.comments as never[] });
+		if (models.appSettings.length) await tx.appSetting.createMany({ data: models.appSettings as never[] });
+		if (models.assignments.length) await tx.assignment.createMany({ data: models.assignments as never[] });
+		if (models.reports.length) await tx.report.createMany({ data: models.reports as never[] });
+		if (models.fileAssets.length) await tx.fileAsset.createMany({ data: models.fileAssets as never[] });
+		if (models.auditLogs.length) await tx.auditLog.createMany({ data: models.auditLogs as never[] });
+		if (models.analyticsVisits.length) await tx.analyticsVisit.createMany({ data: models.analyticsVisits as never[] });
+	});
+}
+
+function rowKey(row: any, fields: string[]) {
+	return fields
+		.map((field) => row?.[field] === null || row?.[field] === undefined ? "" : `${field}:${String(row[field])}`)
+		.filter(Boolean)
+		.join("|");
+}
+
+async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer> | null) {
+	if (backup.version !== backupVersion || !backup.models || typeof backup.models !== "object") {
+		throw new Error("Backup JSON is not valid for this application version.");
+	}
+	const models = { ...emptyBackupModels(), ...backup.models };
+	const rows: BackupAnalysisRow[] = [];
+
+	for (const model of backupModelNames) {
+		const delegateName = backupModelDelegates[model];
+		const delegate = (prisma as any)[delegateName];
+		const backupRows = models[model] as any[];
+		const identityFields = backupIdentityFields[model] || ["id"];
+		const currentRows = await delegate.findMany();
+		const currentKeys = new Set<string>();
+		for (const row of currentRows) {
+			for (const field of identityFields) {
+				const key = rowKey(row, [field]);
+				if (key) currentKeys.add(key);
+			}
+		}
+		const seenBackupKeys = new Set<string>();
+		let existingRows = 0;
+		let duplicateRows = 0;
+		let conflictRows = 0;
+
+		for (const row of backupRows) {
+			const keys = identityFields.map((field) => rowKey(row, [field])).filter(Boolean);
+			const primaryKey = keys[0] || JSON.stringify(row);
+			if (seenBackupKeys.has(primaryKey)) duplicateRows += 1;
+			else seenBackupKeys.add(primaryKey);
+			const matchedKeys = keys.filter((key) => currentKeys.has(key));
+			if (matchedKeys.length) existingRows += 1;
+			if (matchedKeys.length && !matchedKeys.includes(primaryKey)) conflictRows += 1;
+		}
+
+		rows.push({
+			model,
+			backup: backupRows.length,
+			current: currentRows.length,
+			newRows: Math.max(0, backupRows.length - existingRows - duplicateRows),
+			existingRows,
+			duplicateRows,
+			conflictRows
+		});
+	}
+
+	let filesInBackup = 0;
+	let filesInZip = 0;
+	let filesAlreadyPresent = 0;
+	let filesMissingOnServer = 0;
+	for (const file of backup.files || []) {
+		const normalized = normalizeBackupFilePath(file.path);
+		if (!normalized) continue;
+		filesInBackup += 1;
+		if (entries?.has(`files/${normalized}`)) filesInZip += 1;
+		const target = path.resolve(env.projectRoot, normalized);
+		if (target.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) {
+			try {
+				await fs.access(target);
+				filesAlreadyPresent += 1;
+			} catch {
+				filesMissingOnServer += 1;
+			}
+		}
+	}
+
+	return {
+		version: backup.version,
+		exportedAt: backup.exportedAt,
+		models: rows,
+		files: {
+			declared: filesInBackup,
+			inArchive: filesInZip,
+			alreadyPresent: filesAlreadyPresent,
+			missingOnServer: filesMissingOnServer
+		},
+		totals: rows.reduce((total, row) => ({
+			backup: total.backup + row.backup,
+			current: total.current + row.current,
+			newRows: total.newRows + row.newRows,
+			existingRows: total.existingRows + row.existingRows,
+			duplicateRows: total.duplicateRows + row.duplicateRows,
+			conflictRows: total.conflictRows + row.conflictRows
+		}), { backup: 0, current: 0, newRows: 0, existingRows: 0, duplicateRows: 0, conflictRows: 0 })
+	};
 }
 
 export async function readShareSettings() {
@@ -301,100 +727,43 @@ export const cleanPaperPreviewCache: RequestHandler = asyncHandler(async (reques
 });
 
 export const exportDatabaseBackup: RequestHandler = asyncHandler(async (request, response) => {
-	const models: DatabaseBackup["models"] = {
-		users: await prisma.user.findMany(),
-		semesters: await prisma.semester.findMany(),
-		subjects: await prisma.subject.findMany(),
-		sessions: await prisma.session.findMany(),
-		studyMaterials: await prisma.studyMaterial.findMany(),
-		papers: await prisma.paper.findMany(),
-		questions: await prisma.question.findMany(),
-		answers: await prisma.answer.findMany(),
-		progress: await prisma.progress.findMany(),
-		notes: await prisma.note.findMany(),
-		banners: await prisma.banner.findMany(),
-		lectures: await prisma.lecture.findMany(),
-		contributors: await prisma.contributor.findMany(),
-		discussions: await prisma.discussion.findMany(),
-		comments: await prisma.comment.findMany(),
-		appSettings: await prisma.appSetting.findMany(),
-		assignments: await prisma.assignment.findMany(),
-		reports: await prisma.report.findMany(),
-		fileAssets: await prisma.fileAsset.findMany(),
-		auditLogs: await prisma.auditLog.findMany(),
-		analyticsVisits: await prisma.analyticsVisit.findMany()
-	};
-	const backup: DatabaseBackup = {
-		version: backupVersion,
-		exportedAt: new Date().toISOString(),
-		models
-	};
+	const backup = await databaseBackup();
+	const zip = await backupZip(backup);
 	const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-	await audit(String(request.user?.id), "DATABASE_BACKUP_EXPORTED", "DatabaseBackup", stamp);
-	response.setHeader("Content-Type", "application/json");
-	response.setHeader("Content-Disposition", `attachment; filename="gyanpath-database-backup-${stamp}.json"`);
-	response.json(backup);
+	await audit(String(request.user?.id), "DATABASE_BACKUP_EXPORTED", "DatabaseBackup", stamp, {
+		files: backup.files?.length || 0
+	});
+	response.setHeader("Content-Type", "application/zip");
+	response.setHeader("Content-Disposition", `attachment; filename="gyanpath-database-backup-${stamp}.zip"`);
+	response.send(zip);
 });
 
 export const restoreDatabaseBackup: RequestHandler = asyncHandler(async (request, response) => {
-	const body = request.body as Partial<DatabaseBackup>;
-	if (body.version !== backupVersion || !body.models || typeof body.models !== "object") {
+	let parsed: { backup: DatabaseBackup; entries: Map<string, Buffer> | null };
+	try {
+		parsed = await parseUploadedBackup(request);
+		await restoreBackupModels(parsed.backup);
+	} catch (error: any) {
 		response.status(400).json({ code: "INVALID_BACKUP", message: "Backup JSON is not valid for this application version." });
 		return;
 	}
-	const models = { ...emptyBackupModels(), ...body.models };
-
-	await prisma.$transaction(async (tx) => {
-		await tx.analyticsVisit.deleteMany();
-		await tx.auditLog.deleteMany();
-		await tx.fileAsset.deleteMany();
-		await tx.report.deleteMany();
-		await tx.assignment.deleteMany();
-		await tx.appSetting.deleteMany();
-		await tx.comment.deleteMany();
-		await tx.discussion.deleteMany();
-		await tx.contributor.deleteMany();
-		await tx.lecture.deleteMany();
-		await tx.banner.deleteMany();
-		await tx.note.deleteMany();
-		await tx.progress.deleteMany();
-		await tx.answer.deleteMany();
-		await tx.question.deleteMany();
-		await tx.paper.deleteMany();
-		await tx.studyMaterial.deleteMany();
-		await tx.session.deleteMany();
-		await tx.subject.deleteMany();
-		await tx.semester.deleteMany();
-		await tx.user.deleteMany();
-
-		if (models.users.length) await tx.user.createMany({ data: models.users as never[] });
-		if (models.semesters.length) await tx.semester.createMany({ data: models.semesters as never[] });
-		if (models.subjects.length) await tx.subject.createMany({ data: models.subjects as never[] });
-		if (models.sessions.length) await tx.session.createMany({ data: models.sessions as never[] });
-		if (models.studyMaterials.length) await tx.studyMaterial.createMany({ data: models.studyMaterials as never[] });
-		if (models.papers.length) await tx.paper.createMany({ data: models.papers as never[] });
-		if (models.questions.length) await tx.question.createMany({ data: models.questions as never[] });
-		if (models.answers.length) await tx.answer.createMany({ data: models.answers as never[] });
-		if (models.progress.length) await tx.progress.createMany({ data: models.progress as never[] });
-		if (models.notes.length) await tx.note.createMany({ data: models.notes as never[] });
-		if (models.banners.length) await tx.banner.createMany({ data: models.banners as never[] });
-		if (models.lectures.length) await tx.lecture.createMany({ data: models.lectures as never[] });
-		if (models.contributors.length) await tx.contributor.createMany({ data: models.contributors as never[] });
-		if (models.discussions.length) await tx.discussion.createMany({ data: models.discussions as never[] });
-		if (models.comments.length) await tx.comment.createMany({ data: models.comments as never[] });
-		if (models.appSettings.length) await tx.appSetting.createMany({ data: models.appSettings as never[] });
-		if (models.assignments.length) await tx.assignment.createMany({ data: models.assignments as never[] });
-		if (models.reports.length) await tx.report.createMany({ data: models.reports as never[] });
-		if (models.fileAssets.length) await tx.fileAsset.createMany({ data: models.fileAssets as never[] });
-		if (models.auditLogs.length) await tx.auditLog.createMany({ data: models.auditLogs as never[] });
-		if (models.analyticsVisits.length) await tx.analyticsVisit.createMany({ data: models.analyticsVisits as never[] });
-	});
+	const restoredFiles = parsed.entries ? await restoreBackupFiles(parsed.entries, parsed.backup) : 0;
 
 	await audit(null, "DATABASE_BACKUP_RESTORED", "DatabaseBackup", undefined, {
-		version: body.version,
-		exportedAt: body.exportedAt || null
+		version: parsed.backup.version,
+		exportedAt: parsed.backup.exportedAt || null,
+		files: restoredFiles
 	});
-	response.json({ restored: true, models: backupModelNames.length });
+	response.json({ restored: true, models: backupModelNames.length, files: restoredFiles });
+});
+
+export const previewDatabaseBackupRestore: RequestHandler = asyncHandler(async (request, response) => {
+	try {
+		const parsed = await parseUploadedBackup(request);
+		response.json(await analyzeBackup(parsed.backup, parsed.entries));
+	} catch {
+		response.status(400).json({ code: "INVALID_BACKUP", message: "Backup file could not be analyzed." });
+	}
 });
 
 export const getOverview: RequestHandler = asyncHandler(async (_request, response) => {
