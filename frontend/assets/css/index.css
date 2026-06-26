@@ -611,7 +611,7 @@ html {
 	gap: 6px;
 	padding: 10px 14px;
 	background: var(--soft-background);
-	border-bottom: 1px solid var(--item-border);
+	border-top: 1px solid var(--item-border);
 }
 
 .top-navigation a {
@@ -1452,6 +1452,26 @@ body[data-page="admin-users"] .dashboard-page {
 
 body[data-page="admin-users"] .dashboard-section-nav {
 	padding: 14px 10px;
+}
+
+body[data-page="admin-database"] .dashboard-layout {
+	grid-template-columns: minmax(150px, 190px) minmax(0, 1fr);
+	justify-content: stretch;
+	gap: 14px;
+}
+
+body[data-page="admin-database"] .dashboard-page {
+	max-width: none;
+	margin: 0;
+}
+
+body[data-page="admin-database"] .dashboard-section-nav {
+	margin-left: -18px;
+	padding: 14px 10px;
+}
+
+body[data-page="admin-database"] #databaseRestore {
+	width: 100%;
 }
 
 .management-layout {
@@ -2463,6 +2483,244 @@ body[data-page="admin-users"] .dashboard-section-nav {
 	color: var(--heading-text);
 	font-size: .86rem;
 	overflow-wrap: anywhere;
+}
+
+.database-restore-preview {
+	grid-template-columns: repeat(4, minmax(150px, 1fr));
+	align-items: stretch;
+}
+
+.database-restore-stat {
+	position: relative;
+	min-height: 92px;
+	background:
+		linear-gradient(135deg,
+			color-mix(in srgb, var(--app-primary), transparent 92%),
+			var(--item-background));
+}
+
+.database-restore-stat::before {
+	content: "";
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 4px;
+	background: color-mix(in srgb, var(--app-primary), transparent 22%);
+	border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+
+.database-restore-stat strong {
+	font-size: 1.35rem;
+	line-height: 1;
+}
+
+.database-restore-table-wrap {
+	grid-column: 1 / -1;
+	overflow-x: auto;
+	background: var(--panel-background);
+	border: 1px solid var(--item-border);
+	border-radius: var(--radius-lg);
+	box-shadow: inset 0 1px 0 color-mix(in srgb, #fff, transparent 84%);
+}
+
+.database-restore-table {
+	width: 100%;
+	min-width: 760px;
+	border-collapse: collapse;
+}
+
+.database-restore-table th,
+.database-restore-table td {
+	padding: 12px 14px;
+	text-align: right;
+	border-bottom: 1px solid var(--item-border);
+	font-size: .78rem;
+	white-space: nowrap;
+}
+
+.database-restore-table th:first-child,
+.database-restore-table td:first-child {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	text-align: left;
+	background: inherit;
+}
+
+.database-restore-table th {
+	color: var(--heading-text);
+	background: var(--soft-background);
+	font-size: .69rem;
+	font-weight: 900;
+	letter-spacing: .06em;
+	text-transform: uppercase;
+}
+
+.database-restore-table td {
+	color: var(--main-text);
+	background: var(--panel-background);
+}
+
+.database-restore-table tbody tr:hover td {
+	background: color-mix(in srgb, var(--app-primary), transparent 94%);
+}
+
+.database-restore-table tbody tr:last-child td {
+	border-bottom: 0;
+}
+
+.database-restore-table td:first-child strong {
+	color: var(--heading-text);
+	font-size: .82rem;
+}
+
+.database-restore-table td:nth-child(4) {
+	color: var(--app-success);
+	font-weight: 900;
+}
+
+.database-restore-table td:nth-child(6),
+.database-restore-table td:nth-child(7) {
+	color: var(--app-warning);
+	font-weight: 900;
+}
+
+.database-file-table-wrap {
+	margin-top: 4px;
+}
+
+.database-file-table {
+	min-width: 1180px;
+}
+
+.database-entry-table {
+	min-width: 960px;
+}
+
+.database-file-table th,
+.database-file-table td,
+.database-entry-table th,
+.database-entry-table td {
+	text-align: left;
+}
+
+.database-file-table td:nth-child(6) {
+	color: inherit;
+	font-weight: 800;
+}
+
+.database-image-preview {
+	display: grid;
+	place-items: center;
+	width: 132px;
+	height: 78px;
+	overflow: hidden;
+	color: var(--muted-text);
+	background: var(--item-background);
+	border: 1px solid var(--item-border);
+	border-radius: 8px;
+	font-size: .68rem;
+	font-weight: 800;
+	text-decoration: none;
+}
+
+.database-image-preview img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.database-image-preview.is-empty {
+	background:
+		linear-gradient(135deg, transparent 0 48%, var(--item-border) 49% 51%, transparent 52%),
+		var(--soft-background);
+}
+
+.database-file-status {
+	display: inline-flex;
+	align-items: center;
+	min-height: 28px;
+	padding: 5px 9px;
+	border: 1px solid var(--item-border);
+	border-radius: 999px;
+	background: var(--item-background);
+	font-size: .7rem;
+	font-weight: 900;
+	line-height: 1;
+}
+
+.database-file-table tr[data-file-status="same"] .database-file-status {
+	color: var(--app-success);
+	background: color-mix(in srgb, var(--app-success), transparent 91%);
+	border-color: color-mix(in srgb, var(--app-success), transparent 58%);
+}
+
+.database-file-table tr[data-file-status="different"] .database-file-status {
+	color: var(--app-warning);
+	background: color-mix(in srgb, var(--app-warning), transparent 91%);
+	border-color: color-mix(in srgb, var(--app-warning), transparent 58%);
+}
+
+.database-file-table tr[data-file-status="missingOnServer"] .database-file-status {
+	color: var(--app-primary);
+	background: color-mix(in srgb, var(--app-primary), transparent 91%);
+	border-color: color-mix(in srgb, var(--app-primary), transparent 58%);
+}
+
+.database-file-table tr[data-file-status="missingInArchive"] .database-file-status {
+	color: var(--app-danger);
+	background: color-mix(in srgb, var(--app-danger), transparent 92%);
+	border-color: color-mix(in srgb, var(--app-danger), transparent 58%);
+}
+
+.database-entry-table td small {
+	display: block;
+	margin-top: 4px;
+	color: var(--muted-text);
+	font-size: .7rem;
+	line-height: 1.35;
+	white-space: normal;
+}
+
+.database-entry-table td:nth-child(3),
+.database-entry-table td:nth-child(4) {
+	max-width: 260px;
+	white-space: normal;
+	overflow-wrap: anywhere;
+}
+
+.database-entry-table tr[data-entry-status="conflict"] .database-file-status {
+	color: var(--app-warning);
+	background: color-mix(in srgb, var(--app-warning), transparent 91%);
+	border-color: color-mix(in srgb, var(--app-warning), transparent 58%);
+}
+
+.database-entry-table tr[data-entry-status="existing"] .database-file-status {
+	color: var(--app-primary);
+	background: color-mix(in srgb, var(--app-primary), transparent 91%);
+	border-color: color-mix(in srgb, var(--app-primary), transparent 58%);
+}
+
+.database-entry-table tr[data-entry-status="duplicate"] .database-file-status {
+	color: var(--app-danger);
+	background: color-mix(in srgb, var(--app-danger), transparent 92%);
+	border-color: color-mix(in srgb, var(--app-danger), transparent 58%);
+}
+
+.database-resolution-select {
+	min-width: 150px;
+	padding: 8px 10px;
+	color: var(--main-text);
+	background: var(--item-background);
+	border: 1px solid var(--item-border);
+	border-radius: var(--field-radius);
+	font: inherit;
+	font-size: .76rem;
+	font-weight: 800;
+}
+
+.database-resolution-select:focus {
+	border-color: var(--app-primary);
+	outline: var(--field-focus-ring);
 }
 
 .admin-user-activity-item small {

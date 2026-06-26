@@ -147,7 +147,7 @@ type DatabaseBackup = {
 type DatabaseBackupFile = {
 	path: string;
 	size: number;
-	source: "fileAsset";
+	source: "fileAsset" | "uploadsFolder";
 };
 type BackupAnalysisRow = {
 	model: BackupModelName;
@@ -157,6 +157,58 @@ type BackupAnalysisRow = {
 	existingRows: number;
 	duplicateRows: number;
 	conflictRows: number;
+	items: BackupEntryAnalysisRow[];
+};
+type BackupEntryAnalysisRow = {
+	key: string;
+	label: string;
+	status: "new" | "existing" | "conflict" | "duplicate";
+	backupPreview: string;
+	currentPreview: string;
+	defaultAction: "backup" | "current" | "skip";
+};
+type BackupFileAnalysisRow = {
+	path: string;
+	size: number;
+	archiveSize: number | null;
+	currentSize: number | null;
+	status: "same" | "different" | "missingOnServer" | "missingInArchive";
+	defaultAction: "backup" | "current" | "skip";
+	archivePreviewUrl?: string | null;
+	currentPreviewUrl?: string | null;
+};
+type BackupResolution = {
+	mode?: "merge" | "replace";
+	entries?: Record<string, "backup" | "current" | "skip">;
+	files?: Record<string, "backup" | "current" | "skip">;
+};
+type ShareSettings = {
+	title: string;
+	description: string;
+	shareText: string;
+	url: string;
+	qrImageSource: "generated" | "url" | "upload";
+	qrImageUrl?: string | null;
+	qrImagePath?: string | null;
+	qrImageMeta?: {
+		name?: string | null;
+		type?: string | null;
+		size?: number | null;
+		width?: number | null;
+		height?: number | null;
+	} | null;
+};
+type SupportSettings = {
+	enabled: boolean;
+	title: string;
+	description: string;
+	qrData?: string | null;
+	qrImageSource: "generated" | "url" | "upload";
+	qrImageUrl?: string | null;
+	qrImagePath?: string | null;
+	qrImageMeta?: ShareSettings["qrImageMeta"];
+	buttonText?: string | null;
+	buttonUrl?: string | null;
 };
 
 const emptyBackupModels = () => Object.fromEntries(
@@ -225,6 +277,26 @@ function normalizeBackupFilePath(value: string) {
 	if (!withoutFilesPrefix.startsWith("uploads/")) return "";
 	if (withoutFilesPrefix.includes("..")) return "";
 	return withoutFilesPrefix;
+}
+
+function imageMimeType(filePath: string) {
+	const extension = path.extname(filePath).toLowerCase();
+	if (extension === ".png") return "image/png";
+	if (extension === ".jpg" || extension === ".jpeg") return "image/jpeg";
+	if (extension === ".webp") return "image/webp";
+	if (extension === ".gif") return "image/gif";
+	if (extension === ".svg") return "image/svg+xml";
+	return "";
+}
+
+function archivePreviewUrl(filePath: string, data: Buffer | null) {
+	const mimeType = imageMimeType(filePath);
+	if (!mimeType || !data || data.length > 2 * 1024 * 1024) return null;
+	return `data:${mimeType};base64,${data.toString("base64")}`;
+}
+
+function currentPreviewUrl(filePath: string, exists: boolean) {
+	return exists && imageMimeType(filePath) ? `/${filePath}` : null;
 }
 
 function crc32(buffer: Buffer) {
@@ -362,18 +434,42 @@ async function databaseBackup() {
 		auditLogs: await prisma.auditLog.findMany(),
 		analyticsVisits: await prisma.analyticsVisit.findMany()
 	};
-	const files = (models.fileAssets as { path?: string; size?: number }[])
+	const fileMap = new Map<string, DatabaseBackupFile>();
+	(models.fileAssets as { path?: string; size?: number }[])
 		.map((asset) => ({
 			path: normalizeBackupFilePath(String(asset.path || "")),
 			size: Number(asset.size || 0),
 			source: "fileAsset" as const
 		}))
-		.filter((file) => file.path);
+		.filter((file) => file.path)
+		.forEach((file) => fileMap.set(file.path, file));
+	const uploadsRoot = path.join(env.projectRoot, "uploads");
+	async function collectUploads(dir: string) {
+		let entries: import("node:fs").Dirent[] = [];
+		try {
+			entries = await fs.readdir(dir, { withFileTypes: true });
+		} catch {
+			return;
+		}
+		for (const entry of entries) {
+			const fullPath = path.join(dir, entry.name);
+			if (entry.isDirectory()) {
+				await collectUploads(fullPath);
+				continue;
+			}
+			if (!entry.isFile()) continue;
+			const relative = normalizeBackupFilePath(path.relative(env.projectRoot, fullPath));
+			if (!relative || fileMap.has(relative)) continue;
+			const stat = await fs.stat(fullPath);
+			fileMap.set(relative, { path: relative, size: stat.size, source: "uploadsFolder" });
+		}
+	}
+	await collectUploads(uploadsRoot);
 	return {
 		version: backupVersion,
 		exportedAt: new Date().toISOString(),
 		models,
-		files
+		files: [...fileMap.values()]
 	};
 }
 
@@ -399,15 +495,25 @@ async function backupZip(backup: DatabaseBackup) {
 	return createZip(entries);
 }
 
-async function restoreBackupFiles(entries: Map<string, Buffer>, backup: DatabaseBackup) {
+async function restoreBackupFiles(entries: Map<string, Buffer>, backup: DatabaseBackup, resolution: BackupResolution = {}) {
 	let restored = 0;
 	for (const file of backup.files || []) {
 		const normalized = normalizeBackupFilePath(file.path);
 		if (!normalized) continue;
 		const data = entries.get(`files/${normalized}`);
 		if (!data) continue;
+		const selectedAction = resolution.files?.[normalized];
+		let exists = false;
 		const target = path.resolve(env.projectRoot, normalized);
 		if (!target.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) continue;
+		try {
+			await fs.access(target);
+			exists = true;
+		} catch {
+			exists = false;
+		}
+		const finalAction = selectedAction || (exists ? "current" : "backup");
+		if (finalAction !== "backup") continue;
 		await fs.mkdir(path.dirname(target), { recursive: true });
 		await fs.writeFile(target, data);
 		restored += 1;
@@ -437,6 +543,184 @@ async function parseUploadedBackup(request: Parameters<RequestHandler>[0]) {
 		return { backup: parseBackupJson(backupJson), entries };
 	}
 	return { backup: request.body as DatabaseBackup, entries: null };
+}
+
+function parseResolution(request: Parameters<RequestHandler>[0]) {
+	const raw = (request.body as any)?.resolution;
+	if (!raw) return {} as BackupResolution;
+	if (typeof raw === "object") return raw as BackupResolution;
+	try {
+		return JSON.parse(String(raw)) as BackupResolution;
+	} catch {
+		return {} as BackupResolution;
+	}
+}
+
+function uploadCategoryPath(category: string) {
+	const cleaned = category
+		.replace(/\\/g, "/")
+		.split("/")
+		.map((part) => part.toLowerCase().replace(/[^a-z0-9_-]+/g, "-").replace(/^-+|-+$/g, ""))
+		.filter(Boolean)
+		.slice(0, 3);
+	const first = cleaned[0] || "settings";
+	if (first === "settings") return ["settings", ...(cleaned.slice(1))];
+	if (first === "banners") return ["banners", ...(cleaned.slice(1))];
+	if (first === "contributors") return ["contributors", ...(cleaned.slice(1))];
+	return ["settings", ...cleaned];
+}
+
+function uploadPublicPathToAbsolute(publicPath: string) {
+	const normalized = normalizeBackupFilePath(publicPath);
+	if (!normalized) return null;
+	const absolute = path.resolve(env.projectRoot, normalized);
+	const uploadsRoot = path.resolve(env.projectRoot, "uploads");
+	return absolute.startsWith(uploadsRoot + path.sep) ? absolute : null;
+}
+
+async function moveUploadFile(publicPath: string | null | undefined, category: string) {
+	if (!publicPath || !publicPath.startsWith("/uploads/")) return null;
+	const source = uploadPublicPathToAbsolute(publicPath);
+	if (!source) return null;
+	const categoryParts = uploadCategoryPath(category);
+	const fileName = path.basename(source);
+	const targetDir = path.join(env.projectRoot, "uploads", ...categoryParts);
+	const target = path.join(targetDir, fileName);
+	const nextPath = `/uploads/${[...categoryParts, fileName].join("/")}`;
+	if (publicPath === nextPath) return { changed: false, path: publicPath };
+	try {
+		await fs.access(source);
+	} catch {
+		return null;
+	}
+	await fs.mkdir(targetDir, { recursive: true });
+	try {
+		await fs.access(target);
+		const parsed = path.parse(fileName);
+		const alternateName = `${parsed.name}-${Date.now()}${parsed.ext}`;
+		const alternateTarget = path.join(targetDir, alternateName);
+		await fs.rename(source, alternateTarget);
+		return { changed: true, path: `/uploads/${[...categoryParts, alternateName].join("/")}` };
+	} catch {
+		await fs.rename(source, target);
+		return { changed: true, path: nextPath };
+	}
+}
+
+async function saveGeneratedQrImage(data: string, category: string, size = 300) {
+	const categoryParts = uploadCategoryPath(category);
+	const uploadDir = path.join(env.projectRoot, "uploads", ...categoryParts);
+	const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}`;
+	const qrResponse = await fetch(url);
+	if (!qrResponse.ok) throw new Error("QR image could not be generated.");
+	const buffer = Buffer.from(await qrResponse.arrayBuffer());
+	const storedName = `${Date.now()}-${crypto.randomUUID()}.png`;
+	const filePath = path.join(uploadDir, storedName);
+	const publicPath = `/uploads/${[...categoryParts, storedName].join("/")}`;
+	await fs.mkdir(uploadDir, { recursive: true });
+	await fs.writeFile(filePath, buffer);
+	const asset = await prisma.fileAsset.create({
+		data: {
+			originalName: "generated-qr.png",
+			storedName,
+			mimeType: "image/png",
+			size: buffer.length,
+			path: publicPath,
+			category,
+			uploadedById: ""
+		}
+	});
+	return {
+		path: publicPath,
+		meta: {
+			name: asset.originalName,
+			type: asset.mimeType,
+			size: asset.size,
+			width: size,
+			height: size
+		}
+	};
+}
+
+async function ensureGeneratedShareQr(setting: ShareSettings, force = false) {
+	if (setting.qrImageSource !== "generated") return setting;
+	if (!force && setting.qrImagePath) return setting;
+	const generated = await saveGeneratedQrImage(setting.url, "settings/share-qr", 300);
+	return {
+		...setting,
+		qrImagePath: generated.path,
+		qrImageMeta: generated.meta
+	};
+}
+
+async function ensureGeneratedSupportQr(setting: SupportSettings, force = false) {
+	if (setting.qrImageSource !== "generated") return setting;
+	if (!setting.qrData) return setting;
+	if (!force && setting.qrImagePath) return setting;
+	const generated = await saveGeneratedQrImage(setting.qrData, "settings/support-qr", 300);
+	return {
+		...setting,
+		qrImagePath: generated.path,
+		qrImageMeta: generated.meta
+	};
+}
+
+type NormalizeUploadSummary = {
+	moved: number;
+	looseFilesMoved: number;
+	alreadyStructured: number;
+	skipped: number;
+	missing: number;
+	mappings: Record<string, string>;
+};
+
+function isOldDirectSettingsUpload(publicPath: string) {
+	return /^\/uploads\/settings\/[^/]+$/i.test(publicPath);
+}
+
+async function normalizeReferencedUpload(
+	publicPath: string | null | undefined,
+	category: string,
+	movedPaths: Map<string, string>,
+	summary: NormalizeUploadSummary
+) {
+	if (!publicPath || !publicPath.startsWith("/uploads/")) {
+		summary.skipped += 1;
+		return null;
+	}
+	if (movedPaths.has(publicPath)) return movedPaths.get(publicPath) || null;
+	const result = await moveUploadFile(publicPath, category);
+	if (!result) {
+		summary.missing += 1;
+		return null;
+	}
+	movedPaths.set(publicPath, result.path);
+	if (result.changed) summary.moved += 1;
+	else summary.alreadyStructured += 1;
+	if (result.path !== publicPath) summary.mappings[publicPath] = result.path;
+	return result.path;
+}
+
+async function normalizeLooseSettingsUploads(movedPaths: Map<string, string>, summary: NormalizeUploadSummary) {
+	const settingsRoot = path.join(env.projectRoot, "uploads", "settings");
+	let entries: import("node:fs").Dirent[] = [];
+	try {
+		entries = await fs.readdir(settingsRoot, { withFileTypes: true });
+	} catch {
+		return;
+	}
+	for (const entry of entries) {
+		if (!entry.isFile()) continue;
+		const publicPath = `/uploads/settings/${entry.name}`;
+		const nextPath = await normalizeReferencedUpload(publicPath, "settings/misc", movedPaths, summary);
+		if (nextPath && nextPath !== publicPath) summary.looseFilesMoved += 1;
+	}
+	try {
+		const remaining = await fs.readdir(settingsRoot, { withFileTypes: true });
+		if (!remaining.some((entry) => entry.isFile())) return;
+	} catch {
+		// Directory may have been removed externally.
+	}
 }
 
 async function restoreBackupModels(body: Partial<DatabaseBackup>) {
@@ -492,11 +776,85 @@ async function restoreBackupModels(body: Partial<DatabaseBackup>) {
 	});
 }
 
+async function restoreBackupModelsMerge(body: DatabaseBackup, resolution: BackupResolution = {}) {
+	if (body.version !== backupVersion || !body.models || typeof body.models !== "object") {
+		throw new Error("Backup JSON is not valid for this application version.");
+	}
+	const models = { ...emptyBackupModels(), ...body.models };
+	const stats = { created: 0, updated: 0, skipped: 0, failed: 0 };
+
+	for (const model of backupModelNames) {
+		const delegate = (prisma as any)[backupModelDelegates[model]];
+		const rows = models[model] as any[];
+		for (const row of rows) {
+			const identity = primaryIdentity(row);
+			if (!identity) {
+				stats.skipped += 1;
+				continue;
+			}
+			const action = resolution.entries?.[`${model}:${identity.key}`];
+			const where = rowWhere(row);
+			if (!where) {
+				stats.skipped += 1;
+				continue;
+			}
+			let exists = false;
+			try {
+				exists = Boolean(await delegate.findUnique({ where }));
+			} catch {
+				exists = false;
+			}
+			const finalAction = action || (exists ? "current" : "backup");
+			if (finalAction !== "backup") {
+				stats.skipped += 1;
+				continue;
+			}
+			try {
+				if (exists) {
+					await delegate.update({ where, data: row });
+					stats.updated += 1;
+				} else {
+					await delegate.create({ data: row });
+					stats.created += 1;
+				}
+			} catch {
+				stats.failed += 1;
+			}
+		}
+	}
+	return stats;
+}
+
 function rowKey(row: any, fields: string[]) {
 	return fields
 		.map((field) => row?.[field] === null || row?.[field] === undefined ? "" : `${field}:${String(row[field])}`)
 		.filter(Boolean)
 		.join("|");
+}
+
+function primaryIdentity(row: any) {
+	if (row?.id !== undefined && row?.id !== null) return { field: "id", value: row.id, key: `id:${String(row.id)}` };
+	if (row?.key !== undefined && row?.key !== null) return { field: "key", value: row.key, key: `key:${String(row.key)}` };
+	if (row?.userId && row?.questionId) return { field: "userId_questionId", value: { userId: row.userId, questionId: row.questionId }, key: `userId:${row.userId}|questionId:${row.questionId}` };
+	if (row?.questionId && row?.language && row?.mode) return {
+		field: "questionId_language_mode",
+		value: { questionId: row.questionId, language: row.language, mode: row.mode },
+		key: `questionId:${row.questionId}|language:${row.language}|mode:${row.mode}`
+	};
+	return null;
+}
+
+function rowWhere(row: any) {
+	const identity = primaryIdentity(row);
+	if (!identity) return null;
+	return { [identity.field]: identity.value };
+}
+
+function previewRow(row: any) {
+	if (!row) return "";
+	const label = row.displayName || row.title || row.name || row.username || row.code || row.path || row.key || row.id || row.filePath || row.englishPath;
+	const meta = row.updatedAt || row.createdAt || row.status || row.role || row.category || "";
+	return [String(label || "Entry"), meta ? String(meta).slice(0, 32) : ""].filter(Boolean).join(" | ");
 }
 
 async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer> | null) {
@@ -513,25 +871,50 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 		const identityFields = backupIdentityFields[model] || ["id"];
 		const currentRows = await delegate.findMany();
 		const currentKeys = new Set<string>();
+		const currentByKey = new Map<string, any>();
 		for (const row of currentRows) {
 			for (const field of identityFields) {
 				const key = rowKey(row, [field]);
-				if (key) currentKeys.add(key);
+				if (key) {
+					currentKeys.add(key);
+					currentByKey.set(key, row);
+				}
 			}
 		}
 		const seenBackupKeys = new Set<string>();
 		let existingRows = 0;
 		let duplicateRows = 0;
 		let conflictRows = 0;
+		const items: BackupEntryAnalysisRow[] = [];
 
 		for (const row of backupRows) {
 			const keys = identityFields.map((field) => rowKey(row, [field])).filter(Boolean);
 			const primaryKey = keys[0] || JSON.stringify(row);
-			if (seenBackupKeys.has(primaryKey)) duplicateRows += 1;
-			else seenBackupKeys.add(primaryKey);
+			let status: BackupEntryAnalysisRow["status"] = "new";
+			if (seenBackupKeys.has(primaryKey)) {
+				duplicateRows += 1;
+				status = "duplicate";
+			} else seenBackupKeys.add(primaryKey);
 			const matchedKeys = keys.filter((key) => currentKeys.has(key));
-			if (matchedKeys.length) existingRows += 1;
-			if (matchedKeys.length && !matchedKeys.includes(primaryKey)) conflictRows += 1;
+			if (matchedKeys.length) {
+				existingRows += 1;
+				status = status === "duplicate" ? status : "existing";
+			}
+			if (matchedKeys.length && !matchedKeys.includes(primaryKey)) {
+				conflictRows += 1;
+				status = "conflict";
+			}
+			if (items.length < 200 && status !== "new") {
+				const current = currentByKey.get(matchedKeys[0]);
+				items.push({
+					key: primaryKey,
+					label: previewRow(row),
+					status,
+					backupPreview: previewRow(row),
+					currentPreview: previewRow(current),
+					defaultAction: status === "conflict" || status === "existing" ? "current" : "skip"
+				});
+			}
 		}
 
 		rows.push({
@@ -541,7 +924,8 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 			newRows: Math.max(0, backupRows.length - existingRows - duplicateRows),
 			existingRows,
 			duplicateRows,
-			conflictRows
+			conflictRows,
+			items
 		});
 	}
 
@@ -549,18 +933,60 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 	let filesInZip = 0;
 	let filesAlreadyPresent = 0;
 	let filesMissingOnServer = 0;
+	let sameFiles = 0;
+	let differentFiles = 0;
+	const fileRows: BackupFileAnalysisRow[] = [];
+	const analyzedFiles = new Map<string, DatabaseBackupFile>();
 	for (const file of backup.files || []) {
 		const normalized = normalizeBackupFilePath(file.path);
 		if (!normalized) continue;
+		analyzedFiles.set(normalized, { ...file, path: normalized });
+	}
+	for (const [entryName, data] of entries || []) {
+		const normalized = normalizeBackupFilePath(entryName);
+		if (!normalized || analyzedFiles.has(normalized)) continue;
+		analyzedFiles.set(normalized, {
+			path: normalized,
+			size: data.length,
+			source: "uploadsFolder"
+		});
+	}
+	for (const file of analyzedFiles.values()) {
+		const normalized = normalizeBackupFilePath(file.path);
+		if (!normalized) continue;
 		filesInBackup += 1;
-		if (entries?.has(`files/${normalized}`)) filesInZip += 1;
+		const archiveData = entries?.get(`files/${normalized}`) || null;
+		if (archiveData) filesInZip += 1;
 		const target = path.resolve(env.projectRoot, normalized);
 		if (target.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) {
 			try {
-				await fs.access(target);
+				const currentData = await fs.readFile(target);
 				filesAlreadyPresent += 1;
+				const same = archiveData ? currentData.equals(archiveData) : false;
+				if (same) sameFiles += 1;
+				else if (archiveData) differentFiles += 1;
+				fileRows.push({
+					path: normalized,
+					size: file.size,
+					archiveSize: archiveData?.length ?? null,
+					currentSize: currentData.length,
+					status: archiveData ? (same ? "same" : "different") : "missingInArchive",
+					defaultAction: same ? "current" : "current",
+					archivePreviewUrl: archivePreviewUrl(normalized, archiveData),
+					currentPreviewUrl: currentPreviewUrl(normalized, true)
+				});
 			} catch {
 				filesMissingOnServer += 1;
+				fileRows.push({
+					path: normalized,
+					size: file.size,
+					archiveSize: archiveData?.length ?? null,
+					currentSize: null,
+					status: archiveData ? "missingOnServer" : "missingInArchive",
+					defaultAction: archiveData ? "backup" : "skip",
+					archivePreviewUrl: archivePreviewUrl(normalized, archiveData),
+					currentPreviewUrl: null
+				});
 			}
 		}
 	}
@@ -573,7 +999,10 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 			declared: filesInBackup,
 			inArchive: filesInZip,
 			alreadyPresent: filesAlreadyPresent,
-			missingOnServer: filesMissingOnServer
+			missingOnServer: filesMissingOnServer,
+			same: sameFiles,
+			different: differentFiles,
+			items: fileRows
 		},
 		totals: rows.reduce((total, row) => ({
 			backup: total.backup + row.backup,
@@ -589,7 +1018,16 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 export async function readShareSettings() {
 	const setting = await prisma.appSetting.findUnique({ where: { key: shareSettingsKey } });
 	const parsed = shareSettingsSchema.safeParse(setting?.value);
-	return parsed.success ? { ...defaultShareSettings, ...parsed.data } : defaultShareSettings;
+	const current = parsed.success ? { ...defaultShareSettings, ...parsed.data } : defaultShareSettings;
+	const next = await ensureGeneratedShareQr(current as ShareSettings);
+	if (next !== current) {
+		await prisma.appSetting.upsert({
+			where: { key: shareSettingsKey },
+			update: { value: next },
+			create: { key: shareSettingsKey, value: next }
+		});
+	}
+	return next;
 }
 
 export const getShareSettings: RequestHandler = asyncHandler(async (_request, response) => {
@@ -598,13 +1036,27 @@ export const getShareSettings: RequestHandler = asyncHandler(async (_request, re
 
 export const saveShareSettings: RequestHandler = asyncHandler(async (request, response) => {
 	const input = shareSettingsSchema.parse(request.body);
-	const setting = { ...defaultShareSettings, ...input };
+	const setting = await ensureGeneratedShareQr({ ...defaultShareSettings, ...input });
 	await prisma.appSetting.upsert({
 		where: { key: shareSettingsKey },
 		update: { value: setting },
 		create: { key: shareSettingsKey, value: setting }
 	});
 	await audit(String(request.user?.id), "SHARE_SETTINGS_UPDATED", "AppSetting", shareSettingsKey, setting);
+	response.json(setting);
+});
+
+export const refreshShareQrImage: RequestHandler = asyncHandler(async (request, response) => {
+	const current = await readShareSettings();
+	const setting = await ensureGeneratedShareQr({ ...current, qrImageSource: "generated" }, true);
+	await prisma.appSetting.upsert({
+		where: { key: shareSettingsKey },
+		update: { value: setting },
+		create: { key: shareSettingsKey, value: setting }
+	});
+	await audit(String(request.user?.id), "SHARE_QR_IMAGE_REFRESHED", "AppSetting", shareSettingsKey, {
+		path: setting.qrImagePath
+	});
 	response.json(setting);
 });
 
@@ -617,7 +1069,16 @@ export const deleteShareSettings: RequestHandler = asyncHandler(async (request, 
 export async function readSupportSettings() {
 	const setting = await prisma.appSetting.findUnique({ where: { key: supportSettingsKey } });
 	const parsed = supportSettingsSchema.safeParse(setting?.value);
-	return parsed.success ? { ...defaultSupportSettings, ...parsed.data } : defaultSupportSettings;
+	const current = parsed.success ? { ...defaultSupportSettings, ...parsed.data } : defaultSupportSettings;
+	const next = await ensureGeneratedSupportQr(current as SupportSettings);
+	if (next !== current) {
+		await prisma.appSetting.upsert({
+			where: { key: supportSettingsKey },
+			update: { value: next },
+			create: { key: supportSettingsKey, value: next }
+		});
+	}
+	return next;
 }
 
 export const getSupportSettings: RequestHandler = asyncHandler(async (_request, response) => {
@@ -626,13 +1087,27 @@ export const getSupportSettings: RequestHandler = asyncHandler(async (_request, 
 
 export const saveSupportSettings: RequestHandler = asyncHandler(async (request, response) => {
 	const input = supportSettingsSchema.parse(request.body);
-	const setting = { ...defaultSupportSettings, ...input };
+	const setting = await ensureGeneratedSupportQr({ ...defaultSupportSettings, ...input });
 	await prisma.appSetting.upsert({
 		where: { key: supportSettingsKey },
 		update: { value: setting },
 		create: { key: supportSettingsKey, value: setting }
 	});
 	await audit(String(request.user?.id), "SUPPORT_SETTINGS_UPDATED", "AppSetting", supportSettingsKey, setting);
+	response.json(setting);
+});
+
+export const refreshSupportQrImage: RequestHandler = asyncHandler(async (request, response) => {
+	const current = await readSupportSettings();
+	const setting = await ensureGeneratedSupportQr({ ...current, qrImageSource: "generated" }, true);
+	await prisma.appSetting.upsert({
+		where: { key: supportSettingsKey },
+		update: { value: setting },
+		create: { key: supportSettingsKey, value: setting }
+	});
+	await audit(String(request.user?.id), "SUPPORT_QR_IMAGE_REFRESHED", "AppSetting", supportSettingsKey, {
+		path: setting.qrImagePath
+	});
 	response.json(setting);
 });
 
@@ -675,12 +1150,19 @@ export const uploadSettingQrImage: RequestHandler = asyncHandler(async (request,
 		response.status(400).json({ code: "QR_IMAGE_REQUIRED", message: "Please choose a QR image to upload." });
 		return;
 	}
-	const category = String(request.body.category || "settings-qr");
-	const publicPath = `/uploads/settings/${request.file.filename}`;
+	const category = String(request.body.category || "settings/misc");
+	const categoryParts = uploadCategoryPath(category);
+	const uploadDir = path.join(env.projectRoot, "uploads", ...categoryParts);
+	await fs.mkdir(uploadDir, { recursive: true });
+	const extension = path.extname(request.file.originalname).toLowerCase() || ".png";
+	const storedName = `${Date.now()}-${crypto.randomUUID()}${extension}`;
+	const filePath = path.join(uploadDir, storedName);
+	await fs.writeFile(filePath, request.file.buffer);
+	const publicPath = `/uploads/${[...categoryParts, storedName].join("/")}`;
 	const asset = await prisma.fileAsset.create({
 		data: {
 			originalName: request.file.originalname,
-			storedName: request.file.filename,
+			storedName,
 			mimeType: request.file.mimetype,
 			size: request.file.size,
 			path: publicPath,
@@ -699,6 +1181,60 @@ export const uploadSettingQrImage: RequestHandler = asyncHandler(async (request,
 		type: asset.mimeType,
 		size: asset.size
 	});
+});
+
+export const moveOldUploadImages: RequestHandler = asyncHandler(async (request, response) => {
+	const summary: NormalizeUploadSummary = {
+		moved: 0,
+		looseFilesMoved: 0,
+		alreadyStructured: 0,
+		skipped: 0,
+		missing: 0,
+		mappings: {}
+	};
+	const movedPaths = new Map<string, string>();
+	const settingTargets = [
+		{ key: shareSettingsKey, field: "qrImagePath", category: "settings/share-qr" },
+		{ key: supportSettingsKey, field: "qrImagePath", category: "settings/support-qr" },
+		{ key: linkPreviewSettingsKey, field: "imagePath", category: "settings/link-preview" }
+	];
+
+	for (const target of settingTargets) {
+		const row = await prisma.appSetting.findUnique({ where: { key: target.key } });
+		const value = row?.value && typeof row.value === "object" && !Array.isArray(row.value)
+			? row.value as Record<string, unknown>
+			: null;
+		const currentPath = typeof value?.[target.field] === "string" ? value[target.field] as string : null;
+		await normalizeReferencedUpload(currentPath, target.category, movedPaths, summary);
+	}
+
+	const banners = await prisma.banner.findMany();
+	for (const banner of banners) {
+		await normalizeReferencedUpload(banner.image, `banners/${banner.id}`, movedPaths, summary);
+	}
+
+	const contributors = await prisma.contributor.findMany();
+	for (const contributor of contributors) {
+		await normalizeReferencedUpload(contributor.avatar, `contributors/${contributor.id}`, movedPaths, summary);
+	}
+
+	const oldFileAssets = await prisma.fileAsset.findMany({
+		where: { path: { startsWith: "/uploads/settings/" } }
+	});
+	for (const asset of oldFileAssets) {
+		if (!isOldDirectSettingsUpload(asset.path)) continue;
+		await normalizeReferencedUpload(asset.path, asset.category || "settings/misc", movedPaths, summary);
+	}
+	await normalizeLooseSettingsUploads(movedPaths, summary);
+
+	if (Object.keys(summary.mappings).length) {
+		const mappingPath = path.join(env.projectRoot, "uploads", "old-upload-image-mapping.json");
+		await fs.mkdir(path.dirname(mappingPath), { recursive: true });
+		await fs.writeFile(mappingPath, JSON.stringify(summary.mappings, null, 2), "utf8");
+	}
+
+	await audit(String(request.user?.id), "OLD_UPLOAD_IMAGES_MOVED", "FileAsset", undefined, summary);
+	response.json(summary);
 });
 
 export const getPaperPreviewCache: RequestHandler = asyncHandler(async (_request, response) => {
@@ -740,21 +1276,29 @@ export const exportDatabaseBackup: RequestHandler = asyncHandler(async (request,
 
 export const restoreDatabaseBackup: RequestHandler = asyncHandler(async (request, response) => {
 	let parsed: { backup: DatabaseBackup; entries: Map<string, Buffer> | null };
+	const resolution = parseResolution(request);
+	let mergeStats: Awaited<ReturnType<typeof restoreBackupModelsMerge>> | null = null;
 	try {
 		parsed = await parseUploadedBackup(request);
-		await restoreBackupModels(parsed.backup);
+		if (resolution.mode === "merge") {
+			mergeStats = await restoreBackupModelsMerge(parsed.backup, resolution);
+		} else {
+			await restoreBackupModels(parsed.backup);
+		}
 	} catch (error: any) {
 		response.status(400).json({ code: "INVALID_BACKUP", message: "Backup JSON is not valid for this application version." });
 		return;
 	}
-	const restoredFiles = parsed.entries ? await restoreBackupFiles(parsed.entries, parsed.backup) : 0;
+	const restoredFiles = parsed.entries ? await restoreBackupFiles(parsed.entries, parsed.backup, resolution) : 0;
 
 	await audit(null, "DATABASE_BACKUP_RESTORED", "DatabaseBackup", undefined, {
 		version: parsed.backup.version,
 		exportedAt: parsed.backup.exportedAt || null,
-		files: restoredFiles
+		files: restoredFiles,
+		mode: resolution.mode || "replace",
+		mergeStats
 	});
-	response.json({ restored: true, models: backupModelNames.length, files: restoredFiles });
+	response.json({ restored: true, models: backupModelNames.length, files: restoredFiles, mergeStats });
 });
 
 export const previewDatabaseBackupRestore: RequestHandler = asyncHandler(async (request, response) => {

@@ -1,15 +1,59 @@
-﻿import { prisma } from "../../config/prisma.js";
+import crypto from "node:crypto";
+import fs from "node:fs/promises";
+import path from "node:path";
+import { env } from "../../config/env.js";
+import { prisma } from "../../config/prisma.js";
+
+function decodeImageDataUrl(value: string | null | undefined) {
+	const match = String(value || "").match(/^data:(image\/(?:png|jpeg|jpg|webp));base64,([A-Za-z0-9+/=\s]+)$/);
+	if (!match) return null;
+	const mimeType = match[1] === "image/jpg" ? "image/jpeg" : match[1];
+	const extension = ({ "image/png": ".png", "image/jpeg": ".jpg", "image/webp": ".webp" } as Record<string, string>)[mimeType];
+	if (!extension) return null;
+	return {
+		buffer: Buffer.from(match[2].replace(/\s/g, ""), "base64"),
+		extension
+	};
+}
+
+async function persistImageDataUrl(categoryParts: string[], value: string | null | undefined) {
+	const decoded = decodeImageDataUrl(value);
+	if (!decoded) return value || null;
+	const fileName = `${Date.now()}-${crypto.randomUUID()}${decoded.extension}`;
+	const uploadDir = path.join(env.projectRoot, "uploads", ...categoryParts);
+	const publicPath = `/uploads/${[...categoryParts, fileName].join("/")}`;
+	await fs.mkdir(uploadDir, { recursive: true });
+	await fs.writeFile(path.join(uploadDir, fileName), decoded.buffer);
+	return publicPath;
+}
+
+function persistContributorAvatar(contributorId: string, avatar: string | null | undefined) {
+	return persistImageDataUrl(["contributors", contributorId], avatar);
+}
+
+function persistBannerImage(bannerId: string, image: string | null | undefined) {
+	return persistImageDataUrl(["banners", bannerId], image);
+}
 
 export const contentRepository = {
-	listBanners() {
-		return prisma.banner.findMany({ orderBy: [{ priority: "asc" }, { createdAt: "asc" }] });
+	async listBanners() {
+		const banners = await prisma.banner.findMany({ orderBy: [{ priority: "asc" }, { createdAt: "asc" }] });
+		return Promise.all(banners.map(async (banner) => {
+			const image = await persistBannerImage(banner.id, banner.image);
+			if (image !== banner.image) {
+				return prisma.banner.update({ where: { id: banner.id }, data: { image } });
+			}
+			return banner;
+		}));
 	},
-	saveBanner(item: any) {
+	async saveBanner(item: any) {
+		const id = item.id || crypto.randomUUID();
+		const image = await persistBannerImage(id, item.image);
 		const data = {
 			title: item.title,
 			description: item.description,
 			category: item.category,
-			image: item.image || null,
+			image,
 			buttonText: item.buttonText || null,
 			buttonUrl: item.buttonUrl || null,
 			startDate: item.startDate ? new Date(item.startDate) : null,
@@ -18,8 +62,8 @@ export const contentRepository = {
 			active: item.active !== false
 		};
 		return item.id
-			? prisma.banner.upsert({ where: { id: item.id }, update: data, create: { id: item.id, ...data } })
-			: prisma.banner.create({ data });
+			? prisma.banner.upsert({ where: { id: item.id }, update: data, create: { id, ...data } })
+			: prisma.banner.create({ data: { id, ...data } });
 	},
 	deleteBanner(id: string) {
 		return prisma.banner.delete({ where: { id } });
@@ -51,24 +95,32 @@ export const contentRepository = {
 	deleteLecture(id: string) {
 		return prisma.lecture.delete({ where: { id } });
 	},
-	listContributors() {
-		return prisma.contributor.findMany({ where: { active: true }, orderBy: [{ order: "asc" }, { name: "asc" }] });
+	async listContributors() {
+		const contributors = await prisma.contributor.findMany({ where: { active: true }, orderBy: [{ order: "asc" }, { name: "asc" }] });
+		return Promise.all(contributors.map(async (contributor) => {
+			const avatar = await persistContributorAvatar(contributor.id, contributor.avatar);
+			if (avatar !== contributor.avatar) {
+				return prisma.contributor.update({ where: { id: contributor.id }, data: { avatar } });
+			}
+			return contributor;
+		}));
 	},
-	saveContributor(item: any) {
+	async saveContributor(item: any) {
+		const id = item.id || crypto.randomUUID();
+		const avatar = await persistContributorAvatar(id, item.avatar);
 		const data = {
 			name: item.name,
 			info: item.info,
-			avatar: item.avatar || null,
+			avatar,
 			contributions: item.contributions || [],
 			order: Number(item.order || 0),
 			active: item.active !== false
 		};
 		return item.id
-			? prisma.contributor.upsert({ where: { id: item.id }, update: data, create: { id: item.id, ...data } })
-			: prisma.contributor.create({ data });
+			? prisma.contributor.upsert({ where: { id: item.id }, update: data, create: { id, ...data } })
+			: prisma.contributor.create({ data: { id, ...data } });
 	},
 	deleteContributor(id: string) {
 		return prisma.contributor.delete({ where: { id } });
 	}
 };
-

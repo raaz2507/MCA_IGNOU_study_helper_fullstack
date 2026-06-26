@@ -106,7 +106,7 @@ function readImageDimensions(file) {
 
 async function ensureUploadedImage() {
 	if (!uploadState.file) return uploadState;
-	const uploaded = await uploadSettingQrImage(uploadState.file, "link-preview");
+	const uploaded = await uploadSettingQrImage(uploadState.file, "settings/link-preview");
 	revokeUploadPreview();
 	uploadState = {
 		path: uploaded.path,

@@ -16,6 +16,8 @@ import {
 	getNewUserDefaultStatus,
 	getShareSettings,
 	getSupportSettings,
+	refreshShareQrImage,
+	refreshSupportQrImage,
 	reviewAdminReport,
 	saveAdminAssignment,
 	saveAdminSemester,
@@ -458,7 +460,7 @@ async function handleQrFileChange(prefix, file) {
 async function ensureUploadedQr(prefix) {
 	const state = prefix === "share" ? shareQrUpload : supportQrUpload;
 	if (!state.file) return state;
-	const uploaded = await uploadSettingQrImage(state.file, `${prefix}-qr`);
+	const uploaded = await uploadSettingQrImage(state.file, `settings/${prefix}-qr`);
 	const next = {
 		path: uploaded.path,
 		file: null,
@@ -861,6 +863,19 @@ document.getElementById("resetShareSettings").addEventListener("click", async ()
 		setMessage(shareSettingsMessage, error.message, "error");
 	}
 });
+document.getElementById("refreshShareQrImage")?.addEventListener("click", async () => {
+	const button = document.getElementById("refreshShareQrImage");
+	button.disabled = true;
+	try {
+		const saved = await refreshShareQrImage();
+		fillShareSettings(saved);
+		setMessage(shareSettingsMessage, "Share QR image generated and saved.", "success");
+	} catch (error) {
+		setMessage(shareSettingsMessage, error.message, "error");
+	} finally {
+		button.disabled = false;
+	}
+});
 supportSettingsForm.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	try {
@@ -890,6 +905,19 @@ document.getElementById("resetSupportSettings").addEventListener("click", async 
 		setMessage(supportSettingsMessage, "Support settings reset to default.", "success");
 	} catch (error) {
 		setMessage(supportSettingsMessage, error.message, "error");
+	}
+});
+document.getElementById("refreshSupportQrImage")?.addEventListener("click", async () => {
+	const button = document.getElementById("refreshSupportQrImage");
+	button.disabled = true;
+	try {
+		const saved = await refreshSupportQrImage();
+		fillSupportSettings(saved);
+		setMessage(supportSettingsMessage, "Support QR image generated and saved.", "success");
+	} catch (error) {
+		setMessage(supportSettingsMessage, error.message, "error");
+	} finally {
+		button.disabled = false;
 	}
 });
 initialize();

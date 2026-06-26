@@ -1,10 +1,6 @@
 import { Router } from "express";
-import crypto from "node:crypto";
-import fs from "node:fs";
-import path from "node:path";
 import multer from "multer";
 import { UserRole } from "@prisma/client";
-import { env } from "../../config/env.js";
 import { requireRoles } from "../auth/auth.middleware.js";
 import {
 	getAnalyticsRetention,
@@ -36,6 +32,7 @@ import {
 	cleanPaperPreviewCache,
 	generatePaperPreviewCache,
 	getPaperPreviewCache,
+	moveOldUploadImages,
 	previewDatabaseBackupRestore,
 	reviewReport,
 	restoreDatabaseBackup,
@@ -52,21 +49,15 @@ import {
 	updateUserRole,
 	updateUserStatus,
 	resetUserPassword,
+	refreshShareQrImage,
+	refreshSupportQrImage,
 	uploadSettingQrImage
 } from "./admin.controller.js";
 
 export const adminRouter = Router();
-const settingUploadDir = path.join(env.projectRoot, "uploads", "settings");
-fs.mkdirSync(settingUploadDir, { recursive: true });
 const settingImageUpload = multer({
-	storage: multer.diskStorage({
-		destination: (_request, _file, callback) => callback(null, settingUploadDir),
-		filename: (_request, file, callback) => {
-			const extension = path.extname(file.originalname).toLowerCase() || ".png";
-			callback(null, `${Date.now()}-${crypto.randomUUID()}${extension}`);
-		}
-	}),
-	limits: { fileSize: 2 * 1024 * 1024 },
+	storage: multer.memoryStorage(),
+	limits: { fileSize: 4 * 1024 * 1024 },
 	fileFilter: (_request, file, callback) => {
 		const allowed = new Set(["image/png", "image/jpeg", "image/webp"]);
 		callback(null, allowed.has(file.mimetype));
@@ -142,14 +133,17 @@ adminRouter.get("/settings/analytics-retention", getAnalyticsRetention);
 adminRouter.put("/settings/analytics-retention", saveAnalyticsRetention);
 adminRouter.get("/settings/share", getShareSettings);
 adminRouter.put("/settings/share", saveShareSettings);
+adminRouter.post("/settings/share/qr-refresh", refreshShareQrImage);
 adminRouter.delete("/settings/share", deleteShareSettings);
 adminRouter.get("/settings/support", getSupportSettings);
 adminRouter.put("/settings/support", saveSupportSettings);
+adminRouter.post("/settings/support/qr-refresh", refreshSupportQrImage);
 adminRouter.delete("/settings/support", deleteSupportSettings);
 adminRouter.get("/settings/link-preview", getLinkPreviewSettings);
 adminRouter.put("/settings/link-preview", saveLinkPreviewSettings);
 adminRouter.delete("/settings/link-preview", deleteLinkPreviewSettings);
 adminRouter.post("/settings/qr-image", settingImageUpload.single("image"), uploadSettingQrImage);
+adminRouter.post("/uploads/move-old-images", moveOldUploadImages);
 adminRouter.get("/database/backup", exportDatabaseBackup);
 adminRouter.post("/database/restore/preview", databaseRestoreUpload.single("backup"), previewDatabaseBackupRestore);
 adminRouter.post("/database/restore", databaseRestoreUpload.single("backup"), restoreDatabaseBackup);

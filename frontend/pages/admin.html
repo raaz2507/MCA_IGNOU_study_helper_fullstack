@@ -23,7 +23,7 @@
 				<a href="#adminContent">📚 Content Control</a>
 				<a href="#adminShare">Share &amp; QR</a>
 				<a href="#adminSupport">Support</a>
-				<a href="/admin/database">Database Backup</a>
+				<a href="#adminDatabase">Database Backup</a>
 				<a href="#adminPrivacy">🛡 Privacy &amp; Retention</a>
 				<a href="#adminSystem">⚙ System Status</a>
 			</nav>
@@ -122,6 +122,7 @@
 					</div>
 					<div class="admin-form-actions">
 						<button class="logout-button" type="submit">Save Share Settings</button>
+						<button id="refreshShareQrImage" class="secondary-button" type="button">Refresh QR Image</button>
 						<button id="resetShareSettings" class="secondary-button" type="button">Reset</button>
 					</div>
 					<p id="shareSettingsMessage" class="admin-message" aria-live="polite"></p>
@@ -194,10 +195,22 @@
 					<label><span>Button URL</span><input id="supportButtonUrl" type="url" /></label>
 					<div class="admin-form-actions">
 						<button class="logout-button" type="submit">Save Support Settings</button>
+						<button id="refreshSupportQrImage" class="secondary-button" type="button">Refresh QR Image</button>
 						<button id="resetSupportSettings" class="secondary-button" type="button">Reset</button>
 					</div>
 					<p id="supportSettingsMessage" class="admin-message" aria-live="polite"></p>
 				</form>
+			</section>
+
+			<section id="adminDatabase" class="dashboard-panel">
+				<div class="section-heading">
+					<p class="dashboard-label">Admin only</p>
+					<h2>Database Backup and Restore</h2>
+					<p>Open the dedicated backup page to export ZIP backups, analyze restore files and restore uploaded images.</p>
+				</div>
+				<div class="admin-quick-links">
+					<a href="/admin/database">Open Database Backup</a>
+				</div>
 			</section>
 
 			<section id="adminSystem" class="dashboard-panel">

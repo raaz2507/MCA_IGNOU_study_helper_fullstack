@@ -8,6 +8,7 @@ import {
 } from "../utils/banner-store.js";
 
 import { showToast } from "../utils/toast.js";
+import { uploadSettingQrImage } from "../api/admin.api.js";
 
 const form = document.getElementById("bannerForm");
 const list = document.getElementById("bannerAdminList");
@@ -19,6 +20,8 @@ const imageDataInput = document.getElementById("bannerImageData");
 const session = await new AuthService().getSession();
 const canDelete = session?.role === "admin";
 let banners = await getBanners();
+let pendingBannerFile = null;
+let pendingBannerPreviewUrl = "";
 
 function field(id) {
 	return document.getElementById(id);
@@ -66,6 +69,9 @@ function resetForm() {
 	form.reset();
 	field("bannerId").value = "";
 	imageDataInput.value = "";
+	if (pendingBannerPreviewUrl) URL.revokeObjectURL(pendingBannerPreviewUrl);
+	pendingBannerPreviewUrl = "";
+	pendingBannerFile = null;
 	field("bannerPriority").value = String(banners.length + 1);
 	field("bannerActive").checked = true;
 	cancelButton.hidden = true;
@@ -79,6 +85,9 @@ function editBanner(banner) {
 	field("bannerDescription").value = banner.description;
 	field("bannerCategory").value = banner.category;
 	imageDataInput.value = banner.image;
+	if (pendingBannerPreviewUrl) URL.revokeObjectURL(pendingBannerPreviewUrl);
+	pendingBannerPreviewUrl = "";
+	pendingBannerFile = null;
 	field("bannerButtonText").value = banner.buttonText;
 	field("bannerButtonUrl").value = banner.buttonUrl;
 	field("bannerStartDate").value = banner.startDate;
@@ -151,30 +160,6 @@ function renderList() {
 		});
 }
 
-function resizeBanner(file) {
-	return new Promise((resolve, reject) => {
-		const reader = new FileReader();
-		reader.onerror = () => reject(new Error("Image could not be read."));
-		reader.onload = () => {
-			const image = new Image();
-			image.onerror = () => reject(new Error("Please choose a valid image."));
-			image.onload = () => {
-				const canvas = document.createElement("canvas");
-				canvas.width = 1200;
-				canvas.height = 500;
-				const context = canvas.getContext("2d");
-				const scale = Math.max(canvas.width / image.width, canvas.height / image.height);
-				const width = image.width * scale;
-				const height = image.height * scale;
-				context.drawImage(image, (canvas.width - width) / 2, (canvas.height - height) / 2, width, height);
-				resolve(canvas.toDataURL("image/jpeg", 0.84));
-			};
-			image.src = reader.result;
-		};
-		reader.readAsDataURL(file);
-	});
-}
-
 imageInput.addEventListener("change", async () => {
 	const file = imageInput.files[0];
 	if (!file) return;
@@ -184,9 +169,12 @@ imageInput.addEventListener("change", async () => {
 		return;
 	}
 	try {
-		imageDataInput.value = await resizeBanner(file);
+		if (pendingBannerPreviewUrl) URL.revokeObjectURL(pendingBannerPreviewUrl);
+		pendingBannerFile = file;
+		pendingBannerPreviewUrl = URL.createObjectURL(file);
+		imageDataInput.value = pendingBannerPreviewUrl;
 		renderPreview();
-		showMessage("Image is ready.", "success");
+		showMessage("Image ready for upload.", "success");
 	} catch (error) {
 		showMessage(error.message, "error");
 	}
@@ -198,6 +186,10 @@ form.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	try {
 		const banner = readForm();
+		if (pendingBannerFile) {
+			const uploaded = await uploadSettingQrImage(pendingBannerFile, `banners/${banner.id}`);
+			banner.image = uploaded.path;
+		}
 		const saved = await saveBanner(banner);
 		const existingIndex = banners.findIndex((item) => item.id === saved.id);
 		if (existingIndex >= 0) banners[existingIndex] = saved;

@@ -25,6 +25,8 @@ export const saveShareSettings = (setting) =>
 		method: "PUT",
 		body: JSON.stringify(setting)
 	});
+export const refreshShareQrImage = () =>
+	apiRequest("/admin/settings/share/qr-refresh", { method: "POST" });
 export const uploadSettingQrImage = (file, category) => {
 	const body = new FormData();
 	body.append("image", file);
@@ -43,6 +45,8 @@ export const saveSupportSettings = (setting) =>
 		method: "PUT",
 		body: JSON.stringify(setting)
 	});
+export const refreshSupportQrImage = () =>
+	apiRequest("/admin/settings/support/qr-refresh", { method: "POST" });
 export const deleteSupportSettings = () =>
 	apiRequest("/admin/settings/support", { method: "DELETE" });
 export const getLinkPreviewSettings = () =>
@@ -121,6 +125,8 @@ export const getAdminReports = () => apiRequest("/admin/reports");
 export const reviewAdminReport = (id, review) =>
 	apiRequest(`/admin/reports/${encodeURIComponent(id)}`, { method: "PATCH", body: JSON.stringify(review) });
 export const getAdminAuditLogs = () => apiRequest("/admin/audit-logs");
+export const moveOldUploadImages = () =>
+	apiRequest("/admin/uploads/move-old-images", { method: "POST" });
 export const previewDatabaseRestore = (backup) => {
 	const body = new FormData();
 	body.append("backup", backup);
@@ -129,10 +135,11 @@ export const previewDatabaseRestore = (backup) => {
 		body
 	});
 };
-export const restoreDatabaseBackup = (backup) => {
+export const restoreDatabaseBackup = (backup, resolution = null) => {
 	if (backup instanceof File) {
 		const body = new FormData();
 		body.append("backup", backup);
+		if (resolution) body.append("resolution", JSON.stringify(resolution));
 		return apiRequest("/admin/database/restore", {
 			method: "POST",
 			body

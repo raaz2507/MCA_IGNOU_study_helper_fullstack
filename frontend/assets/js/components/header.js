@@ -87,7 +87,6 @@ export function renderHeader(container, options = {}) {
 
 	container.innerHTML = `
 		<header class="site-header${variant ? ` ${variant}-header` : ""}">
-			${variant === "dashboard" ? "" : `<nav class="top-navigation" aria-label="Main navigation">${navigation(activePage)}</nav>`}
 			<div class="header-content">
 				<div class="header-title">
 					${label ? `<p class="dashboard-label">${label}</p>` : ""}
@@ -96,5 +95,6 @@ export function renderHeader(container, options = {}) {
 				</div>
 				${actionMarkup(action, variant)}
 			</div>
+			${variant === "dashboard" ? "" : `<nav class="top-navigation" aria-label="Main navigation">${navigation(activePage)}</nav>`}
 		</header>`;
 }
