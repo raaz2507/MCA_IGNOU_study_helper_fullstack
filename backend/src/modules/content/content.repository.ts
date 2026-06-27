@@ -3,6 +3,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import { env } from "../../config/env.js";
 import { prisma } from "../../config/prisma.js";
+import { cleanupReplacedUpload, deleteUnreferencedUpload } from "../../shared/upload-cleanup.js";
 
 function decodeImageDataUrl(value: string | null | undefined) {
 	const match = String(value || "").match(/^data:(image\/(?:png|jpeg|jpg|webp));base64,([A-Za-z0-9+/=\s]+)$/);
@@ -48,6 +49,9 @@ export const contentRepository = {
 	},
 	async saveBanner(item: any) {
 		const id = item.id || crypto.randomUUID();
+		const previous = item.id
+			? await prisma.banner.findUnique({ where: { id }, select: { image: true } })
+			: null;
 		const image = await persistBannerImage(id, item.image);
 		const data = {
 			title: item.title,
@@ -61,12 +65,17 @@ export const contentRepository = {
 			priority: Number(item.priority || 0),
 			active: item.active !== false
 		};
-		return item.id
+		const saved = item.id
 			? prisma.banner.upsert({ where: { id: item.id }, update: data, create: { id, ...data } })
 			: prisma.banner.create({ data: { id, ...data } });
+		const result = await saved;
+		await cleanupReplacedUpload(previous?.image, result.image);
+		return result;
 	},
-	deleteBanner(id: string) {
-		return prisma.banner.delete({ where: { id } });
+	async deleteBanner(id: string) {
+		const deleted = await prisma.banner.delete({ where: { id } });
+		await deleteUnreferencedUpload(deleted.image);
+		return deleted;
 	},
 	listLectures() {
 		return prisma.lecture.findMany({
@@ -107,6 +116,9 @@ export const contentRepository = {
 	},
 	async saveContributor(item: any) {
 		const id = item.id || crypto.randomUUID();
+		const previous = item.id
+			? await prisma.contributor.findUnique({ where: { id }, select: { avatar: true } })
+			: null;
 		const avatar = await persistContributorAvatar(id, item.avatar);
 		const data = {
 			name: item.name,
@@ -116,11 +128,16 @@ export const contentRepository = {
 			order: Number(item.order || 0),
 			active: item.active !== false
 		};
-		return item.id
+		const saved = item.id
 			? prisma.contributor.upsert({ where: { id: item.id }, update: data, create: { id, ...data } })
 			: prisma.contributor.create({ data: { id, ...data } });
+		const result = await saved;
+		await cleanupReplacedUpload(previous?.avatar, result.avatar);
+		return result;
 	},
-	deleteContributor(id: string) {
-		return prisma.contributor.delete({ where: { id } });
+	async deleteContributor(id: string) {
+		const deleted = await prisma.contributor.delete({ where: { id } });
+		await deleteUnreferencedUpload(deleted.avatar);
+		return deleted;
 	}
 };

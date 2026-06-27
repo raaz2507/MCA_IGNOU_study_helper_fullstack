@@ -11,6 +11,7 @@ import { AppError } from "../../shared/errors/app-error.js";
 import { env } from "../../config/env.js";
 import { adminService } from "./admin.service.js";
 import { prisma } from "../../config/prisma.js";
+import { cleanupReplacedUpload, deleteUnreferencedUpload } from "../../shared/upload-cleanup.js";
 import {
 	analyticsRetentionSchema,
 	emailVerificationSettingsSchema,
@@ -1057,6 +1058,7 @@ export const getShareSettings: RequestHandler = asyncHandler(async (_request, re
 });
 
 export const saveShareSettings: RequestHandler = asyncHandler(async (request, response) => {
+	const previous = await readShareSettings();
 	const input = shareSettingsSchema.parse(request.body);
 	const setting = await ensureGeneratedShareQr({ ...defaultShareSettings, ...input });
 	await prisma.appSetting.upsert({
@@ -1065,6 +1067,7 @@ export const saveShareSettings: RequestHandler = asyncHandler(async (request, re
 		create: { key: shareSettingsKey, value: setting }
 	});
 	cacheSetting(shareSettingsKey, setting);
+	await cleanupReplacedUpload(previous.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SHARE_SETTINGS_UPDATED", "AppSetting", shareSettingsKey, setting);
 	response.json(setting);
 });
@@ -1078,6 +1081,7 @@ export const refreshShareQrImage: RequestHandler = asyncHandler(async (request, 
 		create: { key: shareSettingsKey, value: setting }
 	});
 	cacheSetting(shareSettingsKey, setting);
+	await cleanupReplacedUpload(current.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SHARE_QR_IMAGE_REFRESHED", "AppSetting", shareSettingsKey, {
 		path: setting.qrImagePath
 	});
@@ -1085,8 +1089,10 @@ export const refreshShareQrImage: RequestHandler = asyncHandler(async (request, 
 });
 
 export const deleteShareSettings: RequestHandler = asyncHandler(async (request, response) => {
+	const current = await readShareSettings();
 	await prisma.appSetting.deleteMany({ where: { key: shareSettingsKey } });
 	clearSettingCache(shareSettingsKey);
+	await deleteUnreferencedUpload(current.qrImagePath);
 	await audit(String(request.user?.id), "SHARE_SETTINGS_RESET", "AppSetting", shareSettingsKey);
 	response.status(204).end();
 });
@@ -1113,6 +1119,7 @@ export const getSupportSettings: RequestHandler = asyncHandler(async (_request, 
 });
 
 export const saveSupportSettings: RequestHandler = asyncHandler(async (request, response) => {
+	const previous = await readSupportSettings();
 	const input = supportSettingsSchema.parse(request.body);
 	const setting = await ensureGeneratedSupportQr({ ...defaultSupportSettings, ...input });
 	await prisma.appSetting.upsert({
@@ -1121,6 +1128,7 @@ export const saveSupportSettings: RequestHandler = asyncHandler(async (request, 
 		create: { key: supportSettingsKey, value: setting }
 	});
 	cacheSetting(supportSettingsKey, setting);
+	await cleanupReplacedUpload(previous.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SUPPORT_SETTINGS_UPDATED", "AppSetting", supportSettingsKey, setting);
 	response.json(setting);
 });
@@ -1134,6 +1142,7 @@ export const refreshSupportQrImage: RequestHandler = asyncHandler(async (request
 		create: { key: supportSettingsKey, value: setting }
 	});
 	cacheSetting(supportSettingsKey, setting);
+	await cleanupReplacedUpload(current.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SUPPORT_QR_IMAGE_REFRESHED", "AppSetting", supportSettingsKey, {
 		path: setting.qrImagePath
 	});
@@ -1141,8 +1150,10 @@ export const refreshSupportQrImage: RequestHandler = asyncHandler(async (request
 });
 
 export const deleteSupportSettings: RequestHandler = asyncHandler(async (request, response) => {
+	const current = await readSupportSettings();
 	await prisma.appSetting.deleteMany({ where: { key: supportSettingsKey } });
 	clearSettingCache(supportSettingsKey);
+	await deleteUnreferencedUpload(current.qrImagePath);
 	await audit(String(request.user?.id), "SUPPORT_SETTINGS_RESET", "AppSetting", supportSettingsKey);
 	response.status(204).end();
 });
@@ -1160,6 +1171,7 @@ export const getLinkPreviewSettings: RequestHandler = asyncHandler(async (_reque
 });
 
 export const saveLinkPreviewSettings: RequestHandler = asyncHandler(async (request, response) => {
+	const previous = await readLinkPreviewSettings();
 	const input = linkPreviewSettingsSchema.parse(request.body);
 	const setting = { ...defaultLinkPreviewSettings, ...input };
 	await prisma.appSetting.upsert({
@@ -1168,13 +1180,16 @@ export const saveLinkPreviewSettings: RequestHandler = asyncHandler(async (reque
 		create: { key: linkPreviewSettingsKey, value: setting }
 	});
 	cacheSetting(linkPreviewSettingsKey, setting);
+	await cleanupReplacedUpload(previous.imagePath, setting.imagePath);
 	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_UPDATED", "AppSetting", linkPreviewSettingsKey, setting);
 	response.json(setting);
 });
 
 export const deleteLinkPreviewSettings: RequestHandler = asyncHandler(async (request, response) => {
+	const current = await readLinkPreviewSettings();
 	await prisma.appSetting.deleteMany({ where: { key: linkPreviewSettingsKey } });
 	clearSettingCache(linkPreviewSettingsKey);
+	await deleteUnreferencedUpload(current.imagePath);
 	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_RESET", "AppSetting", linkPreviewSettingsKey);
 	response.status(204).end();
 });
