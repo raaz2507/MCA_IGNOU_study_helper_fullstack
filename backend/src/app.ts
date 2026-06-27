@@ -66,6 +66,13 @@ export function createApp() {
 		"login", "paper-gallery", "pdf-viewer", "profile", "question-bank",
 		"resources", "user-guide", "video-lectures"
 	];
+	const assetCache = {
+		maxAge: "30d",
+		immutable: true
+	};
+	const userContentCache = {
+		maxAge: "1h"
+	};
 
 	app.disable("x-powered-by");
 	app.use(pinoHttp({}, prettyLoggerStream));
@@ -132,10 +139,10 @@ export function createApp() {
 	app.use("/api/analytics", analyticsRouter);
 	app.use("/api/admin", adminRouter);
 
-	app.use("/assets", express.static(path.join(env.frontendRoot, "assets")));
-	app.use("/uploads", express.static(path.join(env.projectRoot, "uploads")));
-	app.use("/local-resources", express.static(env.localResourcesRoot));
-	app.use("/frontend", express.static(env.frontendRoot));
+	app.use("/assets", express.static(path.join(env.frontendRoot, "assets"), assetCache));
+	app.use("/uploads", express.static(path.join(env.projectRoot, "uploads"), userContentCache));
+	app.use("/local-resources", express.static(env.localResourcesRoot, userContentCache));
+	app.use("/frontend", express.static(env.frontendRoot, assetCache));
 	app.get("/robots.txt", (_request, response) => {
 		response.type("text/plain").send([
 			"User-agent: *",

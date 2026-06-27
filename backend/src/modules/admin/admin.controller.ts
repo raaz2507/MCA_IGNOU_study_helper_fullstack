@@ -69,6 +69,8 @@ const defaultLinkPreviewSettings = {
 	imagePath: null,
 	imageMeta: null
 };
+const settingsCacheTtlMs = 60_000;
+const settingsCache = new Map<string, { expiresAt: number; value: unknown }>();
 const backupVersion = 1;
 const backupModelNames = [
 	"users",
@@ -214,6 +216,22 @@ type SupportSettings = {
 const emptyBackupModels = () => Object.fromEntries(
 	backupModelNames.map((name) => [name, []])
 ) as unknown as Record<BackupModelName, unknown[]>;
+
+async function readCachedSetting<T>(key: string, loader: () => Promise<T>) {
+	const cached = settingsCache.get(key);
+	if (cached && cached.expiresAt > Date.now()) return cached.value as T;
+	const value = await loader();
+	settingsCache.set(key, { value, expiresAt: Date.now() + settingsCacheTtlMs });
+	return value;
+}
+
+function cacheSetting(key: string, value: unknown) {
+	settingsCache.set(key, { value, expiresAt: Date.now() + settingsCacheTtlMs });
+}
+
+function clearSettingCache(key: string) {
+	settingsCache.delete(key);
+}
 
 function pythonCandidates() {
 	const candidates = [
@@ -1016,18 +1034,20 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 }
 
 export async function readShareSettings() {
-	const setting = await prisma.appSetting.findUnique({ where: { key: shareSettingsKey } });
-	const parsed = shareSettingsSchema.safeParse(setting?.value);
-	const current = parsed.success ? { ...defaultShareSettings, ...parsed.data } : defaultShareSettings;
-	const next = await ensureGeneratedShareQr(current as ShareSettings);
-	if (next !== current) {
-		await prisma.appSetting.upsert({
-			where: { key: shareSettingsKey },
-			update: { value: next },
-			create: { key: shareSettingsKey, value: next }
-		});
-	}
-	return next;
+	return readCachedSetting(shareSettingsKey, async () => {
+		const setting = await prisma.appSetting.findUnique({ where: { key: shareSettingsKey } });
+		const parsed = shareSettingsSchema.safeParse(setting?.value);
+		const current = parsed.success ? { ...defaultShareSettings, ...parsed.data } : defaultShareSettings;
+		const next = await ensureGeneratedShareQr(current as ShareSettings);
+		if (next !== current) {
+			await prisma.appSetting.upsert({
+				where: { key: shareSettingsKey },
+				update: { value: next },
+				create: { key: shareSettingsKey, value: next }
+			});
+		}
+		return next;
+	});
 }
 
 export const getShareSettings: RequestHandler = asyncHandler(async (_request, response) => {
@@ -1042,6 +1062,7 @@ export const saveShareSettings: RequestHandler = asyncHandler(async (request, re
 		update: { value: setting },
 		create: { key: shareSettingsKey, value: setting }
 	});
+	cacheSetting(shareSettingsKey, setting);
 	await audit(String(request.user?.id), "SHARE_SETTINGS_UPDATED", "AppSetting", shareSettingsKey, setting);
 	response.json(setting);
 });
@@ -1054,6 +1075,7 @@ export const refreshShareQrImage: RequestHandler = asyncHandler(async (request, 
 		update: { value: setting },
 		create: { key: shareSettingsKey, value: setting }
 	});
+	cacheSetting(shareSettingsKey, setting);
 	await audit(String(request.user?.id), "SHARE_QR_IMAGE_REFRESHED", "AppSetting", shareSettingsKey, {
 		path: setting.qrImagePath
 	});
@@ -1062,23 +1084,26 @@ export const refreshShareQrImage: RequestHandler = asyncHandler(async (request, 
 
 export const deleteShareSettings: RequestHandler = asyncHandler(async (request, response) => {
 	await prisma.appSetting.deleteMany({ where: { key: shareSettingsKey } });
+	clearSettingCache(shareSettingsKey);
 	await audit(String(request.user?.id), "SHARE_SETTINGS_RESET", "AppSetting", shareSettingsKey);
 	response.status(204).end();
 });
 
 export async function readSupportSettings() {
-	const setting = await prisma.appSetting.findUnique({ where: { key: supportSettingsKey } });
-	const parsed = supportSettingsSchema.safeParse(setting?.value);
-	const current = parsed.success ? { ...defaultSupportSettings, ...parsed.data } : defaultSupportSettings;
-	const next = await ensureGeneratedSupportQr(current as SupportSettings);
-	if (next !== current) {
-		await prisma.appSetting.upsert({
-			where: { key: supportSettingsKey },
-			update: { value: next },
-			create: { key: supportSettingsKey, value: next }
-		});
-	}
-	return next;
+	return readCachedSetting(supportSettingsKey, async () => {
+		const setting = await prisma.appSetting.findUnique({ where: { key: supportSettingsKey } });
+		const parsed = supportSettingsSchema.safeParse(setting?.value);
+		const current = parsed.success ? { ...defaultSupportSettings, ...parsed.data } : defaultSupportSettings;
+		const next = await ensureGeneratedSupportQr(current as SupportSettings);
+		if (next !== current) {
+			await prisma.appSetting.upsert({
+				where: { key: supportSettingsKey },
+				update: { value: next },
+				create: { key: supportSettingsKey, value: next }
+			});
+		}
+		return next;
+	});
 }
 
 export const getSupportSettings: RequestHandler = asyncHandler(async (_request, response) => {
@@ -1093,6 +1118,7 @@ export const saveSupportSettings: RequestHandler = asyncHandler(async (request, 
 		update: { value: setting },
 		create: { key: supportSettingsKey, value: setting }
 	});
+	cacheSetting(supportSettingsKey, setting);
 	await audit(String(request.user?.id), "SUPPORT_SETTINGS_UPDATED", "AppSetting", supportSettingsKey, setting);
 	response.json(setting);
 });
@@ -1105,6 +1131,7 @@ export const refreshSupportQrImage: RequestHandler = asyncHandler(async (request
 		update: { value: setting },
 		create: { key: supportSettingsKey, value: setting }
 	});
+	cacheSetting(supportSettingsKey, setting);
 	await audit(String(request.user?.id), "SUPPORT_QR_IMAGE_REFRESHED", "AppSetting", supportSettingsKey, {
 		path: setting.qrImagePath
 	});
@@ -1113,14 +1140,17 @@ export const refreshSupportQrImage: RequestHandler = asyncHandler(async (request
 
 export const deleteSupportSettings: RequestHandler = asyncHandler(async (request, response) => {
 	await prisma.appSetting.deleteMany({ where: { key: supportSettingsKey } });
+	clearSettingCache(supportSettingsKey);
 	await audit(String(request.user?.id), "SUPPORT_SETTINGS_RESET", "AppSetting", supportSettingsKey);
 	response.status(204).end();
 });
 
 export async function readLinkPreviewSettings() {
-	const setting = await prisma.appSetting.findUnique({ where: { key: linkPreviewSettingsKey } });
-	const parsed = linkPreviewSettingsSchema.safeParse(setting?.value);
-	return parsed.success ? { ...defaultLinkPreviewSettings, ...parsed.data } : defaultLinkPreviewSettings;
+	return readCachedSetting(linkPreviewSettingsKey, async () => {
+		const setting = await prisma.appSetting.findUnique({ where: { key: linkPreviewSettingsKey } });
+		const parsed = linkPreviewSettingsSchema.safeParse(setting?.value);
+		return parsed.success ? { ...defaultLinkPreviewSettings, ...parsed.data } : defaultLinkPreviewSettings;
+	});
 }
 
 export const getLinkPreviewSettings: RequestHandler = asyncHandler(async (_request, response) => {
@@ -1135,12 +1165,14 @@ export const saveLinkPreviewSettings: RequestHandler = asyncHandler(async (reque
 		update: { value: setting },
 		create: { key: linkPreviewSettingsKey, value: setting }
 	});
+	cacheSetting(linkPreviewSettingsKey, setting);
 	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_UPDATED", "AppSetting", linkPreviewSettingsKey, setting);
 	response.json(setting);
 });
 
 export const deleteLinkPreviewSettings: RequestHandler = asyncHandler(async (request, response) => {
 	await prisma.appSetting.deleteMany({ where: { key: linkPreviewSettingsKey } });
+	clearSettingCache(linkPreviewSettingsKey);
 	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_RESET", "AppSetting", linkPreviewSettingsKey);
 	response.status(204).end();
 });

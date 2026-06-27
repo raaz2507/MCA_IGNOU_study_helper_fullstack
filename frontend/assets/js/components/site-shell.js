@@ -51,12 +51,12 @@ if (siteHeader) {
 
 const authService = new AuthService();
 const accessController = new AccessController(authService);
-const session = await authService.getSession();
 
-if (session) {
+authService.getSession().then((session) => {
+	if (!session) return;
 	document.querySelectorAll("[data-account-guest]").forEach((element) => { element.hidden = true; });
 	document.querySelectorAll("[data-account-user]").forEach((element) => { element.hidden = false; });
 	accessController.renderSession(session);
 	accessController.applyRoleVisibility(session.role);
 	accessController.bindLogout("/");
-}
+});
