@@ -1,0 +1,10 @@
+<% const params = new URLSearchParams({ en: it.file.path, title: it.file.title });
+const meta = [it.file.group, it.file.updated, it.formatBytes(it.file.size)].filter(Boolean).join(' | '); %>
+<article class="card tilt-card" data-ssr-resource>
+	<h3><%= it.file.title %></h3>
+	<p><%= meta %></p>
+	<div class="cardButtons">
+		<a class="btn" href="/pdf-viewer?<%= params.toString() %>" target="_blank" rel="noopener">Open PDF</a>
+		<a class="btn" href="<%= it.file.path %>" target="_blank" rel="noopener">Download</a>
+	</div>
+</article>

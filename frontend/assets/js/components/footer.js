@@ -80,7 +80,8 @@ function updateSupportSection(container, settings) {
 export function renderFooter(container) {
 	if (!container) return;
 
-	container.innerHTML = `
+	const hasServerMarkup = Boolean(container.querySelector(".site-footer"));
+	if (!hasServerMarkup) container.innerHTML = `
 		<footer class="site-footer">
 			<div>
 				<strong>GyanPath</strong>
@@ -117,8 +118,10 @@ export function renderFooter(container) {
 			</nav>
 			<div class="footer-credit-strip">Developed by <strong>Rajaanha</strong>.</div>
 		</footer>`;
-	updateShareLinks(container, defaultShareSettings);
-	updateSupportSection(container, defaultSupportSettings);
+	if (!hasServerMarkup) {
+		updateShareLinks(container, defaultShareSettings);
+		updateSupportSection(container, defaultSupportSettings);
+	}
 	fetch("/api/share-settings")
 		.then((response) => response.ok ? response.json() : null)
 		.then((settings) => {

@@ -1,0 +1,12 @@
+<% const navItems = [
+	{ id: 'home', label: 'Home', href: '/' },
+	{ id: 'resources', label: 'Resources', href: '/resources' },
+	{ id: 'discussion', label: 'Discussion', href: '/discussion' },
+	{ id: 'about', label: 'About', href: '/about' },
+	{ id: 'guide', label: 'User Guide', href: '/user-guide' }
+]; %>
+<nav class="top-navigation" aria-label="Main navigation">
+<% for (const item of navItems) { const active = item.id === it.shell.activePage; %>
+	<a href="<%= item.href %>"<% if (active) { %> class="active" aria-current="page"<% } %>><%= item.label %></a>
+<% } %>
+</nav>

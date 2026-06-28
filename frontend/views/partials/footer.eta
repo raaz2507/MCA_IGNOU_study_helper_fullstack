@@ -1,0 +1,37 @@
+<% const share = it.footer.share;
+const support = it.footer.support;
+const shareQr = share.qrImagePath || (share.qrImageSource === 'url' ? share.qrImageUrl : '');
+const supportQr = support.qrImagePath || (support.qrImageSource === 'url' ? support.qrImageUrl : '');
+const shareMessage = `${share.shareText}: ${share.url}`; %>
+<footer class="site-footer">
+	<div>
+		<strong>GyanPath</strong>
+		<p>Question papers, practicals and study material in one place.</p>
+		<p class="footer-disclaimer">This is an independent study helper, not an official IGNOU application.</p>
+	</div>
+	<section class="share-gyanpath" aria-labelledby="shareGyanPathTitle">
+		<img data-share-qr<% if (!shareQr) { %> hidden<% } %> src="<%= shareQr %>" alt="QR code to open GyanPath" width="112" height="112" />
+		<div>
+			<strong id="shareGyanPathTitle"><%= share.title %></strong>
+			<p data-share-description><%= share.description %></p>
+			<div class="share-links">
+				<a data-share-whatsapp href="https://wa.me/?text=<%= encodeURIComponent(shareMessage) %>" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+				<a data-share-telegram href="https://t.me/share/url?url=<%= encodeURIComponent(share.url) %>&amp;text=<%= encodeURIComponent(share.shareText) %>" target="_blank" rel="noopener noreferrer">Telegram</a>
+			</div>
+		</div>
+	</section>
+	<section class="donation-section" aria-labelledby="donationTitle" data-support-section<% if (!support.enabled) { %> hidden<% } %>>
+		<div class="donation-icon" aria-hidden="true">Rs</div>
+		<img data-support-qr<% if (!supportQr) { %> hidden<% } %> src="<%= supportQr %>" alt="QR code to support GyanPath" width="112" height="112" />
+		<div>
+			<strong id="donationTitle"><%= support.title %></strong>
+			<p data-support-description><%= support.description %></p>
+			<a data-support-action<% if (support.buttonUrl) { %> href="<%= support.buttonUrl %>" class="donation-button"<% } else { %> class="donation-button donation-button-disabled" aria-disabled="true"<% } %> target="_blank" rel="noopener noreferrer"><%= support.buttonText %></a>
+		</div>
+	</section>
+	<nav class="footer-navigation" aria-label="Footer navigation">
+		<a href="/">Home</a><a href="/resources">Resources</a><a href="/discussion">Discussion</a>
+		<a href="/about">About</a><a href="/user-guide">User Guide</a><a href="/dashboard">Dashboard</a>
+	</nav>
+	<div class="footer-credit-strip">Developed by <strong>Rajaanha</strong>.</div>
+</footer>

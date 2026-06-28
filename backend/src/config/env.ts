@@ -37,6 +37,7 @@ export const env = Object.freeze({
 	backendRoot,
 	localResourcesRoot: path.join(projectRoot, "local-resources"),
 	frontendRoot: path.join(projectRoot, "frontend"),
+	viewsRoot: path.join(projectRoot, "frontend", "views"),
 	pagesRoot: path.join(projectRoot, "frontend", "pages")
 });
 

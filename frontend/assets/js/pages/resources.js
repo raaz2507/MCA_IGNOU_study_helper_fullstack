@@ -78,6 +78,14 @@ function renderCollection(section, files, emptyText) {
 }
 
 (async () => {
+	const hasServerMarkup = collections.every((collection) =>
+		document.getElementById(collection.sectionId)?.querySelector("[data-ssr-resources]")
+	);
+	if (hasServerMarkup) {
+		document.body.dataset.resourceCollectionsReady = "true";
+		document.dispatchEvent(new CustomEvent("study-helper:resource-collections-rendered"));
+		return;
+	}
 	const data = await getResourceCollections();
 	collections.forEach((collection) => {
 		const section = document.getElementById(collection.sectionId);

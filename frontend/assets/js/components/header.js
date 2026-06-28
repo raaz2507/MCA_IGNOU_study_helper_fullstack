@@ -73,6 +73,7 @@ function titleMarkup(title, subtitle) {
 
 export function renderHeader(container, options = {}) {
 	if (!container) return;
+	if (container.querySelector(".site-header")) return;
 
 	const {
 		activePage = "",

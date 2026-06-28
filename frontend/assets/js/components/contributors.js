@@ -58,9 +58,11 @@ function contributorCard(contributor) {
 	return card;
 }
 
-const contributors = await getContributors();
-if (grid) {
-	contributors.forEach((contributor) => grid.append(contributorCard(contributor)));
+if (!grid?.hasAttribute("data-ssr-contributors")) {
+	const contributors = await getContributors();
+	if (grid) {
+		contributors.forEach((contributor) => grid.append(contributorCard(contributor)));
+	}
+	if (emptyState) emptyState.hidden = contributors.length !== 0;
 }
-if (emptyState) emptyState.hidden = contributors.length !== 0;
 

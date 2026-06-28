@@ -1,0 +1,36 @@
+<article class="card tilt-card" data-ssr-subject>
+	<h3><%= it.subject.code %></h3>
+	<p><%= it.subject.name %></p>
+	<% if (it.subject.questionPaperCount) { %>
+	<section class="questionPapers">
+		<span><%= it.subject.questionPaperCount %> Question Paper<%= it.subject.questionPaperCount === 1 ? '' : 's' %></span>
+		<div class="question-paper-overview">
+			<% if (it.subject.galleryPage) { %>
+			<div class="question-paper-main-action"><a class="btn" href="<%= it.subject.galleryPage %>">📂 Question Papers PDF's</a></div>
+			<% } %>
+			<% if (it.sessions.length) { %>
+			<div class="question-paper-session-list" aria-label="Available question paper sessions">
+				<% for (const session of it.sessions) { %><span class="question-paper-session-tag"><%= session %></span><% } %>
+			</div>
+			<% } %>
+		</div>
+		<div class="cardButtons question-paper-secondary-actions">
+			<% if (it.subject.htmlViewer) { %><a class="btn" href="<%= it.subject.htmlViewer %>">📄 Question Paper in HTML</a><% } %>
+			<% if (it.subject.questionBank) { %><a class="btn" href="<%= it.subject.questionBank %>">📄 Question Bank</a><% } %>
+		</div>
+	</section>
+	<% } %>
+	<a class="btn video-lecture-button" href="/video-lectures?subject=<%= encodeURIComponent(it.subject.code) %>">▶ Video Lectures</a>
+	<% if (it.subject.studyGroups.length) { %>
+	<section class="books">
+		<% for (let index = 0; index < it.subject.studyGroups.length; index += 1) { const group = it.subject.studyGroups[index]; %>
+		<section class="block<%= index + 1 %>">
+			<h6 class="block-title"><%= group.title %></h6>
+			<% for (const file of group.files) { const params = new URLSearchParams({ en: file.path, title: file.title }); %>
+			<a href="/pdf-viewer?<%= params.toString() %>" target="_blank" rel="noopener"><%= file.title %>.pdf</a>
+			<% } %>
+		</section>
+		<% } %>
+	</section>
+	<% } %>
+</article>

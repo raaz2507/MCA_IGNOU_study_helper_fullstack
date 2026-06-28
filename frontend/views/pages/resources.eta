@@ -1,0 +1,77 @@
+<% layout('../layouts/main') %>
+<% function formatBytes(size = 0) {
+	if (!size) return '';
+	const units = ['B', 'KB', 'MB'];
+	let value = size;
+	let unit = 0;
+	while (value >= 1024 && unit < units.length - 1) { value /= 1024; unit += 1; }
+	return `${value.toFixed(unit ? 1 : 0)} ${units[unit]}`;
+} %>
+
+	<section id="announcementBanner" class="announcement-banner" aria-label="Important announcements"></section>
+
+	<main>
+		<section id="semesterContainer" data-ssr-subjects>
+		<% for (const semester of it.semesters) {
+			const theory = semester.subjects.filter((subject) => subject.type === 'theory');
+			const practical = semester.subjects.filter((subject) => subject.type === 'practical'); %>
+			<section class="semester">
+				<h2>Semester <%= semester.number %></h2>
+				<% for (const group of [{ title: '📖 Theory Papers', className: 'theory', subjects: theory }, { title: '📖 Practical Papers', className: 'prectical', subjects: practical }]) {
+					if (!group.subjects.length) continue; %>
+				<section class="<%= group.className %>">
+					<h2><%= group.title %></h2>
+					<div class="cardContainer">
+					<% for (const subject of group.subjects) { %>
+						<%~ include('../partials/cards/subject', { subject, sessions: it.paperSessionsBySubject[subject.code] || [] }) %>
+					<% } %>
+					</div>
+				</section>
+				<% } %>
+			</section>
+		<% } %>
+		</section>
+		<section class="program-guide" id="program-guide">
+			<h2>📖 Program Guide</h2>
+			<div class="cardContainer" data-ssr-resources>
+			<% if (!it.collections.programGuide.length) { %><p class="empty-state">Program guide PDFs will appear here when added.</p><% } %>
+			<% for (const file of it.collections.programGuide) { %><%~ include('../partials/cards/resource', { file, formatBytes }) %><% } %>
+			</div>
+		</section>
+		<section class="assignments" id="assignments">
+			<h2>📝 Assignments</h2>
+			<div class="cardContainer" data-ssr-resources>
+			<% if (!it.collections.assignments.length) { %><p class="empty-state">Assignment PDFs will appear here when added.</p><% } %>
+			<% for (const file of it.collections.assignments) { %><%~ include('../partials/cards/resource', { file, formatBytes }) %><% } %>
+			</div>
+		</section>
+	</main>
+
+	<dialog id="announcementDetailsDialog" class="announcement-dialog" aria-labelledby="announcementDetailsTitle">
+		<button id="announcementDetailsClose" class="announcement-dialog-close" type="button"
+			aria-label="Close announcement details">
+			<span aria-hidden="true">&times;</span>
+		</button>
+		<div class="announcement-dialog-media">
+			<img class="announcement-dialog-image" data-details-image alt="" />
+		</div>
+		<div class="announcement-dialog-body">
+			<span class="announcement-category" data-details-category></span>
+			<h2 id="announcementDetailsTitle" data-details-title></h2>
+			<p class="announcement-dialog-description" data-details-description></p>
+			<dl class="announcement-dialog-dates" data-details-dates hidden>
+				<div data-details-start hidden>
+					<dt>Starts</dt>
+					<dd></dd>
+				</div>
+				<div data-details-end hidden>
+					<dt>Ends</dt>
+					<dd></dd>
+				</div>
+			</dl>
+			<div class="announcement-dialog-actions">
+				<a class="announcement-action" data-details-action hidden></a>
+				<button id="announcementDetailsDismiss" class="announcement-dialog-dismiss" type="button">Close</button>
+			</div>
+		</div>
+	</dialog>

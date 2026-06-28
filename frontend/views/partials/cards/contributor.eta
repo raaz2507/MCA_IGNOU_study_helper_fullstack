@@ -1,0 +1,17 @@
+<% const avatar = it.contributor.avatar || (it.contributor.id === 'rajaanha' ? '/assets/images/contributors/rajaanha-guinea-pig.webp' : '');
+const contributions = Array.isArray(it.contributor.contributions) ? it.contributor.contributions : [];
+const initials = String(it.contributor.name || '?').trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() || '').join('') || '?'; %>
+<article class="contributor-card"<% if (avatar) { %> style="--contributor-photo: url('<%= avatar %>')"<% } %>>
+	<div class="contributor-card-topbar"><span>Contributor</span><span class="contributor-card-badge">*</span></div>
+	<div class="contributor-avatar">
+	<% if (avatar) { %><img src="<%= avatar %>" alt="<%= it.contributor.name %> profile" /><% } else { %><%= initials %><% } %>
+	</div>
+	<div class="contributor-content">
+		<h3><%= it.contributor.name %></h3>
+		<p><%= it.contributor.info %></p>
+		<% if (contributions.length) { %>
+		<h4>Contributions</h4>
+		<ul><% for (const contribution of contributions) { %><li><%= contribution %></li><% } %></ul>
+		<% } %>
+	</div>
+</article>

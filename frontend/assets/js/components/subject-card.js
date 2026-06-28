@@ -3,11 +3,17 @@ import { getSubjects } from "../api/subjects.api.js";
 
 (async () => {
 	"use strict";
+	const container = document.getElementById("semesterContainer");
+	if (!container) return;
+	if (container.hasAttribute("data-ssr-subjects")) {
+		await import("../utils/page-preferences.js?v=6");
+		document.dispatchEvent(new CustomEvent("study-helper:subjects-rendered"));
+		return;
+	}
 
 	const semesters = await getSubjects();
 	const galleryData = await getPapers();
-	const container = document.getElementById("semesterContainer");
-	if (!container || !Array.isArray(semesters)) return;
+	if (!Array.isArray(semesters)) return;
 
 	function button(label, href) {
 		if (!href) return null;

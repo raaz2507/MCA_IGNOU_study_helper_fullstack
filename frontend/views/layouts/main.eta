@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="<%= it.meta.lang || 'en' %>">
+<%~ include('../partials/head', it) %>
+<body data-page="<%= it.shell.activePage %>" data-header-title="<%= it.shell.title %>" data-header-subtitle="<%= it.shell.subtitle %>">
+	<div id="app-header"><%~ include('../partials/header', it) %></div>
+	<%~ it.body %>
+	<div id="app-footer"><%~ include('../partials/footer', it) %></div>
+	<% for (const script of it.scripts || []) { %>
+	<script<% if (script.module) { %> type="module"<% } %> src="<%= script.src %>"></script>
+	<% } %>
+</body>
+</html>

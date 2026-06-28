@@ -5,6 +5,7 @@ import cors from "cors";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
+import { Eta } from "eta";
 import { pinoHttp } from "pino-http";
 import { env } from "./config/env.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
@@ -15,7 +16,26 @@ import { contentRouter } from "./modules/content/content.routes.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
 import { analyticsRouter } from "./modules/analytics/analytics.routes.js";
 import { readLinkPreviewSettings, readShareSettings, readSupportSettings } from "./modules/admin/admin.controller.js";
+import { resourcesPageData } from "./modules/catalog/resources-page.service.js";
+import { contentService } from "./modules/content/content.service.js";
 import { errorHandler } from "./shared/middleware/error-handler.js";
+
+const eta = new Eta({
+	views: env.viewsRoot,
+	cache: env.nodeEnv === "production"
+});
+
+const socialDescription = "Watermark-Free Study PDFs • Hindi-Translated Study Material • Previous-Year Papers • Smart Question Bank • English & Hinglish Answers • Related Video Lecture Links • Revision Lists • Learning Milestones";
+const socialTitle = "GyanPath | IGNOU MCA Study Companion";
+const socialImage = `${env.siteUrl}/assets/images/gyanpath-link-preview-banner.jpg`;
+
+async function footerData() {
+	const [share, support] = await Promise.all([
+		readShareSettings(),
+		readSupportSettings()
+	]);
+	return { share, support };
+}
 
 const prettyLoggerStream = {
 	write(message: string) {
@@ -54,8 +74,10 @@ function imageMimeType(image: string, configuredType?: string | null) {
 	return "image/png";
 }
 
-async function sendPage(response: express.Response, filePath: string) {
-	let html = await readFile(filePath, "utf8");
+async function sendPage(response: express.Response, filePath: string, data: Record<string, unknown> = {}) {
+	let html = path.extname(filePath) === ".eta"
+		? eta.render(path.relative(env.viewsRoot, filePath).replaceAll("\\", "/").replace(/\.eta$/, ""), data)
+		: await readFile(filePath, "utf8");
 	const settings = await readLinkPreviewSettings();
 	if (settings.enabled) {
 		const image = settings.imageSource === "upload" && settings.imagePath
@@ -209,7 +231,81 @@ export function createApp() {
 			"</urlset>"
 		].join("\n"));
 	});
-	app.get("/", (_request, response) => sendPage(response, path.join(env.pagesRoot, "index.html")));
+	app.get("/", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "home.eta"), {
+		meta: {
+			title: "GyanPath | Learn, Revise, Succeed",
+			description: socialDescription,
+			canonicalUrl: `${env.siteUrl}/`,
+			socialTitle,
+			socialImage
+		},
+		shell: {
+			activePage: "home",
+			title: "GyanPath",
+			subtitle: "Your MCA study companion"
+		},
+		footer: await footerData(),
+		stylesheets: ["/assets/css/index.css?v=28", "/assets/css/pages/landing.css?v=5"],
+		scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
+			{ src: "/assets/js/utils/theme.js" },
+			{ src: "/assets/js/pages/home-account.js?v=2", module: true }
+		],
+		routes: {
+			resources: "/resources"
+		}
+	}));
+	app.get("/resources", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "resources.eta"), {
+		meta: {
+			title: "Study Resources | GyanPath",
+			description: "IGNOU MCA question papers, study material, question banks and video lectures in one place.",
+			socialDescription,
+			canonicalUrl: `${env.siteUrl}/resources`,
+			socialTitle,
+			socialImage
+		},
+		shell: {
+			activePage: "resources",
+			title: "Study Resources",
+			subtitle: "Previous Year Question Papers & Study Material"
+		},
+		footer: await footerData(),
+		stylesheets: ["/assets/css/pages/home.css?v=35"],
+		scripts: [
+			{ src: "/assets/js/components/site-shell.js?v=3", module: true },
+			{ src: "/assets/js/utils/theme.js" },
+			{ src: "/assets/js/components/subject-card.js?v=10", module: true },
+			{ src: "/assets/js/components/card-tilt.js?v=6" },
+			{ src: "/assets/js/components/banner-carousel.js?v=3", module: true },
+			{ src: "/assets/js/pages/resources.js?v=3", module: true }
+		],
+		...await resourcesPageData()
+	}));
+	app.get("/about", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "about.eta"), {
+		meta: {
+			title: "About | GyanPath",
+			description: "Learn about GyanPath, an independent IGNOU MCA study helper for question papers, study material and revision resources.",
+			socialDescription,
+			canonicalUrl: `${env.siteUrl}/about`,
+			socialTitle,
+			socialImage
+		},
+		shell: {
+			activePage: "about",
+			title: "About GyanPath",
+			subtitle: "A simple resource center for IGNOU MCA students."
+		},
+		footer: await footerData(),
+		stylesheets: ["/assets/css/index.css?v=23"],
+		scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
+			{ src: "/assets/js/utils/theme.js" },
+			{ src: "/assets/js/utils/page-preferences.js", module: true },
+			{ src: "/assets/js/components/contributors.js?v=2", module: true },
+			{ src: "/assets/js/pages/about.js?v=1", module: true }
+		],
+		contributors: await contentService.list("contributors")
+	}));
 	app.get("/dashboard/study-materials", (_request, response) =>
 		sendPage(response, path.join(env.pagesRoot, "dashboard-study-materials.html"))
 	);

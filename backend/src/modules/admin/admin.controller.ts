@@ -37,6 +37,14 @@ async function audit(actorId: string | null | undefined, action: string, entityT
 const shareSettingsKey = "share-settings";
 const supportSettingsKey = "support-settings";
 const linkPreviewSettingsKey = "link-preview-settings";
+const defaultLinkPreviewImageUrl = "https://raaz2507.github.io/MCA_IGNOU_study_helper_fullstack/frontend/assets/images/gyanpath-link-preview-banner.jpg";
+const defaultLinkPreviewImageMeta = {
+	name: "gyanpath-link-preview-banner.jpg",
+	type: "image/jpeg",
+	size: 184024,
+	width: 1731,
+	height: 909
+};
 const execFileAsync = promisify(execFile);
 const pdfPreviewCacheDir = path.join(env.frontendRoot, "assets", "images", "pdf-gallery-cache");
 const resourceCatalogScript = path.join(env.frontendRoot, "tools", "generate-resource-catalog.py");
@@ -68,15 +76,9 @@ const defaultLinkPreviewSettings = {
 	description: "Watermark-Free Study PDFs • Hindi-Translated Study Material • Previous-Year Papers • Smart Question Bank • English & Hinglish Answers • Related Video Lecture Links • Revision Lists • Learning Milestones",
 	url: "https://raaz2507.github.io/MCA_IGNOU_study_helper_fullstack/",
 	imageSource: "url",
-	imageUrl: "https://raaz2507.github.io/MCA_IGNOU_study_helper_fullstack/frontend/assets/images/gyanpath-link-preview-banner.webp",
+	imageUrl: defaultLinkPreviewImageUrl,
 	imagePath: null,
-	imageMeta: {
-		name: "gyanpath-link-preview-banner.webp",
-		type: "image/webp",
-		size: 145526,
-		width: 1731,
-		height: 909
-	}
+	imageMeta: defaultLinkPreviewImageMeta
 };
 const settingsCacheTtlMs = 60_000;
 const settingsCache = new Map<string, { expiresAt: number; value: unknown }>();
@@ -1168,7 +1170,14 @@ export async function readLinkPreviewSettings() {
 	return readCachedSetting(linkPreviewSettingsKey, async () => {
 		const setting = await prisma.appSetting.findUnique({ where: { key: linkPreviewSettingsKey } });
 		const parsed = linkPreviewSettingsSchema.safeParse(setting?.value);
-		return parsed.success ? { ...defaultLinkPreviewSettings, ...parsed.data } : defaultLinkPreviewSettings;
+		if (!parsed.success) return defaultLinkPreviewSettings;
+
+		const resolved = { ...defaultLinkPreviewSettings, ...parsed.data };
+		const usesRetiredBundledImage = resolved.imageSource === "url"
+			&& /\/assets\/images\/(?:link-preview-banner\.png|gyanpath-link-preview-banner\.webp)(?:[?#].*)?$/i.test(resolved.imageUrl || "");
+		return usesRetiredBundledImage
+			? { ...resolved, imageUrl: defaultLinkPreviewImageUrl, imageMeta: defaultLinkPreviewImageMeta }
+			: resolved;
 	});
 }
 
