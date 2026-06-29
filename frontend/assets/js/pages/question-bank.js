@@ -21,6 +21,7 @@ class QuestionBankApp {
     this.filtered = [];
     this.selectedMeta = null;
     this.selectedQuestion = null;
+    this.selectionRequestId = 0;
     this.questionCache = new Map();
     this.lang = "english";
     this.answerMode = "exam";
@@ -127,7 +128,8 @@ class QuestionBankApp {
   async init() {
     this.bindEvents();
     await this.loadState();
-    await this.loadManifest();
+    const manifestLoaded = await this.loadManifest();
+    if (!manifestLoaded) return;
     this.applyFilters();
     this.updateStats();
     if (this.db.length) await this.selectQuestion(this.db[0].id);
@@ -143,9 +145,11 @@ class QuestionBankApp {
         this.normalizeQuestionMeta(q),
       );
       this.selectedMeta = this.db[0] || null;
+      return true;
     } catch (error) {
       console.error("Manifest load failed:", error);
       this.showError("Question bank could not be loaded from the Node API.");
+      return false;
     }
   }
   normalizeAppearance(item = {}) {
@@ -180,13 +184,17 @@ class QuestionBankApp {
   async selectQuestion(id) {
     const m = this.getQuestionMeta(id);
     if (!m) return;
+    const requestId = ++this.selectionRequestId;
     this.selectedMeta = m;
     this.renderList();
     this.showLoading("Question load हो रहा है...");
     try {
-      this.selectedQuestion = await this.loadQuestion(m);
+      const question = await this.loadQuestion(m);
+      if (requestId !== this.selectionRequestId) return;
+      this.selectedQuestion = question;
       this.renderDetail();
     } catch (e) {
+      if (requestId !== this.selectionRequestId) return;
       console.error(e);
       this.showError(
         `Question file load failed: ${this.getQuestionFileUrl(m)}`,
@@ -270,7 +278,7 @@ class QuestionBankApp {
   applyFilters() {
     const search = this.$("#searchBox")?.value.toLowerCase().trim() || "",
       marks = this.$("#marksFilter")?.value || "all",
-      diff = this.$("#difficultyFilter")?.value || "all",
+      diff = this.$("#difficultyFilter")?.value.toLowerCase() || "all",
       sort = this.$("#sortBy")?.value || "default";
     this.filtered = this.db.filter((q) => {
       if (this.view === "repeated" && this.getRepeatCount(q) < 2) return false;

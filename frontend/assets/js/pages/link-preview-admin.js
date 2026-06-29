@@ -5,6 +5,8 @@ import {
 	uploadSettingQrImage
 } from "../api/admin.api.js";
 
+export class LinkPreviewAdminPage {
+	initialize() {
 const form = document.getElementById("linkPreviewForm");
 const enabled = document.getElementById("linkPreviewEnabled");
 const title = document.getElementById("linkPreviewTitleInput");
@@ -190,3 +192,7 @@ document.querySelectorAll('input[name="linkPreviewImageSource"]').forEach((input
 [title, description, url, imageUrl].forEach((input) => input?.addEventListener("input", updatePreview));
 
 loadSettings();
+	}
+}
+
+new LinkPreviewAdminPage().initialize();

@@ -277,7 +277,7 @@
 				</div>
 				<div class="contributor-form-actions">
 					<button class="logout-button" type="submit">Save Link Preview</button>
-					<button id="resetLinkPreviewSettings" class="secondary-link" type="button">Reset</button>
+					<button id="resetLinkPreviewSettings" class="secondary-link" type="button" data-visible-for="admin" hidden>Reset</button>
 				</div>
 				<p id="linkPreviewMessage" class="contributor-message" aria-live="polite"></p>
 			</form>
@@ -322,6 +322,11 @@
 				</label>
 
 				<label>
+					<span>GitHub or profile link (optional)</span>
+					<input id="contributorProfileUrl" type="url" maxlength="500" placeholder="https://github.com/username" />
+				</label>
+
+				<label>
 					<span>Contributions - write one item per line</span>
 					<textarea id="contributorContributions" rows="6" required placeholder="Added MCS-220 question papers&#10;Reviewed study material links"></textarea>
 				</label>
@@ -337,5 +342,3 @@
 		</section>
 	</main>
 	</div>
-
-

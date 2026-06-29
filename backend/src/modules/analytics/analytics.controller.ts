@@ -1,9 +1,9 @@
 import { createHash } from "node:crypto";
 import type { RequestHandler } from "express";
 import { z } from "zod";
-import { prisma } from "../../config/prisma.js";
 import { asyncHandler } from "../../shared/middleware/async-handler.js";
 import { authService } from "../auth/auth.service.js";
+import { analyticsRepository } from "./analytics.repository.js";
 
 const visitSchema = z.object({
 	visitorId: z.string().min(12).max(120),
@@ -48,8 +48,7 @@ export const trackVisit: RequestHandler = asyncHandler(async (request, response)
 	const input = visitSchema.parse(request.body);
 	const session = sessionFromRequest(request);
 	const userId = typeof session?.sub === "string" ? session.sub : null;
-	await prisma.analyticsVisit.create({
-		data: {
+	await analyticsRepository.createVisit({
 			userId,
 			visitorHash: hash(input.visitorId),
 			sessionId: hash(input.sessionId),
@@ -60,7 +59,6 @@ export const trackVisit: RequestHandler = asyncHandler(async (request, response)
 			browser: input.browser,
 			country: input.country || "Unknown",
 			loggedIn: Boolean(userId)
-		}
 	});
 	response.status(204).end();
 });
@@ -72,32 +70,16 @@ export const getAnalyticsSummary: RequestHandler = asyncHandler(async (_request,
 	sevenDaysAgo.setDate(today.getDate() - 6);
 	const onlineSince = new Date(now.getTime() - 5 * 60 * 1000);
 
-	const visits = await prisma.analyticsVisit.findMany({
-		where: { createdAt: { gte: sevenDaysAgo } },
-		orderBy: { createdAt: "asc" }
-	});
+	const visits = await analyticsRepository.visitsSince(sevenDaysAgo);
 	const listVisits = visits.length
 		? visits
-		: await prisma.analyticsVisit.findMany({
-			orderBy: { createdAt: "desc" },
-			take: 250
-		});
-	const totalVisits = await prisma.analyticsVisit.count();
-	const uniqueVisitors = await prisma.analyticsVisit.groupBy({ by: ["visitorHash"] });
+		: await analyticsRepository.recentVisits();
+	const totalVisits = await analyticsRepository.totalVisits();
+	const uniqueVisitors = await analyticsRepository.uniqueVisitors();
 	const todayVisits = visits.filter((visit) => visit.createdAt >= today).length;
 	const onlineNow = new Set(visits.filter((visit) => visit.createdAt >= onlineSince).map((visit) => visit.sessionId)).size;
-	const userActivity = await prisma.analyticsVisit.groupBy({
-		by: ["userId"],
-		where: { userId: { not: null } },
-		_count: { _all: true },
-		_max: { createdAt: true },
-		orderBy: { _max: { createdAt: "desc" } },
-		take: 8
-	});
-	const activityUsers = await prisma.user.findMany({
-		where: { id: { in: userActivity.map((item) => String(item.userId)) } },
-		select: { id: true, username: true, displayName: true, role: true }
-	});
+	const userActivity = await analyticsRepository.userActivity();
+	const activityUsers = await analyticsRepository.usersByIds(userActivity.map((item) => String(item.userId)));
 	const usersById = new Map(activityUsers.map((user) => [user.id, user]));
 
 	const countBy = (

@@ -49,9 +49,7 @@ export const authService = {
 		if (await authRepository.findUserByEmail(input.email)) {
 			throw new AppError(409, "Email is already registered.", "EMAIL_TAKEN");
 		}
-		const { prisma } = await import("../../config/prisma.js");
-		const setting = await prisma.appSetting.findUnique({ where: { key: "new-user-default-status" } });
-		const value = setting?.value as { status?: string } | null;
+		const value = await authRepository.setting<{ status?: string }>("new-user-default-status");
 		const status = value?.status === "ACTIVE" ? "ACTIVE" : "PENDING";
 		const verificationRequired = await emailVerificationService.isEnabled();
 		const user = await authRepository.createUser({

@@ -60,7 +60,7 @@ const defaultShareSettings = {
 	title: "Share GyanPath",
 	description: "Scan the QR code or share it with another MCA student.",
 	shareText: "GyanPath - IGNOU MCA study resources",
-	url: "https://mcaignoustudyhelperfullstck-production.up.railway.app/",
+	url: "https://gyanpath.up.railway.app/",
 	qrImageSource: "generated",
 	qrImageUrl: "",
 	qrImagePath: "",
@@ -454,10 +454,12 @@ async function handleQrFileChange(prefix, file) {
 	if (prefix === "share") {
 		if (shareQrUpload.path.startsWith("blob:")) URL.revokeObjectURL(shareQrUpload.path);
 		shareQrUpload = state;
+		setQrSource("share", "upload");
 		updateShareQrPreview();
 	} else {
 		if (supportQrUpload.path.startsWith("blob:")) URL.revokeObjectURL(supportQrUpload.path);
 		supportQrUpload = state;
+		setQrSource("support", "upload");
 		updateSupportQrPreview();
 	}
 }

@@ -1,8 +1,7 @@
 import { randomBytes } from "node:crypto";
 import { env } from "../../config/env.js";
-import { prisma } from "../../config/prisma.js";
 import { AppError } from "../../shared/errors/app-error.js";
-import { hashToken } from "./auth.repository.js";
+import { authRepository, hashToken } from "./auth.repository.js";
 
 const SETTINGS_KEY = "email-verification";
 const TOKEN_LIFETIME_MS = 24 * 60 * 60 * 1000;
@@ -17,8 +16,7 @@ function escapeHtml(value: string) {
 }
 
 export async function emailVerificationEnabled() {
-	const setting = await prisma.appSetting.findUnique({ where: { key: SETTINGS_KEY } });
-	const value = setting?.value as { enabled?: boolean } | null;
+	const value = await authRepository.setting<{ enabled?: boolean }>(SETTINGS_KEY);
 	return value?.enabled === true;
 }
 
@@ -60,37 +58,24 @@ export const emailVerificationService = {
 	async issue(user: { id: string; email: string | null; displayName: string }) {
 		if (!user.email) throw new AppError(400, "A valid email address is required.", "EMAIL_REQUIRED");
 		const token = randomBytes(32).toString("hex");
-		await prisma.user.update({
-			where: { id: user.id },
-			data: {
-				emailVerificationRequired: true,
-				emailVerificationTokenHash: hashToken(token),
-				emailVerificationExpiresAt: new Date(Date.now() + TOKEN_LIFETIME_MS)
-			}
-		});
+		await authRepository.setEmailVerificationToken(
+			user.id,
+			hashToken(token),
+			new Date(Date.now() + TOKEN_LIFETIME_MS)
+		);
 		await sendWithResend({ to: user.email, displayName: user.displayName, token });
 	},
 	async verify(token: string) {
-		const user = await prisma.user.findUnique({
-			where: { emailVerificationTokenHash: hashToken(token) }
-		});
+		const user = await authRepository.findUserByVerificationTokenHash(hashToken(token));
 		if (!user || !user.emailVerificationExpiresAt || user.emailVerificationExpiresAt < new Date()) {
 			throw new AppError(400, "This verification link is invalid or has expired.", "INVALID_VERIFICATION_TOKEN");
 		}
-		await prisma.user.update({
-			where: { id: user.id },
-			data: {
-				emailVerifiedAt: new Date(),
-				emailVerificationRequired: false,
-				emailVerificationTokenHash: null,
-				emailVerificationExpiresAt: null
-			}
-		});
+		await authRepository.markEmailVerified(user.id, new Date());
 		return { success: true };
 	},
 	async resend(email: string) {
 		if (!await emailVerificationEnabled()) return { accepted: true };
-		const user = await prisma.user.findUnique({ where: { email } });
+		const user = await authRepository.findUserByEmail(email);
 		if (user?.emailVerificationRequired && !user.emailVerifiedAt) {
 			await this.issue(user);
 		}

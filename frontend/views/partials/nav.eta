@@ -1,7 +1,6 @@
 <% const navItems = [
 	{ id: 'home', label: 'Home', href: '/' },
 	{ id: 'resources', label: 'Resources', href: '/resources' },
-	{ id: 'discussion', label: 'Discussion', href: '/discussion' },
 	{ id: 'about', label: 'About', href: '/about' },
 	{ id: 'guide', label: 'User Guide', href: '/user-guide' }
 ]; %>

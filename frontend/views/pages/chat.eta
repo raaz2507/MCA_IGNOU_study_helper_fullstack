@@ -1,7 +1,42 @@
 <% layout('../layouts/main') %>
-	<main class="info-page">
-		<section class="info-card">
-			<h2>Real-time chat</h2>
-			<p id="chatEmpty"></p>
+<main class="chat-admin" aria-labelledby="chatTitle">
+	<section class="chat-topbar">
+		<div><span class="eyebrow">Chat operations</span><h1 id="chatTitle">Real-time Chat</h1><p>Monitor conversations and manage the student messaging experience.</p></div>
+		<div class="chat-health"><span></span><div><strong>Socket service</strong><small>No live connection</small></div></div>
+	</section>
+	<section class="chat-shell">
+		<aside class="conversation-pane">
+			<div class="conversation-head"><h2>Messages</h2><button type="button" data-chat-action="New conversation" aria-label="New conversation">＋</button></div>
+			<label class="chat-search"><span>⌕</span><input id="chatSearch" type="search" placeholder="Search conversations" aria-label="Search conversations"></label>
+			<div class="chat-tabs"><button class="active" data-chat-filter="all" type="button">All</button><button data-chat-filter="unread" type="button">Unread <span>3</span></button><button data-chat-filter="groups" type="button">Groups</button></div>
+			<div class="conversation-list" id="conversationList">
+				<button class="conversation active" type="button" data-kind="groups" data-name="MCS-211 Study Group"><span class="chat-avatar purple">M2<i></i></span><span class="conversation-copy"><strong>MCS-211 Study Group</strong><small>Riya: I uploaded the graph notes...</small></span><time>10:42</time><em>3</em></button>
+				<button class="conversation" type="button" data-kind="unread" data-name="Ananya Verma"><span class="chat-avatar rose">AV<i></i></span><span class="conversation-copy"><strong>Ananya Verma</strong><small>Can you review my answer?</small></span><time>09:18</time><em>1</em></button>
+				<button class="conversation" type="button" data-kind="groups" data-name="Semester 2 Announcements"><span class="chat-avatar blue">S2</span><span class="conversation-copy"><strong>Semester 2 Announcements</strong><small>Admin: Exam form deadline updated</small></span><time>Yesterday</time></button>
+				<button class="conversation" type="button" data-kind="all" data-name="Rahul Kumar"><span class="chat-avatar green">RK</span><span class="conversation-copy"><strong>Rahul Kumar</strong><small>Thank you! That makes sense.</small></span><time>Mon</time></button>
+				<button class="conversation" type="button" data-kind="groups" data-name="Project Discussion"><span class="chat-avatar orange">PD</span><span class="conversation-copy"><strong>Project Discussion</strong><small>You: Let's meet at 7 PM.</small></span><time>Sun</time></button>
+			</div>
+			<p id="chatEmpty" class="chat-empty" hidden>No conversations found.</p>
+		</aside>
+
+		<section class="message-pane">
+			<header class="message-head"><div class="chat-avatar purple">M2<i></i></div><div><strong id="activeChatName">MCS-211 Study Group</strong><small>18 members · 5 online</small></div><div class="message-tools"><button type="button" data-chat-action="Search messages" aria-label="Search messages">⌕</button><button type="button" data-chat-action="Conversation details" aria-label="Conversation details">ⓘ</button><button type="button" data-chat-action="More options" aria-label="More options">•••</button></div></header>
+			<div class="message-stream" aria-label="Static conversation preview">
+				<div class="date-divider"><span>Today</span></div>
+				<div class="message incoming"><span class="mini-avatar rose">RS</span><div><small>Riya Sharma · 10:31</small><p>Does anyone have a simple explanation of Dijkstra's relaxation step?</p></div></div>
+				<div class="message incoming"><span class="mini-avatar blue">AM</span><div><small>Arjun Mehta · 10:35</small><p>Think of it as checking whether going through the current node gives us a shorter route.</p><div class="file-card"><span>📄</span><div><strong>Graph_Algorithms_Notes.pdf</strong><small>2.4 MB · PDF</small></div><button type="button" data-chat-action="Preview file">Preview</button></div></div></div>
+				<div class="message outgoing"><div><small>Admin · 10:38</small><p>Good explanation. Please keep the final answer aligned with the course terminology too.</p><span class="read-mark">✓✓ Read by 6</span></div></div>
+				<div class="message incoming"><span class="mini-avatar rose">RS</span><div><small>Riya Sharma · 10:42</small><p>Got it, thank you! I uploaded the graph notes for everyone.</p><span class="reaction">👍 4</span></div></div>
+			</div>
+			<form class="composer" id="chatComposer"><button type="button" data-chat-action="Attach file" aria-label="Attach file">＋</button><label><span class="sr-only">Message</span><textarea id="chatMessage" rows="1" placeholder="Type an admin message…"></textarea></label><button type="button" data-chat-action="Add emoji" aria-label="Add emoji">☺</button><button class="send-button" type="submit" aria-label="Send message">➤</button></form>
 		</section>
-	</main>
+
+		<aside class="details-pane">
+			<div class="details-avatar">M2</div><h2>MCS-211 Study Group</h2><p>Data Structures &amp; Algorithms</p><span class="group-badge">18 members</span>
+			<div class="detail-actions"><button type="button" data-chat-action="Mute chat"><span>♧</span>Mute</button><button type="button" data-chat-action="Search chat"><span>⌕</span>Search</button><button type="button" data-chat-action="Manage members"><span>♙</span>Members</button></div>
+			<div class="detail-section"><button type="button"><span><strong>Shared media</strong><small>12 files and links</small></span><em>›</em></button><div class="media-grid"><span>📘</span><span>📊</span><span>📝</span></div></div>
+			<div class="detail-section admin-controls"><h3>Admin controls</h3><button type="button" data-chat-action="Manage members"><span>Manage members</span><em>›</em></button><button type="button" data-chat-action="View reports"><span>View reported messages</span><b>2</b></button><button type="button" data-chat-action="Pause conversation"><span>Pause conversation</span><em>›</em></button></div>
+		</aside>
+	</section>
+	<p class="chat-toast" id="chatToast" role="status" aria-live="polite"></p>
+</main>

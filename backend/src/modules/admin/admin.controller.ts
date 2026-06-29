@@ -10,7 +10,8 @@ import { asyncHandler } from "../../shared/middleware/async-handler.js";
 import { AppError } from "../../shared/errors/app-error.js";
 import { env } from "../../config/env.js";
 import { adminService } from "./admin.service.js";
-import { prisma } from "../../config/prisma.js";
+import { adminRepository } from "./admin.repository.js";
+import { dataSourceAudit } from "./data-source-audit.js";
 import { cleanupReplacedUpload, deleteUnreferencedUpload } from "../../shared/upload-cleanup.js";
 import {
 	analyticsRetentionSchema,
@@ -31,7 +32,7 @@ import {
 } from "./admin.schema.js";
 
 async function audit(actorId: string | null | undefined, action: string, entityType: string, entityId?: string, details?: object) {
-	await prisma.auditLog.create({ data: { actorId: actorId || null, action, entityType, entityId, details } });
+	await adminRepository.createAuditLog({ actorId: actorId || null, action, entityType, entityId, details });
 }
 
 const shareSettingsKey = "share-settings";
@@ -52,7 +53,7 @@ const defaultShareSettings = {
 	title: "Share GyanPath",
 	description: "Scan the QR code or share it with another MCA student.",
 	shareText: "GyanPath - IGNOU MCA study resources",
-	url: "https://mcaignoustudyhelperfullstck-production.up.railway.app/",
+	url: "https://gyanpath.up.railway.app/",
 	qrImageSource: "generated",
 	qrImageUrl: null,
 	qrImagePath: null,
@@ -105,6 +106,7 @@ const backupModelNames = [
 	"fileAssets",
 	"auditLogs",
 	"analyticsVisits"
+	,"feedback"
 ] as const;
 const backupModelDelegates = {
 	users: "user",
@@ -128,6 +130,7 @@ const backupModelDelegates = {
 	fileAssets: "fileAsset",
 	auditLogs: "auditLog",
 	analyticsVisits: "analyticsVisit"
+	,feedback: "feedback"
 } as const;
 const backupIdentityFields: Partial<Record<BackupModelName, string[]>> = {
 	users: ["id", "username", "email"],
@@ -148,6 +151,7 @@ const backupIdentityFields: Partial<Record<BackupModelName, string[]>> = {
 	fileAssets: ["id", "path"],
 	auditLogs: ["id"],
 	analyticsVisits: ["id"]
+	,feedback: ["id"]
 };
 
 type BackupModelName = typeof backupModelNames[number];
@@ -440,29 +444,7 @@ function readZip(buffer: Buffer) {
 }
 
 async function databaseBackup() {
-	const models: DatabaseBackup["models"] = {
-		users: await prisma.user.findMany(),
-		semesters: await prisma.semester.findMany(),
-		subjects: await prisma.subject.findMany(),
-		sessions: await prisma.session.findMany(),
-		studyMaterials: await prisma.studyMaterial.findMany(),
-		papers: await prisma.paper.findMany(),
-		questions: await prisma.question.findMany(),
-		answers: await prisma.answer.findMany(),
-		progress: await prisma.progress.findMany(),
-		notes: await prisma.note.findMany(),
-		banners: await prisma.banner.findMany(),
-		lectures: await prisma.lecture.findMany(),
-		contributors: await prisma.contributor.findMany(),
-		discussions: await prisma.discussion.findMany(),
-		comments: await prisma.comment.findMany(),
-		appSettings: await prisma.appSetting.findMany(),
-		assignments: await prisma.assignment.findMany(),
-		reports: await prisma.report.findMany(),
-		fileAssets: await prisma.fileAsset.findMany(),
-		auditLogs: await prisma.auditLog.findMany(),
-		analyticsVisits: await prisma.analyticsVisit.findMany()
-	};
+	const models = await adminRepository.exportAllModels() as DatabaseBackup["models"];
 	const fileMap = new Map<string, DatabaseBackupFile>();
 	(models.fileAssets as { path?: string; size?: number }[])
 		.map((asset) => ({
@@ -648,8 +630,7 @@ async function saveGeneratedQrImage(data: string, category: string, size = 300) 
 	const publicPath = `/uploads/${[...categoryParts, storedName].join("/")}`;
 	await fs.mkdir(uploadDir, { recursive: true });
 	await fs.writeFile(filePath, buffer);
-	const asset = await prisma.fileAsset.create({
-		data: {
+	const asset = await adminRepository.createFileAsset({
 			originalName: "generated-qr.png",
 			storedName,
 			mimeType: "image/png",
@@ -657,7 +638,6 @@ async function saveGeneratedQrImage(data: string, category: string, size = 300) 
 			path: publicPath,
 			category,
 			uploadedById: ""
-		}
 	});
 	return {
 		path: publicPath,
@@ -758,51 +738,7 @@ async function restoreBackupModels(body: Partial<DatabaseBackup>) {
 	}
 	const models = { ...emptyBackupModels(), ...body.models };
 
-	await prisma.$transaction(async (tx) => {
-		await tx.analyticsVisit.deleteMany();
-		await tx.auditLog.deleteMany();
-		await tx.fileAsset.deleteMany();
-		await tx.report.deleteMany();
-		await tx.assignment.deleteMany();
-		await tx.appSetting.deleteMany();
-		await tx.comment.deleteMany();
-		await tx.discussion.deleteMany();
-		await tx.contributor.deleteMany();
-		await tx.lecture.deleteMany();
-		await tx.banner.deleteMany();
-		await tx.note.deleteMany();
-		await tx.progress.deleteMany();
-		await tx.answer.deleteMany();
-		await tx.question.deleteMany();
-		await tx.paper.deleteMany();
-		await tx.studyMaterial.deleteMany();
-		await tx.session.deleteMany();
-		await tx.subject.deleteMany();
-		await tx.semester.deleteMany();
-		await tx.user.deleteMany();
-
-		if (models.users.length) await tx.user.createMany({ data: models.users as never[] });
-		if (models.semesters.length) await tx.semester.createMany({ data: models.semesters as never[] });
-		if (models.subjects.length) await tx.subject.createMany({ data: models.subjects as never[] });
-		if (models.sessions.length) await tx.session.createMany({ data: models.sessions as never[] });
-		if (models.studyMaterials.length) await tx.studyMaterial.createMany({ data: models.studyMaterials as never[] });
-		if (models.papers.length) await tx.paper.createMany({ data: models.papers as never[] });
-		if (models.questions.length) await tx.question.createMany({ data: models.questions as never[] });
-		if (models.answers.length) await tx.answer.createMany({ data: models.answers as never[] });
-		if (models.progress.length) await tx.progress.createMany({ data: models.progress as never[] });
-		if (models.notes.length) await tx.note.createMany({ data: models.notes as never[] });
-		if (models.banners.length) await tx.banner.createMany({ data: models.banners as never[] });
-		if (models.lectures.length) await tx.lecture.createMany({ data: models.lectures as never[] });
-		if (models.contributors.length) await tx.contributor.createMany({ data: models.contributors as never[] });
-		if (models.discussions.length) await tx.discussion.createMany({ data: models.discussions as never[] });
-		if (models.comments.length) await tx.comment.createMany({ data: models.comments as never[] });
-		if (models.appSettings.length) await tx.appSetting.createMany({ data: models.appSettings as never[] });
-		if (models.assignments.length) await tx.assignment.createMany({ data: models.assignments as never[] });
-		if (models.reports.length) await tx.report.createMany({ data: models.reports as never[] });
-		if (models.fileAssets.length) await tx.fileAsset.createMany({ data: models.fileAssets as never[] });
-		if (models.auditLogs.length) await tx.auditLog.createMany({ data: models.auditLogs as never[] });
-		if (models.analyticsVisits.length) await tx.analyticsVisit.createMany({ data: models.analyticsVisits as never[] });
-	});
+	await adminRepository.replaceAllModels(models);
 }
 
 async function restoreBackupModelsMerge(body: DatabaseBackup, resolution: BackupResolution = {}) {
@@ -813,7 +749,6 @@ async function restoreBackupModelsMerge(body: DatabaseBackup, resolution: Backup
 	const stats = { created: 0, updated: 0, skipped: 0, failed: 0 };
 
 	for (const model of backupModelNames) {
-		const delegate = (prisma as any)[backupModelDelegates[model]];
 		const rows = models[model] as any[];
 		for (const row of rows) {
 			const identity = primaryIdentity(row);
@@ -829,7 +764,7 @@ async function restoreBackupModelsMerge(body: DatabaseBackup, resolution: Backup
 			}
 			let exists = false;
 			try {
-				exists = Boolean(await delegate.findUnique({ where }));
+				exists = await adminRepository.backupRowExists(model, where);
 			} catch {
 				exists = false;
 			}
@@ -839,13 +774,9 @@ async function restoreBackupModelsMerge(body: DatabaseBackup, resolution: Backup
 				continue;
 			}
 			try {
-				if (exists) {
-					await delegate.update({ where, data: row });
-					stats.updated += 1;
-				} else {
-					await delegate.create({ data: row });
-					stats.created += 1;
-				}
+				await adminRepository.backupRowWrite(model, row, where, exists);
+				if (exists) stats.updated += 1;
+				else stats.created += 1;
 			} catch {
 				stats.failed += 1;
 			}
@@ -894,11 +825,9 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 	const rows: BackupAnalysisRow[] = [];
 
 	for (const model of backupModelNames) {
-		const delegateName = backupModelDelegates[model];
-		const delegate = (prisma as any)[delegateName];
 		const backupRows = models[model] as any[];
 		const identityFields = backupIdentityFields[model] || ["id"];
-		const currentRows = await delegate.findMany();
+		const currentRows = await adminRepository.backupModelRows(model);
 		const currentKeys = new Set<string>();
 		const currentByKey = new Map<string, any>();
 		for (const row of currentRows) {
@@ -1046,16 +975,12 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 
 export async function readShareSettings() {
 	return readCachedSetting(shareSettingsKey, async () => {
-		const setting = await prisma.appSetting.findUnique({ where: { key: shareSettingsKey } });
+		const setting = await adminRepository.setting(shareSettingsKey);
 		const parsed = shareSettingsSchema.safeParse(setting?.value);
 		const current = parsed.success ? { ...defaultShareSettings, ...parsed.data } : defaultShareSettings;
 		const next = await ensureGeneratedShareQr(current as ShareSettings);
 		if (next !== current) {
-			await prisma.appSetting.upsert({
-				where: { key: shareSettingsKey },
-				update: { value: next },
-				create: { key: shareSettingsKey, value: next }
-			});
+			await adminRepository.saveSetting(shareSettingsKey, next);
 		}
 		return next;
 	});
@@ -1069,11 +994,7 @@ export const saveShareSettings: RequestHandler = asyncHandler(async (request, re
 	const previous = await readShareSettings();
 	const input = shareSettingsSchema.parse(request.body);
 	const setting = await ensureGeneratedShareQr({ ...defaultShareSettings, ...input });
-	await prisma.appSetting.upsert({
-		where: { key: shareSettingsKey },
-		update: { value: setting },
-		create: { key: shareSettingsKey, value: setting }
-	});
+	await adminRepository.saveSetting(shareSettingsKey, setting);
 	cacheSetting(shareSettingsKey, setting);
 	await cleanupReplacedUpload(previous.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SHARE_SETTINGS_UPDATED", "AppSetting", shareSettingsKey, setting);
@@ -1083,11 +1004,7 @@ export const saveShareSettings: RequestHandler = asyncHandler(async (request, re
 export const refreshShareQrImage: RequestHandler = asyncHandler(async (request, response) => {
 	const current = await readShareSettings();
 	const setting = await ensureGeneratedShareQr({ ...current, qrImageSource: "generated" }, true);
-	await prisma.appSetting.upsert({
-		where: { key: shareSettingsKey },
-		update: { value: setting },
-		create: { key: shareSettingsKey, value: setting }
-	});
+	await adminRepository.saveSetting(shareSettingsKey, setting);
 	cacheSetting(shareSettingsKey, setting);
 	await cleanupReplacedUpload(current.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SHARE_QR_IMAGE_REFRESHED", "AppSetting", shareSettingsKey, {
@@ -1098,7 +1015,7 @@ export const refreshShareQrImage: RequestHandler = asyncHandler(async (request, 
 
 export const deleteShareSettings: RequestHandler = asyncHandler(async (request, response) => {
 	const current = await readShareSettings();
-	await prisma.appSetting.deleteMany({ where: { key: shareSettingsKey } });
+	await adminRepository.deleteSetting(shareSettingsKey);
 	clearSettingCache(shareSettingsKey);
 	await deleteUnreferencedUpload(current.qrImagePath);
 	await audit(String(request.user?.id), "SHARE_SETTINGS_RESET", "AppSetting", shareSettingsKey);
@@ -1107,16 +1024,12 @@ export const deleteShareSettings: RequestHandler = asyncHandler(async (request, 
 
 export async function readSupportSettings() {
 	return readCachedSetting(supportSettingsKey, async () => {
-		const setting = await prisma.appSetting.findUnique({ where: { key: supportSettingsKey } });
+		const setting = await adminRepository.setting(supportSettingsKey);
 		const parsed = supportSettingsSchema.safeParse(setting?.value);
 		const current = parsed.success ? { ...defaultSupportSettings, ...parsed.data } : defaultSupportSettings;
 		const next = await ensureGeneratedSupportQr(current as SupportSettings);
 		if (next !== current) {
-			await prisma.appSetting.upsert({
-				where: { key: supportSettingsKey },
-				update: { value: next },
-				create: { key: supportSettingsKey, value: next }
-			});
+			await adminRepository.saveSetting(supportSettingsKey, next);
 		}
 		return next;
 	});
@@ -1130,11 +1043,7 @@ export const saveSupportSettings: RequestHandler = asyncHandler(async (request, 
 	const previous = await readSupportSettings();
 	const input = supportSettingsSchema.parse(request.body);
 	const setting = await ensureGeneratedSupportQr({ ...defaultSupportSettings, ...input });
-	await prisma.appSetting.upsert({
-		where: { key: supportSettingsKey },
-		update: { value: setting },
-		create: { key: supportSettingsKey, value: setting }
-	});
+	await adminRepository.saveSetting(supportSettingsKey, setting);
 	cacheSetting(supportSettingsKey, setting);
 	await cleanupReplacedUpload(previous.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SUPPORT_SETTINGS_UPDATED", "AppSetting", supportSettingsKey, setting);
@@ -1144,11 +1053,7 @@ export const saveSupportSettings: RequestHandler = asyncHandler(async (request, 
 export const refreshSupportQrImage: RequestHandler = asyncHandler(async (request, response) => {
 	const current = await readSupportSettings();
 	const setting = await ensureGeneratedSupportQr({ ...current, qrImageSource: "generated" }, true);
-	await prisma.appSetting.upsert({
-		where: { key: supportSettingsKey },
-		update: { value: setting },
-		create: { key: supportSettingsKey, value: setting }
-	});
+	await adminRepository.saveSetting(supportSettingsKey, setting);
 	cacheSetting(supportSettingsKey, setting);
 	await cleanupReplacedUpload(current.qrImagePath, setting.qrImagePath);
 	await audit(String(request.user?.id), "SUPPORT_QR_IMAGE_REFRESHED", "AppSetting", supportSettingsKey, {
@@ -1159,7 +1064,7 @@ export const refreshSupportQrImage: RequestHandler = asyncHandler(async (request
 
 export const deleteSupportSettings: RequestHandler = asyncHandler(async (request, response) => {
 	const current = await readSupportSettings();
-	await prisma.appSetting.deleteMany({ where: { key: supportSettingsKey } });
+	await adminRepository.deleteSetting(supportSettingsKey);
 	clearSettingCache(supportSettingsKey);
 	await deleteUnreferencedUpload(current.qrImagePath);
 	await audit(String(request.user?.id), "SUPPORT_SETTINGS_RESET", "AppSetting", supportSettingsKey);
@@ -1168,7 +1073,7 @@ export const deleteSupportSettings: RequestHandler = asyncHandler(async (request
 
 export async function readLinkPreviewSettings() {
 	return readCachedSetting(linkPreviewSettingsKey, async () => {
-		const setting = await prisma.appSetting.findUnique({ where: { key: linkPreviewSettingsKey } });
+		const setting = await adminRepository.setting(linkPreviewSettingsKey);
 		const parsed = linkPreviewSettingsSchema.safeParse(setting?.value);
 		if (!parsed.success) return defaultLinkPreviewSettings;
 
@@ -1189,11 +1094,7 @@ export const saveLinkPreviewSettings: RequestHandler = asyncHandler(async (reque
 	const previous = await readLinkPreviewSettings();
 	const input = linkPreviewSettingsSchema.parse(request.body);
 	const setting = { ...defaultLinkPreviewSettings, ...input };
-	await prisma.appSetting.upsert({
-		where: { key: linkPreviewSettingsKey },
-		update: { value: setting },
-		create: { key: linkPreviewSettingsKey, value: setting }
-	});
+	await adminRepository.saveSetting(linkPreviewSettingsKey, setting);
 	cacheSetting(linkPreviewSettingsKey, setting);
 	await cleanupReplacedUpload(previous.imagePath, setting.imagePath);
 	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_UPDATED", "AppSetting", linkPreviewSettingsKey, setting);
@@ -1202,7 +1103,7 @@ export const saveLinkPreviewSettings: RequestHandler = asyncHandler(async (reque
 
 export const deleteLinkPreviewSettings: RequestHandler = asyncHandler(async (request, response) => {
 	const current = await readLinkPreviewSettings();
-	await prisma.appSetting.deleteMany({ where: { key: linkPreviewSettingsKey } });
+	await adminRepository.deleteSetting(linkPreviewSettingsKey);
 	clearSettingCache(linkPreviewSettingsKey);
 	await deleteUnreferencedUpload(current.imagePath);
 	await audit(String(request.user?.id), "LINK_PREVIEW_SETTINGS_RESET", "AppSetting", linkPreviewSettingsKey);
@@ -1223,8 +1124,7 @@ export const uploadSettingQrImage: RequestHandler = asyncHandler(async (request,
 	const filePath = path.join(uploadDir, storedName);
 	await fs.writeFile(filePath, request.file.buffer);
 	const publicPath = `/uploads/${[...categoryParts, storedName].join("/")}`;
-	const asset = await prisma.fileAsset.create({
-		data: {
+	const asset = await adminRepository.createFileAsset({
 			originalName: request.file.originalname,
 			storedName,
 			mimeType: request.file.mimetype,
@@ -1232,7 +1132,6 @@ export const uploadSettingQrImage: RequestHandler = asyncHandler(async (request,
 			path: publicPath,
 			category,
 			uploadedById: String(request.user?.id)
-		}
 	});
 	await audit(String(request.user?.id), "SETTING_QR_IMAGE_UPLOADED", "FileAsset", asset.id, {
 		category,
@@ -1263,8 +1162,9 @@ export const moveOldUploadImages: RequestHandler = asyncHandler(async (request, 
 		{ key: linkPreviewSettingsKey, field: "imagePath", category: "settings/link-preview" }
 	];
 
+	const [allSettings, banners, contributors, oldFileAssets] = await adminRepository.settingsForUploadNormalization();
 	for (const target of settingTargets) {
-		const row = await prisma.appSetting.findUnique({ where: { key: target.key } });
+		const row = allSettings.find((setting) => setting.key === target.key);
 		const value = row?.value && typeof row.value === "object" && !Array.isArray(row.value)
 			? row.value as Record<string, unknown>
 			: null;
@@ -1272,19 +1172,14 @@ export const moveOldUploadImages: RequestHandler = asyncHandler(async (request, 
 		await normalizeReferencedUpload(currentPath, target.category, movedPaths, summary);
 	}
 
-	const banners = await prisma.banner.findMany();
 	for (const banner of banners) {
 		await normalizeReferencedUpload(banner.image, `banners/${banner.id}`, movedPaths, summary);
 	}
 
-	const contributors = await prisma.contributor.findMany();
 	for (const contributor of contributors) {
 		await normalizeReferencedUpload(contributor.avatar, `contributors/${contributor.id}`, movedPaths, summary);
 	}
 
-	const oldFileAssets = await prisma.fileAsset.findMany({
-		where: { path: { startsWith: "/uploads/settings/" } }
-	});
 	for (const asset of oldFileAssets) {
 		if (!isOldDirectSettingsUpload(asset.path)) continue;
 		await normalizeReferencedUpload(asset.path, asset.category || "settings/misc", movedPaths, summary);
@@ -1401,35 +1296,14 @@ export const saveSubject: RequestHandler = asyncHandler(async (request, response
 		questionBank: input.questionBank
 	};
 	const id = request.params.id ? String(request.params.id) : undefined;
-	const item = id
-		? await prisma.subject.update({
-			where: { id },
-			data,
-			select: {
-				id: true,
-				code: true,
-				title: true,
-				semester: true,
-				type: true
-			}
-		})
-		: await prisma.subject.create({
-			data,
-			select: {
-				id: true,
-				code: true,
-				title: true,
-				semester: true,
-				type: true
-			}
-		});
+	const item = await adminRepository.saveSubject(id, data);
 	await audit(String(request.user?.id), id ? "SUBJECT_UPDATED" : "SUBJECT_CREATED", "Subject", item.id, item);
 	response.status(id ? 200 : 201).json(item);
 });
 
 export const deleteSubject: RequestHandler = asyncHandler(async (request, response) => {
 	const id = String(request.params.id);
-	await prisma.subject.delete({ where: { id } });
+	await adminRepository.deleteSubject(id);
 	await audit(String(request.user?.id), "SUBJECT_DELETED", "Subject", id);
 	response.status(204).end();
 });
@@ -1472,11 +1346,7 @@ export const updateUserStatus: RequestHandler = asyncHandler(async (request, res
 		response.status(400).json({ code: "SELF_STATUS_CHANGE", message: "You cannot suspend or ban your own account." });
 		return;
 	}
-	const user = await prisma.user.update({
-		where: { id: String(request.params.id) },
-		data: { status: input.status },
-		select: { id: true, username: true, displayName: true, role: true, status: true }
-	});
+	const user = await adminRepository.updateUserStatus(String(request.params.id), input.status);
 	await audit(actorId, "USER_STATUS_UPDATED", "User", user.id, { status: input.status });
 	response.json(user);
 });
@@ -1492,8 +1362,12 @@ export const updateUser: RequestHandler = asyncHandler(async (request, response)
 	response.json(user);
 });
 
+export const getDataSourceAudit: RequestHandler = asyncHandler(async (_request, response) => {
+	response.json(dataSourceAudit());
+});
+
 export const getEmailVerificationSettings: RequestHandler = asyncHandler(async (_request, response) => {
-	const setting = await prisma.appSetting.findUnique({ where: { key: "email-verification" } });
+	const setting = await adminRepository.setting("email-verification");
 	const value = setting?.value as { enabled?: boolean } | null;
 	response.json({
 		enabled: value?.enabled === true,
@@ -1511,11 +1385,7 @@ export const saveEmailVerificationSettings: RequestHandler = asyncHandler(async 
 			"EMAIL_PROVIDER_NOT_CONFIGURED"
 		);
 	}
-	await prisma.appSetting.upsert({
-		where: { key: "email-verification" },
-		update: { value: input },
-		create: { key: "email-verification", value: input }
-	});
+	await adminRepository.saveSetting("email-verification", input);
 	await audit(String(request.user?.id), "EMAIL_VERIFICATION_SETTING_UPDATED", "AppSetting", "email-verification", input);
 	response.json({ ...input, configured: true, fromEmail: env.resendFromEmail });
 });
@@ -1540,73 +1410,59 @@ export const deleteUser: RequestHandler = asyncHandler(async (request, response)
 });
 
 export const getNewUserDefaultStatus: RequestHandler = asyncHandler(async (_request, response) => {
-	const setting = await prisma.appSetting.findUnique({ where: { key: "new-user-default-status" } });
+	const setting = await adminRepository.setting("new-user-default-status");
 	const value = setting?.value as { status?: string } | null;
 	response.json({ status: value?.status === "ACTIVE" ? "ACTIVE" : "PENDING" });
 });
 
 export const saveNewUserDefaultStatus: RequestHandler = asyncHandler(async (request, response) => {
 	const input = newUserDefaultStatusSchema.parse(request.body);
-	await prisma.appSetting.upsert({
-		where: { key: "new-user-default-status" },
-		update: { value: input },
-		create: { key: "new-user-default-status", value: input }
-	});
+	await adminRepository.saveSetting("new-user-default-status", input);
 	await audit(String(request.user?.id), "NEW_USER_DEFAULT_STATUS_UPDATED", "AppSetting", "new-user-default-status", input);
 	response.json(input);
 });
 
 export const listSemesters: RequestHandler = asyncHandler(async (_request, response) => {
-	response.json(await prisma.semester.findMany({ orderBy: { number: "asc" } }));
+	response.json(await adminRepository.semesters());
 });
 
 export const saveSemester: RequestHandler = asyncHandler(async (request, response) => {
 	const input = semesterSchema.parse(request.body);
 	const id = request.params.id ? String(request.params.id) : undefined;
-	const item = id
-		? await prisma.semester.update({ where: { id }, data: input })
-		: await prisma.semester.create({ data: input });
+	const item = await adminRepository.saveSemester(id, input);
 	await audit(String(request.user?.id), id ? "SEMESTER_UPDATED" : "SEMESTER_CREATED", "Semester", item.id, input);
 	response.json(item);
 });
 
 export const deleteSemester: RequestHandler = asyncHandler(async (request, response) => {
 	const id = String(request.params.id);
-	await prisma.semester.delete({ where: { id } });
+	await adminRepository.deleteSemester(id);
 	await audit(String(request.user?.id), "SEMESTER_DELETED", "Semester", id);
 	response.status(204).end();
 });
 
 export const listAssignments: RequestHandler = asyncHandler(async (_request, response) => {
-	response.json(await prisma.assignment.findMany({
-		include: { subject: { select: { code: true, title: true } }, createdBy: { select: { displayName: true } } },
-		orderBy: { createdAt: "desc" }
-	}));
+	response.json(await adminRepository.assignments());
 });
 
 export const saveAssignment: RequestHandler = asyncHandler(async (request, response) => {
 	const input = assignmentSchema.parse(request.body);
 	const data = { ...input, dueDate: input.dueDate ? new Date(input.dueDate) : null };
 	const id = request.params.id ? String(request.params.id) : undefined;
-	const item = id
-		? await prisma.assignment.update({ where: { id }, data })
-		: await prisma.assignment.create({ data: { ...data, createdById: String(request.user?.id) } });
+	const item = await adminRepository.saveAssignment(id, data, String(request.user?.id));
 	await audit(String(request.user?.id), id ? "ASSIGNMENT_UPDATED" : "ASSIGNMENT_CREATED", "Assignment", item.id);
 	response.json(item);
 });
 
 export const deleteAssignment: RequestHandler = asyncHandler(async (request, response) => {
 	const id = String(request.params.id);
-	await prisma.assignment.delete({ where: { id } });
+	await adminRepository.deleteAssignment(id);
 	await audit(String(request.user?.id), "ASSIGNMENT_DELETED", "Assignment", id);
 	response.status(204).end();
 });
 
 export const listStudyMaterials: RequestHandler = asyncHandler(async (_request, response) => {
-	response.json(await prisma.studyMaterial.findMany({
-		include: { subject: { select: { code: true, title: true, semester: true } } },
-		orderBy: [{ subject: { semester: "asc" } }, { subject: { code: "asc" } }, { groupName: "asc" }, { title: "asc" }]
-	}));
+	response.json(await adminRepository.studyMaterials());
 });
 
 export const saveStudyMaterial: RequestHandler = asyncHandler(async (request, response) => {
@@ -1618,25 +1474,20 @@ export const saveStudyMaterial: RequestHandler = asyncHandler(async (request, re
 		englishChecksum: input.englishChecksum || null,
 		hindiChecksum: input.hindiChecksum || null
 	};
-	const item = id
-		? await prisma.studyMaterial.update({ where: { id }, data })
-		: await prisma.studyMaterial.create({ data });
+	const item = await adminRepository.saveStudyMaterial(id, data);
 	await audit(String(request.user?.id), id ? "STUDY_MATERIAL_UPDATED" : "STUDY_MATERIAL_CREATED", "StudyMaterial", item.id);
 	response.status(id ? 200 : 201).json(item);
 });
 
 export const deleteStudyMaterial: RequestHandler = asyncHandler(async (request, response) => {
 	const id = String(request.params.id);
-	await prisma.studyMaterial.delete({ where: { id } });
+	await adminRepository.deleteStudyMaterial(id);
 	await audit(String(request.user?.id), "STUDY_MATERIAL_DELETED", "StudyMaterial", id);
 	response.status(204).end();
 });
 
 export const listPapers: RequestHandler = asyncHandler(async (_request, response) => {
-	response.json(await prisma.paper.findMany({
-		include: { subject: { select: { code: true, title: true, semester: true } } },
-		orderBy: [{ subject: { semester: "asc" } }, { subject: { code: "asc" } }, { session: "desc" }, { title: "asc" }]
-	}));
+	response.json(await adminRepository.papers());
 });
 
 export const savePaper: RequestHandler = asyncHandler(async (request, response) => {
@@ -1653,41 +1504,29 @@ export const savePaper: RequestHandler = asyncHandler(async (request, response) 
 		fileSize: input.fileSize ?? null,
 		updatedAt: new Date()
 	};
-	const item = id
-		? await prisma.paper.update({ where: { id }, data })
-		: await prisma.paper.create({ data });
+	const item = await adminRepository.savePaper(id, data);
 	await audit(String(request.user?.id), id ? "PAPER_UPDATED" : "PAPER_CREATED", "Paper", item.id);
 	response.status(id ? 200 : 201).json(item);
 });
 
 export const deletePaper: RequestHandler = asyncHandler(async (request, response) => {
 	const id = String(request.params.id);
-	await prisma.paper.delete({ where: { id } });
+	await adminRepository.deletePaper(id);
 	await audit(String(request.user?.id), "PAPER_DELETED", "Paper", id);
 	response.status(204).end();
 });
 
 export const listReports: RequestHandler = asyncHandler(async (_request, response) => {
-	response.json(await prisma.report.findMany({
-		include: {
-			reporter: { select: { username: true, displayName: true } },
-			reportedUser: { select: { username: true, displayName: true } }
-		},
-		orderBy: { createdAt: "desc" }
-	}));
+	response.json(await adminRepository.reports());
 });
 
 export const reviewReport: RequestHandler = asyncHandler(async (request, response) => {
 	const input = reportReviewSchema.parse(request.body);
-	const item = await prisma.report.update({ where: { id: String(request.params.id) }, data: input });
+	const item = await adminRepository.reviewReport(String(request.params.id), input);
 	await audit(String(request.user?.id), "REPORT_REVIEWED", "Report", item.id, input);
 	response.json(item);
 });
 
 export const listAuditLogs: RequestHandler = asyncHandler(async (_request, response) => {
-	response.json(await prisma.auditLog.findMany({
-		take: 200,
-		include: { actor: { select: { username: true, displayName: true } } },
-		orderBy: { createdAt: "desc" }
-	}));
+	response.json(await adminRepository.auditLogs());
 });

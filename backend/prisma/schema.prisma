@@ -61,6 +61,7 @@ model User {
   reportsAbout Report[]     @relation("ReportedUser")
   auditLogs    AuditLog[]   @relation("AuditActor")
   analyticsVisits AnalyticsVisit[]
+  feedback      Feedback[]
   createdAt    DateTime     @default(now())
   updatedAt    DateTime     @updatedAt
 }
@@ -248,6 +249,7 @@ model Contributor {
   name          String
   info          String
   avatar        String?
+  profileUrl    String?
   contributions Json
   order         Int      @default(0)
   active        Boolean  @default(true)
@@ -377,4 +379,18 @@ model AnalyticsVisit {
   @@index([visitorHash, createdAt])
   @@index([pagePath, createdAt])
   @@index([sessionId, createdAt])
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  userId      String?
+  visitorHash String?
+  mood        String
+  message     String
+  pagePath    String
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
 }

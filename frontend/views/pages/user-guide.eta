@@ -1,14 +1,84 @@
 <% layout('../layouts/main') %>
 	<main class="info-page">
 		<article class="info-card">
-			<h2>Getting Started</h2>
+			<h2>GyanPath User Guide</h2>
+			<p>Use this guide to find study resources, read question papers, practise questions and manage your learning progress.</p>
+
+			<h2>1. Getting Started</h2>
 			<ol>
-				<li>Open the Home page and choose your semester.</li>
-				<li>Select Theory Papers, Practical Papers or Assignments.</li>
-				<li>Use a subject card to open exam papers, the HTML viewer or the question bank.</li>
-				<li>Use the left sidebar to jump between sections quickly.</li>
+				<li>Open <a href="/">Home</a> to create an account, sign in or browse available resources.</li>
+				<li>After registration, verify your email if email verification is enabled.</li>
+				<li>Open <a href="/resources">Resources</a>, choose a semester and select a subject.</li>
+				<li>Signed-in users can save question-bank progress, bookmarks and revision lists.</li>
 			</ol>
-			<h2>Reading Preferences</h2>
-			<p>Use the theme buttons in the header. Your selected theme is saved automatically.</p>
+			<p><strong>Common issue:</strong> If a verification email is delayed, check the email address and spam folder, then use the resend option after its cooldown ends.</p>
+
+			<h2>2. Study Resources</h2>
+			<ul>
+				<li><strong>Where:</strong> Resources → Semester → Theory or Practical subject.</li>
+				<li><strong>How:</strong> Use a subject card to open study material, previous papers, the question bank or published lectures.</li>
+				<li><strong>Result:</strong> The selected collection opens for that subject.</li>
+				<li><strong>Tip:</strong> Use the section sidebar on long pages to jump between semesters and subjects.</li>
+			</ul>
+
+			<h2>3. Question Papers and PDF Reader</h2>
+			<ol>
+				<li>Open a subject's question-paper collection.</li>
+				<li>Search by title, session, subject or file name.</li>
+				<li>Select a paper to open it in the PDF reader.</li>
+				<li>When both versions exist, switch between English and Hindi.</li>
+			</ol>
+			<p><strong>Common issue:</strong> A PDF may be unavailable when its source file has not been published. Return to the collection and try another available language or session.</p>
+
+			<h2>4. Question Bank</h2>
+			<ul>
+				<li>Search questions by topic, tag, year or question text.</li>
+				<li>Filter by marks and difficulty, or sort by repetition and exam year.</li>
+				<li>Switch between English and Hinglish answers.</li>
+				<li>Choose Short, Exam or Detailed answer mode when that content is available.</li>
+				<li>Use Bookmark, Revision and Completed actions to organise your study.</li>
+			</ul>
+			<p><strong>Note:</strong> Saving personal progress requires a signed-in student account.</p>
+
+			<h2>5. Video Lectures</h2>
+			<ul>
+				<li>Open Video Lectures from a subject card or the published lecture page.</li>
+				<li>Search by title, unit, teacher or description.</li>
+				<li>Use the language filter to narrow the results.</li>
+				<li>A lecture may be a single video or a YouTube playlist.</li>
+			</ul>
+
+			<h2>6. Profile and Progress</h2>
+			<ul>
+				<li>Open Profile after signing in to review or update account information.</li>
+				<li>Use the question bank to maintain bookmarks, revision items and completed questions.</li>
+				<li>If the session expires, sign in again before making protected changes.</li>
+			</ul>
+
+			<h2>7. Appearance and Navigation</h2>
+			<ul>
+				<li>Choose Light, Dark or Sepia from the theme controls. The selection is saved in this browser.</li>
+				<li>Use the main navigation to reach Home, Resources, Discussion, About and this guide.</li>
+				<li>On smaller screens, use the menu and section controls to reveal navigation.</li>
+			</ul>
+
+			<h2>8. Troubleshooting</h2>
+			<ul>
+				<li><strong>Page is empty:</strong> Refresh once and confirm that the selected subject has published content.</li>
+				<li><strong>Progress is not saved:</strong> Confirm that you are signed in.</li>
+				<li><strong>Video does not play:</strong> Open its YouTube source; embedding may be disabled by the publisher.</li>
+				<li><strong>Access denied:</strong> Sign in with an account that has permission for that page.</li>
+			</ul>
+
+			<h2>9. About GyanPath and Feedback</h2>
+			<ul>
+				<li>Open <a href="/about">About</a> to read the project's purpose, organisation and disclaimer.</li>
+				<li>Use the feedback form to save a mood and a short improvement note on this device.</li>
+				<li>The Contributors section identifies people whose published work supports the project.</li>
+			</ul>
+
+			<h2>10. Privacy and Disclaimer</h2>
+			<p>Account details and saved learning progress are used to provide GyanPath features. YouTube and other external resources follow their own privacy policies.</p>
+			<p>GyanPath is an independent study helper and is not an official IGNOU website. Always confirm deadlines, rules and official notices through IGNOU.</p>
 		</article>
 	</main>

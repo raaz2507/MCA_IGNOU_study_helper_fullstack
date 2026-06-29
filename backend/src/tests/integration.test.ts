@@ -102,6 +102,25 @@ test("admin control panel APIs expose overview and protect role management", asy
 	await agent.post("/api/auth/logout");
 });
 
+test("editors can manage link preview settings without receiving Admin-only access", async () => {
+	const editorAgent = request.agent(createApp());
+	const login = await editorAgent.post("/api/auth/login").send({
+		username: "editor",
+		password: "editor123"
+	});
+	assert.equal(login.status, 200);
+
+	const linkPreviewSettings = await editorAgent.get("/api/admin/settings/link-preview");
+	assert.equal(linkPreviewSettings.status, 200);
+	assert.ok(linkPreviewSettings.body.imageUrl || linkPreviewSettings.body.imagePath);
+
+	const adminOverview = await editorAgent.get("/api/admin/overview");
+	assert.equal(adminOverview.status, 403);
+	const resetAttempt = await editorAgent.delete("/api/admin/settings/link-preview");
+	assert.equal(resetAttempt.status, 403);
+	await editorAgent.post("/api/auth/logout");
+});
+
 test("analytics records anonymous visits and exposes admin summary", async () => {
 	const app = createApp();
 	const tracked = await request(app).post("/api/analytics/visit").send({

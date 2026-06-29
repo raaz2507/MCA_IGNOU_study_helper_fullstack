@@ -9,6 +9,8 @@ import {
 } from "../api/admin.api.js";
 import { showToast } from "../utils/toast.js";
 
+export class AdminUsersPage {
+	initialize() {
 const usersBody = document.getElementById("adminUsersBody");
 const searchInput = document.getElementById("adminUserSearch");
 const roleFilter = document.getElementById("adminRoleFilter");
@@ -371,3 +373,7 @@ document.getElementById("exportUsersJson").addEventListener("click", () => expor
 document.getElementById("closeUserDetails").addEventListener("click", () => detailDialog.close());
 
 initialize();
+	}
+}
+
+new AdminUsersPage().initialize();

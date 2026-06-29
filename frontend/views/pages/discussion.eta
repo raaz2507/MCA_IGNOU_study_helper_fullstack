@@ -1,7 +1,68 @@
 <% layout('../layouts/main') %>
-	<main class="info-page">
-		<section class="info-card">
-			<h2>Discussion rooms</h2>
-			<p id="discussionEmpty"></p>
+<main class="discussion-admin" aria-labelledby="discussionTitle">
+	<section class="discussion-hero">
+		<div>
+			<span class="eyebrow">Discussion management</span>
+			<h1 id="discussionTitle">Discussion &amp; Doubt Board</h1>
+			<p>Review student questions, spot unanswered doubts and keep subject conversations healthy.</p>
+		</div>
+		<button class="primary-action" type="button" data-demo-action="New room">＋ Create room</button>
+	</section>
+
+	<section class="discussion-stats" aria-label="Discussion overview">
+		<article><span class="stat-icon violet">💬</span><div><strong>128</strong><small>Open discussions</small></div><em>+12 this week</em></article>
+		<article><span class="stat-icon amber">?</span><div><strong>23</strong><small>Unanswered doubts</small></div><em>Needs attention</em></article>
+		<article><span class="stat-icon green">✓</span><div><strong>86%</strong><small>Solved rate</small></div><em>Last 30 days</em></article>
+		<article><span class="stat-icon rose">⚑</span><div><strong>4</strong><small>Reported posts</small></div><em>Review queue</em></article>
+	</section>
+
+	<div class="discussion-layout">
+		<section class="discussion-panel">
+			<div class="panel-heading">
+				<div><span class="eyebrow">Moderation queue</span><h2>Recent discussions</h2></div>
+				<label class="discussion-search"><span>⌕</span><input id="discussionSearch" type="search" placeholder="Search title, subject or student" aria-label="Search discussions"></label>
+			</div>
+			<div class="filter-row" role="group" aria-label="Filter discussions">
+				<button class="filter-chip active" type="button" data-filter="all">All <span>6</span></button>
+				<button class="filter-chip" type="button" data-filter="unanswered">Unanswered <span>2</span></button>
+				<button class="filter-chip" type="button" data-filter="solved">Solved <span>3</span></button>
+				<button class="filter-chip" type="button" data-filter="reported">Reported <span>1</span></button>
+			</div>
+			<div class="discussion-list" id="discussionList">
+				<article class="discussion-item" data-status="unanswered" data-search="mcs 211 dijkstra shortest path priya sharma">
+					<div class="avatar purple">PS</div><div class="discussion-copy"><div class="item-meta"><span class="subject-tag">MCS-211</span><span>8 min ago</span></div><h3>Why does Dijkstra fail with negative edge weights?</h3><p>I understand the greedy step, but where exactly does the proof break?</p><div class="item-footer"><span>💬 0 replies</span><span>👁 18 views</span><span class="status unanswered">Unanswered</span></div></div><button class="more-button" aria-label="More actions">•••</button>
+				</article>
+				<article class="discussion-item" data-status="solved" data-search="mcs 220 struts interceptor lifecycle arjun mehta">
+					<div class="avatar blue">AM</div><div class="discussion-copy"><div class="item-meta"><span class="subject-tag">MCS-220</span><span>34 min ago</span></div><h3>Struts interceptor lifecycle explained with an example</h3><p>Can someone verify whether this execution order is correct for the exam?</p><div class="item-footer"><span>💬 7 replies</span><span>👁 64 views</span><span class="status solved">✓ Solved</span></div></div><button class="more-button" aria-label="More actions">•••</button>
+				</article>
+				<article class="discussion-item reported-item" data-status="reported" data-search="mcs 213 normalization assignment report neha singh">
+					<div class="avatar orange">NS</div><div class="discussion-copy"><div class="item-meta"><span class="subject-tag">MCS-213</span><span>1 hr ago</span></div><h3>Normalization doubt from the latest assignment</h3><p>Two reports received. Review the attached link before restoring the post.</p><div class="item-footer"><span>💬 3 replies</span><span>👁 41 views</span><span class="status reported">⚑ Reported</span></div></div><button class="more-button" aria-label="More actions">•••</button>
+				</article>
+				<article class="discussion-item" data-status="solved" data-search="mcs 212 process scheduling round robin amit kumar">
+					<div class="avatar green">AK</div><div class="discussion-copy"><div class="item-meta"><span class="subject-tag">MCS-212</span><span>2 hrs ago</span></div><h3>Round-robin waiting-time calculation</h3><p>Sharing my working for the December 2025 paper question.</p><div class="item-footer"><span>💬 11 replies</span><span>👁 92 views</span><span class="status solved">✓ Solved</span></div></div><button class="more-button" aria-label="More actions">•••</button>
+				</article>
+			</div>
+			<p class="empty-filter" id="discussionEmpty" hidden>No discussions match this filter.</p>
 		</section>
-	</main>
+
+		<aside class="discussion-sidebar">
+			<section class="side-card">
+				<div class="side-title"><div><span class="eyebrow">Rooms</span><h2>Subject activity</h2></div><button type="button" data-demo-action="Manage rooms">Manage</button></div>
+				<ul class="room-list">
+					<li><span class="room-icon purple">DS</span><div><strong>Data Structures</strong><small>MCS-211 · 42 posts</small></div><em>12</em></li>
+					<li><span class="room-icon blue">OS</span><div><strong>Operating Systems</strong><small>MCS-212 · 31 posts</small></div><em>8</em></li>
+					<li><span class="room-icon orange">DB</span><div><strong>Database Systems</strong><small>MCS-213 · 28 posts</small></div><em>3</em></li>
+					<li><span class="room-icon green">WD</span><div><strong>Web Technologies</strong><small>MCS-220 · 27 posts</small></div><em>5</em></li>
+				</ul>
+			</section>
+			<section class="side-card moderation-card">
+				<span class="eyebrow">Community health</span><h2>Moderation checklist</h2>
+				<label><input type="checkbox" checked> Review reported content</label>
+				<label><input type="checkbox"> Answer old unanswered doubts</label>
+				<label><input type="checkbox"> Publish weekly discussion prompt</label>
+				<div class="health-meter"><span><i style="width: 72%"></i></span><small>72% complete today</small></div>
+			</section>
+		</aside>
+	</div>
+	<p class="demo-toast" id="discussionToast" role="status" aria-live="polite"></p>
+</main>

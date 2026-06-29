@@ -1,15 +1,7 @@
 import { AuthService } from "../utils/auth.js";
 import { fetchLectureMetadata } from "../api/content.api.js";
 import { getSubjects } from "../api/subjects.api.js";
-import {
-	createLectureId,
-	getLectures,
-	lectureType,
-	normalizeLecture,
-	removeLecture,
-	saveLecture,
-	youtubeEmbedUrl
-} from "../utils/video-lectures-store.js";
+import { videoLectureStore } from "../utils/video-lectures-store.js";
 
 import { showToast } from "../utils/toast.js";
 
@@ -21,7 +13,7 @@ const fetchButton = document.getElementById("fetchLectureDetails");
 const subjectSelect = document.getElementById("lectureSubject");
 const session = await new AuthService().getSession();
 const canDelete = session?.role === "admin";
-let lectures = await getLectures();
+let lectures = await videoLectureStore.getLectures();
 
 function field(id) {
 	return document.getElementById(id);
@@ -71,10 +63,10 @@ function readForm() {
 	if (!subjectSelect.value) {
 		throw new Error("Please select a subject before saving.");
 	}
-	const lecture = normalizeLecture({
-		id: field("lectureId").value || createLectureId(),
+	const lecture = videoLectureStore.normalizeLecture({
+		id: field("lectureId").value || videoLectureStore.createLectureId(),
 		subject: subjectSelect.value,
-		type: lectureType(field("lectureUrl").value),
+		type: videoLectureStore.lectureType(field("lectureUrl").value),
 		title: field("lectureTitle").value,
 		unit: field("lectureUnit").value,
 		description: field("lectureDescription").value,
@@ -132,7 +124,7 @@ function renderList() {
 		const item = document.createElement("article");
 		item.className = "lecture-admin-item";
 
-		const embedUrl = youtubeEmbedUrl(lecture.url, window.location.origin);
+		const embedUrl = videoLectureStore.youtubeEmbedUrl(lecture.url, window.location.origin);
 		const thumbnail = document.createElement("div");
 		thumbnail.className = "lecture-admin-thumbnail";
 		if (embedUrl) {
@@ -171,7 +163,7 @@ function renderList() {
 			remove.textContent = "Delete";
 			remove.addEventListener("click", async () => {
 				if (!window.confirm(`Delete lecture "${lecture.title}"?`)) return;
-				await removeLecture(lecture.id);
+				await videoLectureStore.removeLecture(lecture.id);
 				lectures = lectures.filter((itemLecture) => itemLecture.id !== lecture.id);
 				renderList();
 				if (field("lectureId").value === lecture.id) resetForm();
@@ -210,7 +202,7 @@ form.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	try {
 		const lecture = readForm();
-		const saved = await saveLecture(lecture);
+		const saved = await videoLectureStore.saveLecture(lecture);
 		const existingIndex = lectures.findIndex((item) => item.id === saved.id);
 		if (existingIndex >= 0) lectures[existingIndex] = saved;
 		else lectures.push(saved);

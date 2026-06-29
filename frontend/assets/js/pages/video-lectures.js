@@ -1,4 +1,4 @@
-import { getPublishedLectures, youtubeEmbedUrl } from "../utils/video-lectures-store.js";
+import { videoLectureStore } from "../utils/video-lectures-store.js";
 
 const params = new URLSearchParams(window.location.search);
 const subject = String(params.get("subject") || "").trim().toUpperCase();
@@ -7,7 +7,7 @@ const subtitle = document.getElementById("lecturePageSubtitle");
 const grid = document.getElementById("lectureGrid");
 const search = document.getElementById("lectureSearch");
 const language = document.getElementById("lectureLanguageFilter");
-const allLectures = await getPublishedLectures(subject);
+const allLectures = await videoLectureStore.getPublishedLectures(subject);
 
 if (title) title.textContent = subject ? `${subject} Video Lectures` : "Video Lectures";
 if (subtitle) {
@@ -49,7 +49,7 @@ function render() {
 		card.className = "lecture-card";
 		const media = document.createElement("div");
 		media.className = "lecture-media";
-		const embedUrl = youtubeEmbedUrl(lecture.url, window.location.origin);
+		const embedUrl = videoLectureStore.youtubeEmbedUrl(lecture.url, window.location.origin);
 		const isPlaylist = lecture.type === "playlist";
 		if (embedUrl) {
 			const frame = document.createElement("iframe");

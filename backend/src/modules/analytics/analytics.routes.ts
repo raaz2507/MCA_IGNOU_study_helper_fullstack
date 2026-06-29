@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { getAnalyticsSummary, trackVisit } from "./analytics.controller.js";
 import { requireRoles } from "../auth/auth.middleware.js";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../domain/auth/roles.js";
 
 export const analyticsRouter = Router();
 

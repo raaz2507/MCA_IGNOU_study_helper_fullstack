@@ -10,6 +10,8 @@ import {
 import { showToast } from "../utils/toast.js";
 import { uploadSettingQrImage } from "../api/admin.api.js";
 
+export class BannerAdminPage {
+	async initialize() {
 const form = document.getElementById("bannerForm");
 const list = document.getElementById("bannerAdminList");
 const message = document.getElementById("bannerMessage");
@@ -206,5 +208,8 @@ form.addEventListener("submit", async (event) => {
 field("bannerPriority").value = String(banners.length + 1);
 renderPreview();
 renderList();
+	}
+}
 
+new BannerAdminPage().initialize();
 

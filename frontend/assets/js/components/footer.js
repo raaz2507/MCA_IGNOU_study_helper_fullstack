@@ -2,7 +2,7 @@ const defaultShareSettings = {
 	title: "Share GyanPath",
 	description: "Scan the QR code or share it with another MCA student.",
 	shareText: "GyanPath - IGNOU MCA study resources",
-	url: "https://mcaignoustudyhelperfullstck-production.up.railway.app/",
+	url: "https://gyanpath.up.railway.app/",
 	qrImageSource: "generated",
 	qrImageUrl: "",
 	qrImagePath: ""
@@ -19,11 +19,32 @@ const defaultSupportSettings = {
 	buttonUrl: ""
 };
 
-function selectedQrImage(settings, generatedData) {
+function selectConfiguredQrImage(settings) {
 	if (settings.qrImageSource === "generated" && settings.qrImagePath) return settings.qrImagePath;
 	if (settings.qrImageSource === "upload" && settings.qrImagePath) return settings.qrImagePath;
 	if (settings.qrImageSource === "url" && settings.qrImageUrl) return settings.qrImageUrl;
 	return "";
+}
+
+function displayQrImageWithFallback(qrImageElement, configuredImageUrl) {
+	if (!qrImageElement) return;
+	const fallbackDataUrl = qrImageElement.dataset.qrFallbackSrc || "";
+	const fallbackAlternativeText = qrImageElement.dataset.qrFallbackAlt || qrImageElement.alt;
+	const preferredImageUrl = configuredImageUrl || fallbackDataUrl;
+	qrImageElement.hidden = !preferredImageUrl;
+	if (!preferredImageUrl) return;
+
+	qrImageElement.onerror = () => {
+		if (!fallbackDataUrl || qrImageElement.src === fallbackDataUrl) {
+			qrImageElement.hidden = true;
+			return;
+		}
+		qrImageElement.src = fallbackDataUrl;
+		qrImageElement.alt = fallbackAlternativeText;
+		qrImageElement.hidden = false;
+	};
+	qrImageElement.src = preferredImageUrl;
+	if (!configuredImageUrl) qrImageElement.alt = fallbackAlternativeText;
 }
 
 function updateShareLinks(container, settings) {
@@ -37,11 +58,7 @@ function updateShareLinks(container, settings) {
 
 	if (title) title.textContent = share.title;
 	if (description) description.textContent = share.description;
-	if (qr) {
-		const qrImage = selectedQrImage(share, share.url);
-		qr.hidden = !qrImage;
-		if (qrImage) qr.src = qrImage;
-	}
+	displayQrImageWithFallback(qr, selectConfiguredQrImage(share));
 	if (whatsapp) whatsapp.href = `https://wa.me/?text=${encodeURIComponent(message)}`;
 	if (telegram) telegram.href = `https://t.me/share/url?url=${encodeURIComponent(share.url)}&text=${encodeURIComponent(share.shareText)}`;
 }
@@ -58,11 +75,7 @@ function updateSupportSection(container, settings) {
 	section.hidden = !support.enabled;
 	if (title) title.textContent = support.title;
 	if (description) description.textContent = support.description;
-	if (qr) {
-		const qrImage = selectedQrImage(support, support.qrData);
-		qr.hidden = !qrImage;
-		if (qrImage) qr.src = qrImage;
-	}
+	displayQrImageWithFallback(qr, selectConfiguredQrImage(support));
 	if (action) {
 		action.textContent = support.buttonText || defaultSupportSettings.buttonText;
 		if (support.buttonUrl) {

@@ -1,0 +1,9 @@
+{
+  "indexes": [
+    { "collectionGroup": "papers", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "subjectId", "order": "ASCENDING" }, { "fieldPath": "session", "order": "DESCENDING" }] },
+    { "collectionGroup": "studyMaterials", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "subjectId", "order": "ASCENDING" }, { "fieldPath": "groupName", "order": "ASCENDING" }, { "fieldPath": "title", "order": "ASCENDING" }] },
+    { "collectionGroup": "analyticsVisits", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "userId", "order": "ASCENDING" }, { "fieldPath": "createdAt", "order": "DESCENDING" }] },
+    { "collectionGroup": "feedback", "queryScope": "COLLECTION", "fields": [{ "fieldPath": "createdAt", "order": "DESCENDING" }] }
+  ],
+  "fieldOverrides": []
+}

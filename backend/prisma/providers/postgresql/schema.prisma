@@ -1,0 +1,397 @@
+// Generated from backend/prisma/schema.prisma. Do not edit manually.
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  EDITOR
+  MODERATOR
+  ADMIN
+}
+
+enum QuestionStatus {
+  PENDING
+  PUBLISHED
+}
+
+enum UserStatus {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum ReportStatus {
+  OPEN
+  REVIEWING
+  RESOLVED
+  DISMISSED
+}
+
+model User {
+  id           String       @id @default(cuid())
+  email        String?      @unique
+  username     String       @unique
+  passwordHash String
+  displayName  String
+  role         UserRole     @default(USER)
+  status       UserStatus   @default(PENDING)
+  emailVerifiedAt               DateTime?
+  emailVerificationRequired     Boolean      @default(false)
+  emailVerificationTokenHash    String?      @unique
+  emailVerificationExpiresAt    DateTime?
+  sessions     Session[]
+  progress     Progress[]
+  notes        Note[]
+  discussions  Discussion[]
+  comments     Comment[]
+  assignments  Assignment[] @relation("AssignmentCreator")
+  reportsMade  Report[]     @relation("ReportAuthor")
+  reportsAbout Report[]     @relation("ReportedUser")
+  auditLogs    AuditLog[]   @relation("AuditActor")
+  analyticsVisits AnalyticsVisit[]
+  feedback      Feedback[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+}
+
+model Semester {
+  id        String        @id @default(cuid())
+  number    Int           @unique
+  title     String
+  active    Boolean       @default(true)
+  status    PublishStatus @default(PUBLISHED)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  userId    String
+  expiresAt DateTime
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Subject {
+  id             String          @id @default(cuid())
+  code           String          @unique
+  title          String
+  semester       Int
+  type           String
+  folderPath     String          @unique
+  htmlViewerPath String?
+  questionBank   Boolean         @default(false)
+  papers         Paper[]
+  studyMaterials StudyMaterial[]
+  questions      Question[]
+  discussions    Discussion[]
+  lectures       Lecture[]
+  assignments    Assignment[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([semester])
+}
+
+model StudyMaterial {
+  id        String   @id @default(cuid())
+  subjectId String
+  groupName String
+  title     String
+  filePath  String   @unique
+  hindiPath String?
+  englishChecksum String?
+  hindiChecksum String?
+  status    PublishStatus @default(PUBLISHED)
+  subject   Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@index([subjectId, groupName])
+}
+
+model Paper {
+  id          String   @id @default(cuid())
+  subjectId   String
+  title       String
+  session     String
+  fileName    String
+  englishPath String
+  hindiPath   String?
+  englishChecksum String?
+  hindiChecksum   String?
+  previewPath String?
+  pageCount   Int?
+  fileSize    Int?
+  updatedAt   DateTime
+  status      PublishStatus @default(PUBLISHED)
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+
+  @@unique([subjectId, englishPath])
+  @@index([subjectId, session])
+}
+
+model Question {
+  id             String         @id
+  subjectId      String
+  sourceFile     String?
+  title          String
+  questionMd     String?
+  category       String?
+  difficulty     String?
+  marks          Int?
+  tags           Json
+  appearedIn     Json
+  relatedData    Json?
+  media          Json?
+  contentStatus  QuestionStatus @default(PENDING)
+  subject        Subject        @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  answers        Answer[]
+  progress       Progress[]
+  notes          Note[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@index([subjectId])
+  @@index([subjectId, difficulty])
+}
+
+model Answer {
+  id         String   @id @default(cuid())
+  questionId String
+  language   String
+  mode       String
+  content    String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, language, mode])
+}
+
+model Progress {
+  userId     String
+  questionId String
+  completed  Boolean  @default(false)
+  revision   Boolean  @default(false)
+  bookmarked Boolean  @default(false)
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  updatedAt  DateTime @updatedAt
+
+  @@id([userId, questionId])
+  @@index([userId])
+}
+
+model Note {
+  id         String    @id @default(cuid())
+  userId     String
+  questionId String?
+  content    String
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question   Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@index([userId])
+}
+
+model Banner {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  category    String
+  image       String?
+  buttonText  String?
+  buttonUrl   String?
+  startDate   DateTime?
+  endDate     DateTime?
+  priority    Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Lecture {
+  id          String   @id @default(cuid())
+  subjectId   String
+  title       String
+  unit        String?
+  description String?
+  url         String
+  teacher     String?
+  language    String
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  subject     Subject  @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([subjectId, active, order])
+}
+
+model Contributor {
+  id            String   @id @default(cuid())
+  name          String
+  info          String
+  avatar        String?
+  profileUrl    String?
+  contributions Json
+  order         Int      @default(0)
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+model Discussion {
+  id        String    @id @default(cuid())
+  subjectId String
+  authorId  String
+  title     String
+  content   String
+  solved    Boolean   @default(false)
+  anonymous Boolean   @default(false)
+  subject   Subject   @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  author    User      @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  comments  Comment[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([subjectId, createdAt])
+}
+
+model Comment {
+  id           String     @id @default(cuid())
+  discussionId String
+  authorId     String
+  parentId     String?
+  content      String
+  discussion   Discussion @relation(fields: [discussionId], references: [id], onDelete: Cascade)
+  author       User       @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  parent       Comment?   @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      Comment[]  @relation("CommentReplies")
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  @@index([discussionId, createdAt])
+}
+
+model AppSetting {
+  key       String   @id
+  value     Json
+  updatedAt DateTime @updatedAt
+}
+
+model Assignment {
+  id          String        @id @default(cuid())
+  subjectId   String
+  title       String
+  description String?
+  dueDate     DateTime?
+  solutionUrl String?
+  status      PublishStatus @default(DRAFT)
+  createdById String
+  subject     Subject       @relation(fields: [subjectId], references: [id], onDelete: Cascade)
+  createdBy   User          @relation("AssignmentCreator", fields: [createdById], references: [id], onDelete: Restrict)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+
+  @@index([subjectId, status])
+}
+
+model Report {
+  id             String       @id @default(cuid())
+  reporterId     String
+  reportedUserId String?
+  targetType     String
+  targetId       String?
+  reason         String
+  details        String?
+  status         ReportStatus @default(OPEN)
+  resolution     String?
+  reporter       User         @relation("ReportAuthor", fields: [reporterId], references: [id], onDelete: Cascade)
+  reportedUser   User?        @relation("ReportedUser", fields: [reportedUserId], references: [id], onDelete: SetNull)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([status, createdAt])
+}
+
+model FileAsset {
+  id           String   @id @default(cuid())
+  originalName String
+  storedName   String
+  mimeType     String
+  size         Int
+  path         String
+  category     String
+  uploadedById String
+  createdAt    DateTime @default(now())
+
+  @@index([category, createdAt])
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  actorId    String?
+  action     String
+  entityType String
+  entityId   String?
+  details    Json?
+  actor      User?    @relation("AuditActor", fields: [actorId], references: [id], onDelete: SetNull)
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([entityType, entityId])
+}
+
+model AnalyticsVisit {
+  id             String   @id @default(cuid())
+  userId         String?
+  visitorHash    String
+  sessionId      String
+  pagePath       String
+  referrer       String
+  referrerSource String
+  deviceType     String
+  browser        String
+  country        String?
+  loggedIn       Boolean  @default(false)
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+  @@index([visitorHash, createdAt])
+  @@index([pagePath, createdAt])
+  @@index([sessionId, createdAt])
+}
+
+model Feedback {
+  id          String   @id @default(cuid())
+  userId      String?
+  visitorHash String?
+  mood        String
+  message     String
+  pagePath    String
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt   DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId, createdAt])
+}

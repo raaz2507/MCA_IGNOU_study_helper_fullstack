@@ -188,7 +188,8 @@ Update the checkbox and status whenever a feature is completed.
 
 ## 8. Discussion and Doubt Board
 
-- [-] Discussion page and database-schema foundation
+- [x] Static Admin/Editor testing discussion and doubt-board page
+- [-] Discussion database-schema foundation
 - [ ] Subject-wise discussion rooms
 - [ ] Create a discussion post
 - [ ] Question-specific discussion threads
@@ -207,7 +208,8 @@ Update the checkbox and status whenever a feature is completed.
 
 ## 9. Real-Time Chat
 
-- [-] Chat page and frontend API-client foundation
+- [x] Static Admin/Editor testing real-time chat page
+- [-] Chat frontend API-client foundation
 - [-] Configure Socket.IO foundation
 - [ ] One-to-one chat
 - [ ] Group chat

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../domain/auth/roles.js";
 import { requireRoles } from "../auth/auth.middleware.js";
 import {
 	getAnalyticsRetention,
@@ -8,6 +8,7 @@ import {
 	getOverview,
 	getSubjects,
 	getSystemStatus,
+	getDataSourceAudit,
 	getUsers,
 	saveSubject,
 	deletePaper,
@@ -119,6 +120,22 @@ adminRouter.delete("/assignments/:id", deleteAssignment);
 adminRouter.get("/reports", listReports);
 adminRouter.patch("/reports/:id", reviewReport);
 adminRouter.get("/audit-logs", listAuditLogs);
+adminRouter.get(
+	"/settings/link-preview",
+	...requireRoles(UserRole.ADMIN, UserRole.EDITOR),
+	getLinkPreviewSettings
+);
+adminRouter.put(
+	"/settings/link-preview",
+	...requireRoles(UserRole.ADMIN, UserRole.EDITOR),
+	saveLinkPreviewSettings
+);
+adminRouter.post(
+	"/settings/qr-image",
+	...requireRoles(UserRole.ADMIN, UserRole.EDITOR),
+	settingImageUpload.single("image"),
+	uploadSettingQrImage
+);
 
 adminRouter.use(...requireRoles(UserRole.ADMIN));
 adminRouter.get("/overview", getOverview);
@@ -131,6 +148,7 @@ adminRouter.delete("/users/:id", deleteUser);
 adminRouter.get("/settings/new-user-default-status", getNewUserDefaultStatus);
 adminRouter.put("/settings/new-user-default-status", saveNewUserDefaultStatus);
 adminRouter.get("/system", getSystemStatus);
+adminRouter.get("/data-sources", getDataSourceAudit);
 adminRouter.get("/settings/analytics-retention", getAnalyticsRetention);
 adminRouter.put("/settings/analytics-retention", saveAnalyticsRetention);
 adminRouter.get("/settings/email-verification", getEmailVerificationSettings);
@@ -143,10 +161,7 @@ adminRouter.get("/settings/support", getSupportSettings);
 adminRouter.put("/settings/support", saveSupportSettings);
 adminRouter.post("/settings/support/qr-refresh", refreshSupportQrImage);
 adminRouter.delete("/settings/support", deleteSupportSettings);
-adminRouter.get("/settings/link-preview", getLinkPreviewSettings);
-adminRouter.put("/settings/link-preview", saveLinkPreviewSettings);
 adminRouter.delete("/settings/link-preview", deleteLinkPreviewSettings);
-adminRouter.post("/settings/qr-image", settingImageUpload.single("image"), uploadSettingQrImage);
 adminRouter.post("/uploads/move-old-images", moveOldUploadImages);
 adminRouter.get("/database/backup", exportDatabaseBackup);
 adminRouter.post("/database/restore/preview", databaseRestoreUpload.single("backup"), previewDatabaseBackupRestore);

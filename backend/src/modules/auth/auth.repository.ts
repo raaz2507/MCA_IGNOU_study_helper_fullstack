@@ -5,6 +5,10 @@ export const hashToken = (token: string) =>
 	createHash("sha256").update(token).digest("hex");
 
 export const authRepository = {
+	async setting<T>(key: string): Promise<T | null> {
+		const setting = await prisma.appSetting.findUnique({ where: { key } });
+		return setting?.value as T | null;
+	},
 	findUserByUsername(username: string) {
 		return prisma.user.findUnique({ where: { username } });
 	},
@@ -13,6 +17,9 @@ export const authRepository = {
 	},
 	findUserByEmail(email: string) {
 		return prisma.user.findUnique({ where: { email } });
+	},
+	findUserByVerificationTokenHash(emailVerificationTokenHash: string) {
+		return prisma.user.findUnique({ where: { emailVerificationTokenHash } });
 	},
 	createUser(data: {
 		displayName: string;
@@ -36,6 +43,27 @@ export const authRepository = {
 	},
 	updatePassword(id: string, passwordHash: string) {
 		return prisma.user.update({ where: { id }, data: { passwordHash } });
+	},
+	setEmailVerificationToken(id: string, tokenHash: string, expiresAt: Date) {
+		return prisma.user.update({
+			where: { id },
+			data: {
+				emailVerificationRequired: true,
+				emailVerificationTokenHash: tokenHash,
+				emailVerificationExpiresAt: expiresAt
+			}
+		});
+	},
+	markEmailVerified(id: string, verifiedAt: Date) {
+		return prisma.user.update({
+			where: { id },
+			data: {
+				emailVerifiedAt: verifiedAt,
+				emailVerificationRequired: false,
+				emailVerificationTokenHash: null,
+				emailVerificationExpiresAt: null
+			}
+		});
 	},
 	deleteUserSessions(userId: string) {
 		return prisma.session.deleteMany({ where: { userId } });

@@ -1,4 +1,4 @@
-import type { UserRole } from "@prisma/client";
+import type { UserRole } from "../../domain/auth/roles.js";
 import { AppError } from "../../shared/errors/app-error.js";
 import { adminRepository } from "./admin.repository.js";
 

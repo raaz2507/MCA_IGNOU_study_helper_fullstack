@@ -9,10 +9,26 @@
     "build": "npm run clean && npm run prisma:generate && tsc -p backend/tsconfig.json",
     "start": "node backend/dist/src/server.js",
     "test": "tsx --test backend/src/tests/*.test.ts",
-    "prisma:generate": "prisma generate --schema backend/prisma/schema.prisma",
+    "prisma:schemas": "tsx backend/prisma/generate-provider-schemas.ts",
+    "prisma:generate": "npm run prisma:schemas && prisma generate --schema backend/prisma/providers/postgresql/schema.prisma",
+    "prisma:generate:postgresql": "npm run prisma:schemas && prisma generate --schema backend/prisma/providers/postgresql/schema.prisma",
+    "prisma:generate:mysql": "npm run prisma:schemas && prisma generate --schema backend/prisma/providers/mysql/schema.prisma",
+    "prisma:generate:sqlite": "npm run prisma:schemas && prisma generate --schema backend/prisma/providers/sqlite/schema.prisma",
+    "prisma:validate:providers": "npm run prisma:schemas && prisma validate --schema backend/prisma/providers/postgresql/schema.prisma && prisma validate --schema backend/prisma/providers/mysql/schema.prisma && prisma validate --schema backend/prisma/providers/sqlite/schema.prisma",
     "prisma:migrate": "prisma migrate dev --schema backend/prisma/schema.prisma",
     "prisma:deploy": "prisma migrate deploy --schema backend/prisma/schema.prisma",
-    "prisma:seed": "tsx backend/prisma/seed.ts"
+    "prisma:deploy:runtime": "tsx backend/prisma/deploy-runtime.ts",
+    "prisma:migrate:postgresql": "npm run prisma:schemas && prisma migrate dev --schema backend/prisma/providers/postgresql/schema.prisma",
+    "prisma:migrate:mysql": "npm run prisma:schemas && prisma migrate dev --schema backend/prisma/providers/mysql/schema.prisma",
+    "prisma:migrate:sqlite": "npm run prisma:schemas && prisma migrate dev --schema backend/prisma/providers/sqlite/schema.prisma",
+    "prisma:deploy:postgresql": "prisma migrate deploy --schema backend/prisma/providers/postgresql/schema.prisma",
+    "prisma:deploy:mysql": "prisma migrate deploy --schema backend/prisma/providers/mysql/schema.prisma",
+    "prisma:deploy:sqlite": "prisma migrate deploy --schema backend/prisma/providers/sqlite/schema.prisma",
+    "prisma:seed": "tsx backend/prisma/seed.ts",
+    "content:scan": "tsx backend/src/infrastructure/content/generate-content-manifest.ts"
+	,"firestore:migrate:dry-run": "tsx backend/src/infrastructure/database/firestore/migrate-from-prisma.ts"
+	,"firestore:migrate": "tsx backend/src/infrastructure/database/firestore/migrate-from-prisma.ts --execute"
+	,"firestore:verify": "tsx backend/src/infrastructure/database/firestore/verify-migration.ts"
   },
   "engines": {
     "node": ">=22 <27"
@@ -27,6 +43,7 @@
     "eta": "^4.6.0",
     "express": "^5.2.1",
     "express-rate-limit": "^8.5.2",
+    "firebase-admin": "^14.1.0",
     "helmet": "^8.2.0",
     "ioredis": "^5.11.1",
     "jsonwebtoken": "^9.0.3",
@@ -34,6 +51,7 @@
     "pg": "^8.22.0",
     "pino": "^10.3.1",
     "pino-http": "^11.0.0",
+    "qrcode": "^1.5.4",
     "socket.io": "^4.8.3",
     "zod": "^4.4.3"
   },
@@ -46,6 +64,7 @@
     "@types/multer": "^2.1.0",
     "@types/node": "^26.0.0",
     "@types/pg": "^8.20.0",
+    "@types/qrcode": "^1.5.6",
     "@types/supertest": "^7.2.0",
     "eslint": "^10.5.0",
     "nodemon": "^3.1.14",

@@ -1,5 +1,5 @@
 ﻿import { Router } from "express";
-import { UserRole } from "@prisma/client";
+import { UserRole } from "../../domain/auth/roles.js";
 import { deleteContent, fetchLectureMetadata, listContent, saveContent } from "./content.controller.js";
 import { requireRoles } from "../auth/auth.middleware.js";
 

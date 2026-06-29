@@ -9,6 +9,8 @@ import {
 } from "../api/admin.api.js";
 import { showToast } from "../utils/toast.js";
 
+export class ResourceManagementPage {
+	async initialize() {
 let subjects = [];
 let studyMaterials = [];
 let papers = [];
@@ -308,3 +310,7 @@ try {
 	if (hasStudyMaterialSection) showMessage("studyMaterialMessage", `Resources could not be loaded: ${error.message}`, "error");
 	if (hasPaperSection) showMessage("paperMessage", `Resources could not be loaded: ${error.message}`, "error");
 }
+	}
+}
+
+new ResourceManagementPage().initialize();

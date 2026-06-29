@@ -1,70 +1,50 @@
 <% layout('../layouts/main') %>
-<% /* Page metadata and assets are provided by layouts/base.eta. */ %>
+	<main class="info-page about-page">
+		<article class="info-card about-story">
+			<h2>Our Mission</h2>
+			<p>GyanPath brings IGNOU MCA study material, previous-year papers, question banks and revision tools into one organised, student-friendly place.</p>
 
-	<main class="info-page">
-		<article class="info-card">
-			<h2>Purpose</h2>
-			<p>This website keeps semester-wise question papers, practical papers, study material and revision resources together in one place.</p>
+			<h2>What GyanPath Provides</h2>
+			<p>Resources are grouped by semester and subject so students can move from study material to exam practice without hunting across scattered folders and links.</p>
 
-			<h2>Organization</h2>
-			<p>Resources are arranged by semester and subject so students can quickly find the material they need.</p>
+			<div class="about-highlights" aria-label="GyanPath highlights">
+				<article><strong>Semester-wise</strong><span>Resources organised by programme, semester and subject.</span></article>
+				<article><strong>English &amp; Hindi</strong><span>Language options for supported study material and papers.</span></article>
+				<article><strong>Question Bank</strong><span>Search, filters, answer modes, bookmarks and revision lists.</span></article>
+				<article><strong>Video Learning</strong><span>Curated subject lectures and playlists where available.</span></article>
+				<article><strong>Study Progress</strong><span>Signed-in students can track completed and saved questions.</span></article>
+			</div>
 
-			<h2>Disclaimer</h2>
-			<p>This is an independent student study helper and is not an official IGNOU application or website. IGNOU name and course references are used only to organize educational resources.</p>
-
-			<h2>Developer</h2>
-			<p>This study helper is developed and maintained by <strong>Rajaanha</strong>.</p>
+			<h2>Trust and Transparency</h2>
+			<ul>
+				<li>GyanPath is an independent study helper and is not affiliated with or operated by IGNOU.</li>
+				<li>IGNOU names and course references are used only to organise educational resources.</li>
+				<li>Students should verify deadlines, examination rules and official notices directly through IGNOU.</li>
+				<li>External PDFs, videos and websites remain subject to their publishers' availability and policies.</li>
+			</ul>
 		</article>
 
-		<section class="feedback-section" aria-labelledby="feedbackTitle">
+		<section class="feedback-section feedback-card" aria-labelledby="feedbackTitle">
 			<div class="section-heading">
 				<p class="dashboard-label">Student feedback</p>
 				<h2 id="feedbackTitle">How was your visit?</h2>
+				<p>Your response is submitted privately to GyanPath. If you are offline, a local draft is kept.</p>
 			</div>
-			<form id="feedbackForm" class="feedback-card">
+			<form id="feedbackForm">
 				<div class="feedback-moods" role="radiogroup" aria-label="Select your mood">
-					<label class="feedback-mood">
-						<input type="radio" name="mood" value="very-happy" />
-						<span aria-hidden="true">😄</span>
-						<strong>Great</strong>
-					</label>
-					<label class="feedback-mood">
-						<input type="radio" name="mood" value="happy" />
-						<span aria-hidden="true">🙂</span>
-						<strong>Good</strong>
-					</label>
-					<label class="feedback-mood">
-						<input type="radio" name="mood" value="neutral" />
-						<span aria-hidden="true">😐</span>
-						<strong>Okay</strong>
-					</label>
-					<label class="feedback-mood">
-						<input type="radio" name="mood" value="confused" />
-						<span aria-hidden="true">😕</span>
-						<strong>Confusing</strong>
-					</label>
-					<label class="feedback-mood">
-						<input type="radio" name="mood" value="sad" />
-						<span aria-hidden="true">🙁</span>
-						<strong>Needs work</strong>
-					</label>
+					<label class="feedback-mood"><input type="radio" name="mood" value="very-happy" required /><span aria-hidden="true">😄</span><strong>Great</strong></label>
+					<label class="feedback-mood"><input type="radio" name="mood" value="happy" /><span aria-hidden="true">🙂</span><strong>Good</strong></label>
+					<label class="feedback-mood"><input type="radio" name="mood" value="neutral" /><span aria-hidden="true">😐</span><strong>Okay</strong></label>
+					<label class="feedback-mood"><input type="radio" name="mood" value="confused" /><span aria-hidden="true">😕</span><strong>Confusing</strong></label>
+					<label class="feedback-mood"><input type="radio" name="mood" value="sad" /><span aria-hidden="true">🙁</span><strong>Needs work</strong></label>
 				</div>
-				<label class="feedback-note">
-					<span>Message</span>
-					<textarea id="feedbackMessage" rows="4" maxlength="400" placeholder="Tell us what should improve."></textarea>
-				</label>
-				<div class="feedback-actions">
-					<button class="btn" type="submit">Save Feedback</button>
-					<p id="feedbackStatus" role="status" aria-live="polite"></p>
-				</div>
+				<label class="feedback-note"><span>Private feedback note</span><textarea id="feedbackMessage" rows="4" maxlength="400" placeholder="Tell us what could be improved."></textarea></label>
+				<div class="feedback-actions"><button class="btn" type="submit">Submit feedback</button><p id="feedbackStatus" role="status" aria-live="polite"></p></div>
 			</form>
 		</section>
 
 		<section class="contributors-section" aria-labelledby="contributorsTitle">
-			<div class="section-heading">
-				<p class="dashboard-label">People behind the resources</p>
-				<h2 id="contributorsTitle">Contributors</h2>
-			</div>
+			<div class="section-heading"><p class="dashboard-label">People behind the resources</p><h2 id="contributorsTitle">Contributors</h2></div>
 			<div id="contributorsGrid" class="contributors-grid" data-ssr-contributors>
 			<% for (const contributor of it.contributors) { %><%~ include('../partials/cards/contributor', { contributor }) %><% } %>
 			</div>

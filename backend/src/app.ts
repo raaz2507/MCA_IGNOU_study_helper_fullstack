@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { Eta } from "eta";
 import { pinoHttp } from "pino-http";
+import QRCode from "qrcode";
 import { env } from "./config/env.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
 import { catalogRouter } from "./modules/catalog/catalog.routes.js";
@@ -15,6 +16,7 @@ import { progressRouter } from "./modules/progress/progress.routes.js";
 import { contentRouter } from "./modules/content/content.routes.js";
 import { adminRouter } from "./modules/admin/admin.routes.js";
 import { analyticsRouter } from "./modules/analytics/analytics.routes.js";
+import { feedbackRouter } from "./modules/feedback/feedback.routes.js";
 import { readLinkPreviewSettings, readShareSettings, readSupportSettings } from "./modules/admin/admin.controller.js";
 import { resourcesPageData } from "./modules/catalog/resources-page.service.js";
 import { contentService } from "./modules/content/content.service.js";
@@ -28,13 +30,38 @@ const eta = new Eta({
 const socialDescription = "Watermark-Free Study PDFs • Hindi-Translated Study Material • Previous-Year Papers • Smart Question Bank • English & Hinglish Answers • Related Video Lecture Links • Revision Lists • Learning Milestones";
 const socialTitle = "GyanPath | IGNOU MCA Study Companion";
 const socialImage = `${env.siteUrl}/assets/images/gyanpath-link-preview-banner.jpg`;
+const generatedQrCodeDataUrlCache = new Map<string, string>();
+
+async function generateQrCodeFallbackDataUrl(qrCodeContent: string | null | undefined) {
+	if (!qrCodeContent) return "";
+	const cachedDataUrl = generatedQrCodeDataUrlCache.get(qrCodeContent);
+	if (cachedDataUrl) return cachedDataUrl;
+	const generatedDataUrl = await QRCode.toDataURL(qrCodeContent, {
+		width: 300,
+		margin: 2,
+		errorCorrectionLevel: "M"
+	});
+	if (generatedQrCodeDataUrlCache.size >= 20) {
+		const oldestCachedContent = generatedQrCodeDataUrlCache.keys().next().value;
+		if (oldestCachedContent) generatedQrCodeDataUrlCache.delete(oldestCachedContent);
+	}
+	generatedQrCodeDataUrlCache.set(qrCodeContent, generatedDataUrl);
+	return generatedDataUrl;
+}
 
 async function footerData() {
 	const [share, support] = await Promise.all([
 		readShareSettings(),
 		readSupportSettings()
 	]);
-	return { share, support };
+	const [shareQrFallbackDataUrl, supportQrFallbackDataUrl] = await Promise.all([
+		generateQrCodeFallbackDataUrl(share.url),
+		generateQrCodeFallbackDataUrl(support.enabled ? support.qrData : "")
+	]);
+	return {
+		share: { ...share, qrFallbackDataUrl: shareQrFallbackDataUrl },
+		support: { ...support, qrFallbackDataUrl: supportQrFallbackDataUrl }
+	};
 }
 
 const prettyLoggerStream = {
@@ -190,6 +217,7 @@ export function createApp() {
 	app.use("/api/progress", progressRouter);
 	app.use("/api/content", contentRouter);
 	app.use("/api/analytics", analyticsRouter);
+	app.use("/api/feedback", feedbackRouter);
 	app.use("/api/admin", adminRouter);
 
 	app.use("/assets", express.static(path.join(env.frontendRoot, "assets"), assetCache));
@@ -212,7 +240,7 @@ export function createApp() {
 		].join("\n"));
 	});
 	app.get("/sitemap.xml", (_request, response) => {
-		const indexedPages = ["", "resources", "paper-gallery", "question-bank", "video-lectures", "discussion", "user-guide", "about"];
+		const indexedPages = ["", "resources", "paper-gallery", "question-bank", "video-lectures", "user-guide", "about"];
 		const urls = indexedPages.map((page) => {
 			const loc = page ? `${env.siteUrl}/${page}` : `${env.siteUrl}/`;
 			return [
@@ -297,7 +325,6 @@ export function createApp() {
 		stylesheets: ["/assets/css/index.css?v=23"],
 		scripts: [
 			{ src: "/assets/js/components/site-shell.js", module: true },
-			{ src: "/assets/js/components/contributors.js?v=2", module: true },
 			{ src: "/assets/js/pages/about.js?v=1", module: true }
 		],
 		contributors: await contentService.list("contributors")
@@ -340,6 +367,17 @@ export function createApp() {
 		description: "Learn how to use GyanPath to find IGNOU MCA semester resources, question papers, assignments and question banks.",
 		headerTitle: "User Guide", headerSubtitle: "How to use the MCA Study Helper.", stylesheets: ["/assets/css/index.css?v=23"]
 	}));
+	app.get("/editor-guide", (_request, response) => standardPage(response, {
+		view: "editor-guide", activePage: "editor-guide", title: "Editor Guide | GyanPath",
+		description: "Guidance for authorised GyanPath editors who manage study resources, question papers and video lectures.",
+		robots: "noindex, nofollow", headerTitle: "Editor Guide",
+		headerSubtitle: "Content-management workflows and publishing checks.",
+		pageBody: { className: "auth-pending", allowedRoles: "editor,moderator,admin" },
+		stylesheets: ["/assets/css/index.css?v=23"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
+			{ src: "/assets/js/utils/protected-page.js", module: true }
+		]
+	}));
 	app.get("/video-lectures", (_request, response) => standardPage(response, {
 		view: "video-lectures", activePage: "lectures", title: "IGNOU MCA Video Lectures | GyanPath",
 		description: "Watch curated IGNOU MCA video lectures by subject, unit, teacher and language.",
@@ -351,18 +389,35 @@ export function createApp() {
 	}));
 	app.get("/chat", (_request, response) => standardPage(response, {
 		view: "chat", activePage: "chat", title: "Chat | GyanPath", description: "Personal and study-group conversations on GyanPath.",
-		headerTitle: "Student Chat", headerSubtitle: "Personal and study-group conversations.", stylesheets: ["/assets/css/pages/chat.css"], scripts: [
+		robots: "noindex, nofollow", headerTitle: "Chat Operations", headerSubtitle: "Static preview of personal and study-group conversations.",
+		label: "Admin and Editor", action: "logout", pageBody: { className: "auth-pending", allowedRoles: "admin,editor" },
+		stylesheets: ["/assets/css/pages/chat.css?v=2"], scripts: [
 			{ src: "/assets/js/components/site-shell.js", module: true },
-			{ src: "/assets/js/pages/chat.js", module: true }
+			{ src: "/assets/js/utils/protected-page.js", module: true },
+			{ src: "/assets/js/pages/chat.js?v=2", module: true }
 		]
 	}));
 	app.get("/discussion", (_request, response) => standardPage(response, {
 		view: "discussion", activePage: "discussion", title: "Discussions | GyanPath",
 		description: "Join IGNOU MCA subject-wise discussion rooms for doubts, answers and peer learning.",
-		headerTitle: "Student Discussions", headerSubtitle: "Subject-wise doubts, answers and peer learning.",
-		stylesheets: ["/assets/css/pages/discussion.css"], scripts: [
+		robots: "noindex, nofollow", headerTitle: "Discussion Operations", headerSubtitle: "Static moderation preview for doubts and peer learning.",
+		label: "Admin and Editor", action: "logout", pageBody: { className: "auth-pending", allowedRoles: "admin,editor" },
+		stylesheets: ["/assets/css/pages/discussion.css?v=2"], scripts: [
 			{ src: "/assets/js/components/site-shell.js", module: true },
-			{ src: "/assets/js/pages/discussion.js", module: true }
+			{ src: "/assets/js/utils/protected-page.js", module: true },
+			{ src: "/assets/js/pages/discussion.js?v=2", module: true }
+		]
+	}));
+	app.get("/testing", (_request, response) => standardPage(response, {
+		view: "testing", activePage: "testing", title: "Feature Testing | GyanPath",
+		description: "Management access to GyanPath features currently under active development.",
+		robots: "noindex, nofollow", headerTitle: "Feature Testing",
+		headerSubtitle: "Community features available to Admin and Editor accounts.",
+		label: "Admin and Editor", action: "logout",
+		pageBody: { className: "auth-pending", allowedRoles: "admin,editor" },
+		stylesheets: ["/assets/css/pages/testing.css?v=1"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
+			{ src: "/assets/js/utils/protected-page.js", module: true }
 		]
 	}));
 	app.get("/pdf-viewer", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "pdf-viewer.eta"), {
@@ -516,7 +571,7 @@ export function createApp() {
 	app.get("/admin", (_request, response) => dashboardPage(response, {
 		view: "admin", activePage: "admin", title: "Super Admin | GyanPath", headerTitle: "Super Admin Control Panel",
 		description: "Platform overview, users, roles and system status.", label: "Admin Only",
-		action: "logout", roles: "admin", stylesheetVersion: 27, pageScript: "/assets/js/pages/admin.js"
+		action: "logout", roles: "admin", stylesheetVersion: 27, pageScript: "/assets/js/pages/admin.js?v=2"
 	}));
 	app.get("/admin/users", (_request, response) => dashboardPage(response, {
 		view: "admin-users", activePage: "admin-users", title: "User Management | GyanPath",

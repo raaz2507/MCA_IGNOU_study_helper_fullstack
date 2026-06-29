@@ -1,7 +1,12 @@
 <% const share = it.footer.share;
 const support = it.footer.support;
-const shareQr = share.qrImagePath || (share.qrImageSource === 'url' ? share.qrImageUrl : '');
-const supportQr = support.qrImagePath || (support.qrImageSource === 'url' ? support.qrImageUrl : '');
+const sharePrimaryQrImage = share.qrImagePath || (share.qrImageSource === 'url' ? share.qrImageUrl : '');
+const supportPrimaryQrImage = support.qrImagePath || (support.qrImageSource === 'url' ? support.qrImageUrl : '');
+const supportStaticFallbackImagePath = '/assets/images/support-gyanpath-fallback.webp';
+const shareQrImage = sharePrimaryQrImage || share.qrFallbackDataUrl;
+const supportQrFallbackImage = support.qrFallbackDataUrl || supportStaticFallbackImagePath;
+const supportQrImage = supportPrimaryQrImage || supportQrFallbackImage;
+const supportImageIsQrCode = Boolean(supportPrimaryQrImage || support.qrFallbackDataUrl);
 const shareMessage = `${share.shareText}: ${share.url}`; %>
 <footer class="site-footer">
 	<div>
@@ -10,7 +15,7 @@ const shareMessage = `${share.shareText}: ${share.url}`; %>
 		<p class="footer-disclaimer">This is an independent study helper, not an official IGNOU application.</p>
 	</div>
 	<section class="share-gyanpath" aria-labelledby="shareGyanPathTitle">
-		<img data-share-qr<% if (!shareQr) { %> hidden<% } %> src="<%= shareQr %>" alt="QR code to open GyanPath" width="112" height="112" />
+		<img data-share-qr data-qr-fallback-src="<%= share.qrFallbackDataUrl %>"<% if (!shareQrImage) { %> hidden<% } %> src="<%= shareQrImage %>" alt="QR code to open GyanPath" width="112" height="112" />
 		<div>
 			<strong id="shareGyanPathTitle"><%= share.title %></strong>
 			<p data-share-description><%= share.description %></p>
@@ -21,8 +26,7 @@ const shareMessage = `${share.shareText}: ${share.url}`; %>
 		</div>
 	</section>
 	<section class="donation-section" aria-labelledby="donationTitle" data-support-section<% if (!support.enabled) { %> hidden<% } %>>
-		<div class="donation-icon" aria-hidden="true">Rs</div>
-		<img data-support-qr<% if (!supportQr) { %> hidden<% } %> src="<%= supportQr %>" alt="QR code to support GyanPath" width="112" height="112" />
+		<img data-support-qr data-qr-fallback-src="<%= supportQrFallbackImage %>" data-qr-fallback-alt="Support GyanPath" src="<%= supportQrImage %>" alt="<%= supportImageIsQrCode ? 'QR code to support GyanPath' : 'Support GyanPath' %>" width="112" height="112" />
 		<div>
 			<strong id="donationTitle"><%= support.title %></strong>
 			<p data-support-description><%= support.description %></p>
@@ -30,7 +34,7 @@ const shareMessage = `${share.shareText}: ${share.url}`; %>
 		</div>
 	</section>
 	<nav class="footer-navigation" aria-label="Footer navigation">
-		<a href="/">Home</a><a href="/resources">Resources</a><a href="/discussion">Discussion</a>
+		<a href="/">Home</a><a href="/resources">Resources</a>
 		<a href="/about">About</a><a href="/user-guide">User Guide</a><a href="/dashboard">Dashboard</a>
 	</nav>
 	<div class="footer-credit-strip">Developed by <strong>Rajaanha</strong>.</div>

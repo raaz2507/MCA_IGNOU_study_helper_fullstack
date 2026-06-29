@@ -1,8 +1,8 @@
-import { UserRole } from "@prisma/client";
+import { USER_ROLES } from "../../domain/auth/roles.js";
 import { z } from "zod";
 
 export const updateRoleSchema = z.object({
-	role: z.nativeEnum(UserRole)
+	role: z.enum(USER_ROLES)
 });
 
 export const analyticsRetentionSchema = z.object({
@@ -68,7 +68,7 @@ export const userStatusSchema = z.object({
 });
 
 export const updateUserSchema = z.object({
-	role: z.nativeEnum(UserRole),
+	role: z.enum(USER_ROLES),
 	status: z.enum(["PENDING", "ACTIVE", "SUSPENDED", "BANNED"])
 });
 

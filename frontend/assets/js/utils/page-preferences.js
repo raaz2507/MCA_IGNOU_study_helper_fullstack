@@ -1,5 +1,9 @@
-(() => {
-	"use strict";
+export class PagePreferences {
+	constructor() {
+		this.initialize();
+	}
+
+	initialize() {
 
 	const themes = Array.isArray(window.STUDY_HELPER_THEMES)
 		? window.STUDY_HELPER_THEMES
@@ -414,4 +418,7 @@
 			{ once: true }
 		);
 	}
-})();
+	}
+}
+
+new PagePreferences();

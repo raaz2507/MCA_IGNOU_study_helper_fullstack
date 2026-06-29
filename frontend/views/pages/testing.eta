@@ -1,0 +1,40 @@
+<% layout('../layouts/main') %>
+<main class="testing-page" aria-labelledby="testingTitle">
+	<section class="testing-intro">
+		<div>
+			<p class="dashboard-label">Admin and Editor</p>
+			<h1 id="testingTitle">Feature Testing</h1>
+			<p>Open community features that are currently available to the management team.</p>
+		</div>
+		<a class="testing-back" href="/dashboard">← Back to Dashboard</a>
+	</section>
+
+	<section class="testing-grid" aria-label="Features available for testing">
+		<a class="testing-card discussion-testing-card" href="/discussion">
+			<span class="testing-card-icon" aria-hidden="true">💬</span>
+			<div class="testing-card-copy">
+				<p class="testing-kicker">Community</p>
+				<h2>Discussion &amp; Doubt Board</h2>
+				<p>Review subject rooms, unanswered doubts, solved questions and reported posts.</p>
+				<ul><li>Discussion moderation</li><li>Subject room activity</li><li>Search and status filters</li></ul>
+			</div>
+			<span class="testing-open">Open Discussion <b>→</b></span>
+		</a>
+
+		<a class="testing-card chat-testing-card" href="/chat">
+			<span class="testing-card-icon" aria-hidden="true">⚡</span>
+			<div class="testing-card-copy">
+				<p class="testing-kicker">Communication</p>
+				<h2>Real-time Chat</h2>
+				<p>Explore conversation lists, group messages, shared files and chat controls.</p>
+				<ul><li>Personal and group chat</li><li>Message workspace</li><li>Admin conversation controls</li></ul>
+			</div>
+			<span class="testing-open">Open Chat <b>→</b></span>
+		</a>
+	</section>
+
+	<section class="testing-note">
+		<span aria-hidden="true">ℹ</span>
+		<div><h2>Access information</h2><p>These pages are currently limited to Admin and Editor accounts. They can be moved into the student area when their backend workflows are complete.</p></div>
+	</section>
+</main>

@@ -1,0 +1,69 @@
+<% layout('../layouts/main') %>
+	<main class="info-page">
+		<article class="info-card">
+			<h2>Editor Guide</h2>
+			<p>This guide is for Editors, Moderators and Administrators who maintain published learning content.</p>
+
+			<h2>1. Access and Responsibilities</h2>
+			<ul>
+				<li>Sign in with an authorised account and open the Dashboard.</li>
+				<li>Edit only content that you have verified against a reliable source.</li>
+				<li>Preview changes before publishing them for students.</li>
+				<li>Do not use user-management or destructive operations unless your role explicitly permits them.</li>
+			</ul>
+
+			<h2>2. Subjects and Academic Structure</h2>
+			<ol>
+				<li>Confirm the programme, semester, subject code and subject title.</li>
+				<li>Keep subject codes uppercase and consistent with existing records.</li>
+				<li>Check the student-facing Resources page after changing academic metadata.</li>
+			</ol>
+
+			<h2>3. Study Materials</h2>
+			<ul>
+				<li>Select the correct subject before adding a material record.</li>
+				<li>Provide a clear title, type, language availability and valid file information.</li>
+				<li>Use edit mode for corrections instead of creating a duplicate record.</li>
+				<li>After saving, verify that the material opens from the subject card.</li>
+			</ul>
+
+			<h2>4. Question Papers</h2>
+			<ul>
+				<li>Record the subject, exam session, year and available English/Hindi files accurately.</li>
+				<li>Use consistent titles so gallery search and sorting remain useful.</li>
+				<li>Open the saved item in the PDF reader and test each available language.</li>
+			</ul>
+
+			<h2>5. Video Lectures</h2>
+			<ol>
+				<li>Select the subject and enter a complete YouTube video or playlist URL.</li>
+				<li>Add a useful title, unit, teacher, language, description and display order.</li>
+				<li>Use the metadata helper where available, then review the fetched details.</li>
+				<li>Keep the lecture inactive until its preview and subject association are correct.</li>
+			</ol>
+
+			<h2>6. Banners and Contributors</h2>
+			<ul>
+				<li>Use concise accessible text and suitable images.</li>
+				<li>Check links before publishing a banner.</li>
+				<li>Use priority/order values intentionally and remove outdated entries only when permitted.</li>
+			</ul>
+
+			<h2>7. Publishing Checklist</h2>
+			<ol>
+				<li>Correct subject and semester selected.</li>
+				<li>Title, language, session and year verified.</li>
+				<li>Files and external links open successfully.</li>
+				<li>No duplicate record already exists.</li>
+				<li>Student-facing page checked on desktop and mobile layout.</li>
+			</ol>
+
+			<h2>8. Common Problems</h2>
+			<ul>
+				<li><strong>Save rejected:</strong> Review required fields and your current role.</li>
+				<li><strong>Upload rejected:</strong> Confirm the file type, size and connection, then retry once.</li>
+				<li><strong>Item not visible:</strong> Check its active/published state and subject association.</li>
+				<li><strong>Wrong content published:</strong> Unpublish or correct it promptly; do not create another duplicate.</li>
+			</ul>
+		</article>
+	</main>

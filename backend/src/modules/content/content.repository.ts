@@ -124,6 +124,9 @@ export const contentRepository = {
 			name: item.name,
 			info: item.info,
 			avatar,
+			profileUrl: /^https?:\/\//i.test(String(item.profileUrl || "").trim())
+				? String(item.profileUrl).trim()
+				: null,
 			contributions: item.contributions || [],
 			order: Number(item.order || 0),
 			active: item.active !== false

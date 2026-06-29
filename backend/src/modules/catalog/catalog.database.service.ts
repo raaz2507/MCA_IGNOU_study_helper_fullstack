@@ -1,6 +1,8 @@
 import { env } from "../../config/env.js";
-import { catalogRepository } from "./catalog.repository.js";
+import { container } from "../../container/container.js";
 import { papers as localPapers } from "./catalog.service.js";
+
+const catalogRepository = container.catalogRepository;
 
 const fallbackPreview = "/assets/images/pdf-preview-fallback.svg";
 

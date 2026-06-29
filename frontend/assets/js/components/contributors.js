@@ -18,10 +18,7 @@ function contributorCard(contributor) {
 	topBar.className = "contributor-card-topbar";
 	const role = document.createElement("span");
 	role.textContent = "Contributor";
-	const badge = document.createElement("span");
-	badge.className = "contributor-card-badge";
-	badge.textContent = "*";
-	topBar.append(role, badge);
+	topBar.append(role);
 
 	const avatar = document.createElement("div");
 	avatar.className = "contributor-avatar";
@@ -41,6 +38,15 @@ function contributorCard(contributor) {
 	const info = document.createElement("p");
 	info.textContent = contributor.info;
 	content.append(name, info);
+	if (contributor.profileUrl) {
+		const profileLink = document.createElement("a");
+		profileLink.className = "contributor-profile-link";
+		profileLink.href = contributor.profileUrl;
+		profileLink.target = "_blank";
+		profileLink.rel = "noopener noreferrer";
+		profileLink.textContent = "View GitHub / profile";
+		content.append(profileLink);
+	}
 
 	if (contributor.contributions.length) {
 		const heading = document.createElement("h4");

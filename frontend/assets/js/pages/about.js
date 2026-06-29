@@ -18,19 +18,45 @@ function restoreFeedback() {
 	if (saved.mood) setStatus("Saved on this device.");
 }
 
-form?.addEventListener("submit", (event) => {
+function visitorId() {
+	const key = "gyanpath-feedback-visitor";
+	let value = localStorage.getItem(key);
+	if (!value) {
+		value = crypto.randomUUID();
+		localStorage.setItem(key, value);
+	}
+	return value;
+}
+
+form?.addEventListener("submit", async (event) => {
 	event.preventDefault();
 	const mood = form.elements.mood?.value || "";
 	if (!mood) {
 		setStatus("Please choose a mood first.");
 		return;
 	}
-	localStorage.setItem(storageKey, JSON.stringify({
+	const payload = {
 		mood,
 		message: message?.value.trim() || "",
-		updatedAt: new Date().toISOString()
-	}));
-	setStatus("Thanks, your feedback is saved.");
+		pagePath: window.location.pathname,
+		visitorId: visitorId()
+	};
+	setStatus("Sending feedback…");
+	try {
+		const response = await fetch("/api/feedback", {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			credentials: "include",
+			body: JSON.stringify(payload)
+		});
+		if (!response.ok) throw new Error("Feedback could not be submitted.");
+		localStorage.removeItem(storageKey);
+		form.reset();
+		setStatus("Thanks, your feedback was submitted.");
+	} catch {
+		localStorage.setItem(storageKey, JSON.stringify({ ...payload, updatedAt: new Date().toISOString() }));
+		setStatus("You appear offline. A draft was saved on this device.");
+	}
 });
 
 restoreFeedback();

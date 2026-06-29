@@ -21,11 +21,13 @@
 			<% if (it.shell.action === 'dashboard') { %>
 			<div class="protected-actions">
 				<a href="/admin" data-visible-for="admin">Admin Page</a>
+				<a href="/testing">Testing</a>
 				<button type="button" class="logout-button" data-logout>Logout</button>
 			</div>
 			<% } else if (it.shell.action === 'logout') { %>
 			<div class="protected-actions">
 				<a href="/dashboard">Dashboard</a>
+				<a href="/testing">Testing</a>
 				<button type="button" class="logout-button" data-logout>Logout</button>
 			</div>
 			<% } else if (!dashboardHeader) { %>

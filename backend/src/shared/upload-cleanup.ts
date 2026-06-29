@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { env } from "../config/env.js";
-import { prisma } from "../config/prisma.js";
+import { uploadCleanupRepository } from "./upload-cleanup.repository.js";
 
 function containsPath(value: unknown, publicPath: string): boolean {
 	if (value === publicPath) return true;
@@ -22,14 +22,10 @@ function uploadAbsolutePath(publicPath: string) {
 }
 
 async function isReferenced(publicPath: string) {
-	const [bannerCount, contributorCount, settings] = await Promise.all([
-		prisma.banner.count({ where: { image: publicPath } }),
-		prisma.contributor.count({ where: { avatar: publicPath } }),
-		prisma.appSetting.findMany({ select: { value: true } })
-	]);
+	const { bannerCount, contributorCount, settingValues } = await uploadCleanupRepository.references(publicPath);
 	return bannerCount > 0
 		|| contributorCount > 0
-		|| settings.some((setting) => containsPath(setting.value, publicPath));
+		|| settingValues.some((value) => containsPath(value, publicPath));
 }
 
 async function removeEmptyParentDirectories(startDirectory: string, uploadsRoot: string) {
@@ -50,7 +46,7 @@ export async function deleteUnreferencedUpload(publicPath: string | null | undef
 	const resolved = uploadAbsolutePath(publicPath);
 	if (!resolved || await isReferenced(publicPath)) return false;
 	await fs.rm(resolved.absolutePath, { force: true });
-	await prisma.fileAsset.deleteMany({ where: { path: publicPath } });
+	await uploadCleanupRepository.deleteFileAssetByPath(publicPath);
 	await removeEmptyParentDirectories(path.dirname(resolved.absolutePath), resolved.uploadsRoot);
 	return true;
 }

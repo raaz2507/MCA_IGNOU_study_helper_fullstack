@@ -1,8 +1,8 @@
 import { createPaperCard } from "../components/paper-card.js";
 import { getPapers } from "../api/papers.api.js";
 
-(async () => {
-	"use strict";
+export class PaperGalleryPage {
+	async initialize() {
 
 	const savedTheme = localStorage.getItem("study-helper-theme");
 	const allowedThemes = Array.isArray(window.STUDY_HELPER_THEMES)
@@ -73,4 +73,7 @@ import { getPapers } from "../api/papers.api.js";
 	});
 
 	render(subjectFiles);
-})();
+	}
+}
+
+new PaperGalleryPage().initialize();

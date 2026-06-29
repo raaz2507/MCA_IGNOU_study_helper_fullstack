@@ -13,10 +13,14 @@ test("health API returns Express status", async () => {
 test("frontend home page is served at the clean root route", async () => {
 	const response = await request(createApp()).get("/");
 	assert.equal(response.status, 200);
+	assert.doesNotMatch(response.text, /href="\/discussion"/);
 	assert.match(response.text, /<title>GyanPath \| Learn, Revise, Succeed<\/title>/);
 	assert.match(response.text, /href="\/resources">Browse Study Resources<\/a>/);
 	assert.match(response.text, /<header class="site-header">/);
 	assert.match(response.text, /<footer class="site-footer">/);
+	assert.match(response.text, /data-qr-fallback-src="data:image\/png;base64,/);
+	assert.doesNotMatch(response.text, /data-share-qr hidden/);
+	assert.match(response.text, /data-qr-fallback-src="\/assets\/images\/support-gyanpath-fallback\.webp"/);
 	assert.doesNotMatch(response.text, /<%=/);
 });
 
@@ -110,7 +114,7 @@ test("legacy HTML page URLs redirect to clean routes", async () => {
 });
 
 test("remaining public, protected and reader pages render through Eta", async () => {
-	const routes = ["/user-guide", "/video-lectures", "/chat", "/discussion", "/profile", "/pdf-viewer"];
+	const routes = ["/user-guide", "/video-lectures", "/chat", "/discussion", "/testing", "/profile", "/pdf-viewer"];
 	for (const route of routes) {
 		const response = await request(createApp()).get(route);
 		assert.equal(response.status, 200);
@@ -119,6 +123,12 @@ test("remaining public, protected and reader pages render through Eta", async ()
 	const profile = await request(createApp()).get("/profile");
 	assert.match(profile.text, /data-allowed-roles="user,editor,moderator,admin"/);
 	assert.match(profile.text, /noindex, nofollow/);
+	for (const route of ["/chat", "/discussion", "/testing"]) {
+		const protectedPreview = await request(createApp()).get(route);
+		assert.match(protectedPreview.text, /data-allowed-roles="admin,editor"/);
+		assert.match(protectedPreview.text, /\/assets\/js\/utils\/protected-page\.js/);
+		assert.match(protectedPreview.text, /noindex, nofollow/);
+	}
 	const viewer = await request(createApp()).get("/pdf-viewer");
 	assert.match(viewer.text, /id="pdfFrame"/);
 	assert.doesNotMatch(viewer.text, /class="site-header"/);

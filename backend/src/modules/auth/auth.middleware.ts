@@ -1,5 +1,5 @@
 ﻿import type { RequestHandler } from "express";
-import { UserRole } from "@prisma/client";
+import { UserRole, type UserRole as UserRoleType } from "../../domain/auth/roles.js";
 import { AppError } from "../../shared/errors/app-error.js";
 import { authService } from "./auth.service.js";
 
@@ -12,7 +12,7 @@ export const requireAuth: RequestHandler = (request, _response, next) => {
 			id: String(payload.sub),
 			username: String(payload.username),
 			displayName: String(payload.displayName),
-			role: String(payload.role) as UserRole
+			role: String(payload.role) as UserRoleType
 		};
 		next();
 	} catch (error) {
@@ -20,7 +20,7 @@ export const requireAuth: RequestHandler = (request, _response, next) => {
 	}
 };
 
-export const requireRoles = (...roles: UserRole[]): RequestHandler[] => [
+export const requireRoles = (...roles: UserRoleType[]): RequestHandler[] => [
 	requireAuth,
 	(request, _response, next) => {
 		if (!request.user || !roles.includes(request.user.role)) {

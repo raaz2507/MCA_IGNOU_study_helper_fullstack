@@ -2,6 +2,8 @@ import { AuthService, ROLE_LEVELS } from "../utils/auth.js";
 import { apiRequest } from "../api/client.js";
 import { setFlash, showToast } from "../utils/toast.js";
 
+export class HomeAccountPage {
+	async initialize() {
 const tabs = [...document.querySelectorAll("[data-account-tab]")];
 const panels = [...document.querySelectorAll("[data-account-panel]")];
 const message = document.getElementById("homeAccountMessage");
@@ -162,3 +164,7 @@ resendButton.addEventListener("click", async () => {
 
 signupEmail.addEventListener("input", updateResendCooldown);
 updateResendCooldown();
+	}
+}
+
+new HomeAccountPage().initialize();

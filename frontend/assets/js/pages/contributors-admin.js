@@ -14,6 +14,7 @@ const list = document.getElementById("contributorAdminList");
 const idInput = document.getElementById("contributorId");
 const nameInput = document.getElementById("contributorName");
 const infoInput = document.getElementById("contributorInfo");
+const profileUrlInput = document.getElementById("contributorProfileUrl");
 const contributionsInput = document.getElementById("contributorContributions");
 const avatarInput = document.getElementById("contributorAvatar");
 const preview = document.getElementById("contributorAvatarPreview");
@@ -60,6 +61,7 @@ function editContributor(contributor) {
 	idInput.value = contributor.id;
 	nameInput.value = contributor.name;
 	infoInput.value = contributor.info;
+	profileUrlInput.value = contributor.profileUrl || "";
 	contributionsInput.value = contributor.contributions.join("\n");
 	pendingAvatar = contributor.avatar;
 	pendingAvatarFile = null;
@@ -167,6 +169,7 @@ form.addEventListener("submit", async (event) => {
 		name,
 		info,
 		avatar: pendingAvatar,
+		profileUrl: profileUrlInput.value.trim(),
 		contributions
 	};
 	if (pendingAvatarFile) {

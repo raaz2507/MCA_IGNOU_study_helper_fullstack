@@ -1064,6 +1064,55 @@ html {
 	box-shadow: 0 10px 28px var(--theme-shadow);
 }
 
+.feedback-card form {
+	display: grid;
+	gap: 18px;
+}
+
+.about-story ul {
+	margin-top: 10px;
+}
+
+.about-highlights {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: 14px;
+	margin: 24px 0 30px;
+}
+
+.about-highlights article {
+	display: grid;
+	gap: 7px;
+	padding: 18px;
+	background: var(--soft-background);
+	border: 1px solid var(--card-border);
+	border-radius: 14px;
+}
+
+.about-highlights strong {
+	color: var(--heading-text);
+	font-family: var(--font-heading);
+}
+
+.about-highlights span {
+	color: var(--muted-text);
+	line-height: 1.55;
+}
+
+.contributor-profile-link {
+	display: inline-flex;
+	align-self: flex-start;
+	margin-top: 9px;
+	color: var(--app-primary);
+	font-weight: 750;
+	text-decoration: none;
+}
+
+.contributor-profile-link:hover,
+.contributor-profile-link:focus-visible {
+	text-decoration: underline;
+}
+
 .feedback-moods {
 	display: grid;
 	grid-template-columns: repeat(5, minmax(0, 1fr));
@@ -3732,6 +3781,14 @@ body[data-page="admin-database"] #databaseRestore {
 
 .donation-section p {
 	margin: 5px 0 10px;
+}
+
+.donation-section [data-support-qr] {
+	flex: 0 0 auto;
+	width: 112px;
+	height: 112px;
+	object-fit: cover;
+	border-radius: 20px;
 }
 
 .donation-button {
