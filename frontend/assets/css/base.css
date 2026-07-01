@@ -284,3 +284,27 @@ body::before {
 	opacity: var(--body-art-opacity);
 }
 
+/* Keep disabled actions unmistakable across every page and theme. */
+:where(
+	button:disabled,
+	input[type="button"]:disabled,
+	input[type="submit"]:disabled,
+	input[type="reset"]:disabled,
+	a[aria-disabled="true"],
+	[role="button"][aria-disabled="true"],
+	.donation-button-disabled
+) {
+	color: var(--app-muted, #64748b) !important;
+	background: color-mix(in srgb, var(--app-muted, #64748b) 20%, var(--app-surface, #fff)) !important;
+	border-color: color-mix(in srgb, var(--app-muted, #64748b) 48%, transparent) !important;
+	box-shadow: none !important;
+	filter: grayscale(1) !important;
+	opacity: 0.62 !important;
+	cursor: not-allowed !important;
+	transform: none !important;
+}
+
+:where(a[aria-disabled="true"], [role="button"][aria-disabled="true"], .donation-button-disabled) {
+	pointer-events: none;
+}
+

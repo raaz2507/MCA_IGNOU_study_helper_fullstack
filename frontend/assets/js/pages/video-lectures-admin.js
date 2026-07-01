@@ -1,5 +1,8 @@
 import { AuthService } from "../utils/auth.js";
-import { fetchLectureMetadata } from "../api/content.api.js";
+import {
+	fetchLectureMetadata, getLectureCatalog, saveLectureCatalog,
+	syncLectureCatalog, validateLectureCatalog
+} from "../api/content.api.js";
 import { getSubjects } from "../api/subjects.api.js";
 import { videoLectureStore } from "../utils/video-lectures-store.js";
 
@@ -11,6 +14,11 @@ const message = document.getElementById("lectureMessage");
 const cancelButton = document.getElementById("cancelLectureEdit");
 const fetchButton = document.getElementById("fetchLectureDetails");
 const subjectSelect = document.getElementById("lectureSubject");
+const catalogEditor = document.getElementById("lectureCatalogJson");
+const catalogMessage = document.getElementById("lectureCatalogMessage");
+const validateCatalogButton = document.getElementById("validateLectureCatalog");
+const saveCatalogButton = document.getElementById("saveLectureCatalog");
+const syncCatalogButton = document.getElementById("syncLectureCatalog");
 const session = await new AuthService().getSession();
 const canDelete = session?.role === "admin";
 let lectures = await videoLectureStore.getLectures();
@@ -28,6 +36,42 @@ function showMessage(text, type = "") {
 	message.className = `contributor-message ${type}`.trim();
 	if (["success", "error", "warning", "info"].includes(type) && text) {
 		showToast(text, type);
+	}
+}
+
+function showCatalogMessage(text, type = "") {
+	catalogMessage.textContent = text;
+	catalogMessage.className = `contributor-message lecture-catalog-message ${type}`.trim();
+	if (["success", "error", "warning", "info"].includes(type) && text) showToast(text, type);
+}
+
+function validationText(result) {
+	return result.valid
+		? "JSON structure is valid and every subject exists in the database."
+		: result.errors.map((error, index) => `${index + 1}. ${error}`).join("\n");
+}
+
+async function loadLectureCatalog() {
+	try {
+		const result = await getLectureCatalog();
+		catalogEditor.value = result.content;
+		if (!result.valid) showCatalogMessage(validationText(result), "error");
+	} catch (error) {
+		showCatalogMessage(`Catalog could not be loaded: ${error.message}`, "error");
+	}
+}
+
+async function withCatalogButton(button, pendingText, action) {
+	const originalText = button.textContent;
+	button.disabled = true;
+	button.textContent = pendingText;
+	try {
+		await action();
+	} catch (error) {
+		showCatalogMessage(error.message, "error");
+	} finally {
+		button.disabled = false;
+		button.textContent = originalText;
 	}
 }
 
@@ -214,7 +258,31 @@ form.addEventListener("submit", async (event) => {
 	}
 });
 
+validateCatalogButton.addEventListener("click", () => withCatalogButton(validateCatalogButton, "Validating...", async () => {
+	const result = await validateLectureCatalog(catalogEditor.value);
+	showCatalogMessage(validationText(result), result.valid ? "success" : "error");
+}));
+
+saveCatalogButton.addEventListener("click", () => withCatalogButton(saveCatalogButton, "Saving...", async () => {
+	const result = await saveLectureCatalog(catalogEditor.value);
+	catalogEditor.value = result.content;
+	showCatalogMessage("Lecture JSON catalog saved successfully.", "success");
+}));
+
+syncCatalogButton.addEventListener("click", () => withCatalogButton(syncCatalogButton, "Syncing...", async () => {
+	const saved = await saveLectureCatalog(catalogEditor.value);
+	catalogEditor.value = saved.content;
+	const result = await syncLectureCatalog();
+	lectures = await videoLectureStore.getLectures();
+	renderList();
+	showCatalogMessage(
+		`Sync complete. Added: ${result.added}, Updated: ${result.updated}, Skipped: ${result.skipped}, Errors: ${result.errors}.`,
+		"success"
+	);
+}));
+
 await populateSubjects();
+await loadLectureCatalog();
 field("lectureOrder").value = String(lectures.length + 1);
 renderList();
 

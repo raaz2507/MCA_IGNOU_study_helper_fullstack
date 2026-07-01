@@ -13,3 +13,13 @@ export const fetchLectureMetadata = (url) =>
 		method: "POST",
 		body: JSON.stringify({ url })
 	});
+export const getLectureCatalog = () => apiRequest("/content/lectures/catalog");
+export const validateLectureCatalog = (content) => apiRequest("/content/lectures/catalog/validate", {
+	method: "POST", body: JSON.stringify({ content })
+});
+export const saveLectureCatalog = (content) => apiRequest("/content/lectures/catalog", {
+	method: "PUT", body: JSON.stringify({ content })
+});
+export const syncLectureCatalog = () => apiRequest("/content/lectures/catalog/sync", {
+	method: "POST", body: JSON.stringify({ updateExisting: true })
+});

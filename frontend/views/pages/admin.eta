@@ -18,6 +18,7 @@
 
 		<main class="dashboard-page admin-page">
 			<section id="adminOverview" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#platform-overview" aria-label="Open Platform Overview documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Live PostgreSQL data</p>
 					<h2>Platform Overview</h2>
@@ -55,6 +56,7 @@
 			</section>
 
 			<section id="adminUsers" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#user-role-management" aria-label="Open User and Role documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Admin only</p>
 					<h2>User and Role Management</h2>
@@ -66,6 +68,7 @@
 			</section>
 
 			<section id="adminContent" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#content-control" aria-label="Open Content Control documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Content operations</p>
 					<h2>Content Control</h2>
@@ -81,6 +84,7 @@
 
 
 			<section id="adminEmailVerification" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#email-verification" aria-label="Open Email Verification documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Account security</p>
 					<h2>Resend Email Verification</h2>
@@ -105,6 +109,7 @@
 			</section>
 
 			<section id="adminShare" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#share-qr-settings" aria-label="Open Share and QR documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Public sharing</p>
 					<h2>Share and QR Settings</h2>
@@ -116,13 +121,20 @@
 					<label><span>Share text</span><textarea id="shareText" rows="3" required
 							maxlength="500"></textarea></label>
 					<label><span>Share URL</span><input id="shareUrl" type="url" required /></label>
-					<div class="admin-source-toggle" role="radiogroup" aria-label="Share QR source">
-						<label><input name="shareQrImageSource" type="radio" value="generated" checked /><span>Generated</span></label>
-						<label><input name="shareQrImageSource" type="radio" value="url" /><span>Image URL</span></label>
-						<label><input name="shareQrImageSource" type="radio" value="upload" /><span>Upload</span></label>
+					<div class="admin-source-options" role="radiogroup" aria-label="Share QR source">
+						<div class="admin-source-option admin-source-generated">
+							<label class="admin-source-choice"><input name="shareQrImageSource" type="radio" value="generated" checked /><span>Generated</span></label>
+							<small>Generate the QR automatically from the Share URL above.</small>
+						</div>
+						<div class="admin-source-option admin-source-url">
+							<label class="admin-source-choice"><input name="shareQrImageSource" type="radio" value="url" /><span>Image URL</span></label>
+							<label data-share-source="url"><span>Share QR image URL</span><input id="shareQrImageUrl" type="url" maxlength="500" /></label>
+						</div>
+						<div class="admin-source-option admin-source-upload">
+							<label class="admin-source-choice"><input name="shareQrImageSource" type="radio" value="upload" /><span>Upload</span></label>
+							<label data-share-source="upload"><span>Upload Share QR image</span><input id="shareQrImageFile" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+						</div>
 					</div>
-					<label data-share-source="url"><span>Share QR image URL</span><input id="shareQrImageUrl" type="url" maxlength="500" /></label>
-					<label data-share-source="upload"><span>Upload Share QR image</span><input id="shareQrImageFile" type="file" accept="image/png,image/jpeg,image/webp" /></label>
 					<div class="admin-qr-preview" aria-live="polite">
 						<img id="shareQrPreview" alt="Share QR preview" width="112" height="112" hidden />
 						<div>
@@ -141,6 +153,7 @@
 			</section>
 
 			<section id="adminPrivacy" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#analytics-retention" aria-label="Open Analytics Retention documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Visitor privacy</p>
 					<h2>Analytics Data Retention</h2>
@@ -176,6 +189,7 @@
 			</section>
 
 			<section id="adminSupport" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#support-settings" aria-label="Open Support Settings documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Donation settings</p>
 					<h2>Support GyanPath Settings</h2>
@@ -186,14 +200,24 @@
 					<label><span>Title</span><input id="supportTitle" required maxlength="80" /></label>
 					<label><span>Description</span><textarea id="supportDescription" rows="3" required
 							maxlength="300"></textarea></label>
-					<div class="admin-source-toggle" role="radiogroup" aria-label="Support QR source">
-						<label><input name="supportQrImageSource" type="radio" value="generated" checked /><span>Generated</span></label>
-						<label><input name="supportQrImageSource" type="radio" value="url" /><span>Image URL</span></label>
-						<label><input name="supportQrImageSource" type="radio" value="upload" /><span>Upload</span></label>
+					<label><span>UPI ID</span><input id="supportUpiId" maxlength="100" placeholder="name@bank" autocomplete="off" /></label>
+					<label><span>Payee name</span><input id="supportPayeeName" maxlength="100" placeholder="GyanPath" /></label>
+					<label><span>Suggested amount (optional)</span><input id="supportAmount" type="number" min="1" max="1000000" step="0.01" inputmode="decimal" /></label>
+					<label><span>Payment note</span><input id="supportPaymentNote" maxlength="160" placeholder="Support GyanPath" /></label>
+					<div class="admin-source-options" role="radiogroup" aria-label="Support QR source">
+						<div class="admin-source-option admin-source-generated">
+							<label class="admin-source-choice"><input name="supportQrImageSource" type="radio" value="generated" checked /><span>Generated</span></label>
+							<label data-support-source="generated"><span>Advanced QR data (used only when UPI ID is empty)</span><input id="supportQrData" maxlength="700" /></label>
+						</div>
+						<div class="admin-source-option admin-source-url">
+							<label class="admin-source-choice"><input name="supportQrImageSource" type="radio" value="url" /><span>Image URL</span></label>
+							<label data-support-source="url"><span>QR image URL</span><input id="supportQrImageUrl" type="url" maxlength="500" /></label>
+						</div>
+						<div class="admin-source-option admin-source-upload">
+							<label class="admin-source-choice"><input name="supportQrImageSource" type="radio" value="upload" /><span>Upload</span></label>
+							<label data-support-source="upload"><span>Upload Support QR image</span><input id="supportQrImageFile" type="file" accept="image/png,image/jpeg,image/webp" /></label>
+						</div>
 					</div>
-					<label data-support-source="url"><span>QR image URL</span><input id="supportQrImageUrl" type="url" maxlength="500" /></label>
-					<label data-support-source="upload"><span>Upload Support QR image</span><input id="supportQrImageFile" type="file" accept="image/png,image/jpeg,image/webp" /></label>
-					<label><span>QR data / UPI link</span><input id="supportQrData" maxlength="700" /></label>
 					<div class="admin-qr-preview" aria-live="polite">
 						<img id="supportQrPreview" alt="Support QR preview" width="112" height="112" hidden />
 						<div>
@@ -203,7 +227,7 @@
 						</div>
 					</div>
 					<label><span>Button text</span><input id="supportButtonText" maxlength="60" /></label>
-					<label><span>Button URL</span><input id="supportButtonUrl" type="url" /></label>
+					<label><span>Fallback button URL (used only when UPI ID is empty)</span><input id="supportButtonUrl" type="url" /></label>
 					<div class="admin-form-actions">
 						<button class="logout-button" type="submit">Save Support Settings</button>
 						<button id="refreshSupportQrImage" class="secondary-button" type="button">Refresh QR Image</button>
@@ -214,6 +238,7 @@
 			</section>
 
 			<section id="adminDatabase" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#database-operations" aria-label="Open Database Operations documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Admin only</p>
 					<h2>Database Backup and Restore</h2>
@@ -225,6 +250,7 @@
 			</section>
 
 			<section id="adminSystem" class="dashboard-panel">
+				<a class="section-help-link" href="/admin-guide#system-status" aria-label="Open System Status documentation" title="View documentation">ⓘ</a>
 				<div class="section-heading">
 					<p class="dashboard-label">Read-only diagnostics</p>
 					<h2>System Status</h2>

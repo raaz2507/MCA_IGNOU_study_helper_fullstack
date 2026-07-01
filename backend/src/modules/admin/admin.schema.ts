@@ -20,6 +20,16 @@ const optionalUrl = z.preprocess(
 	z.string().trim().url().max(500).optional().nullable()
 );
 
+const optionalUpiId = z.preprocess(
+	(value) => typeof value === "string" && value.trim() === "" ? null : value,
+	z.string().trim().regex(/^[A-Za-z0-9._-]{2,}@[A-Za-z0-9.-]{2,}$/, "Enter a valid UPI ID.").max(100).optional().nullable()
+);
+
+const optionalPaymentAmount = z.preprocess(
+	(value) => value === "" || value == null ? null : value,
+	z.coerce.number().positive().max(1000000).optional().nullable()
+);
+
 const qrImageMetaSchema = z.object({
 	name: z.string().max(260).optional().nullable(),
 	type: z.string().max(80).optional().nullable(),
@@ -43,6 +53,10 @@ export const supportSettingsSchema = z.object({
 	enabled: z.boolean().default(false),
 	title: z.string().trim().min(2).max(80),
 	description: z.string().trim().min(2).max(300),
+	upiId: optionalUpiId,
+	payeeName: z.string().trim().max(100).optional().nullable(),
+	amount: optionalPaymentAmount,
+	paymentNote: z.string().trim().max(160).optional().nullable(),
 	qrData: z.string().trim().max(700).optional().nullable(),
 	qrImageSource: z.enum(["generated", "url", "upload"]).default("generated"),
 	qrImageUrl: optionalUrl,

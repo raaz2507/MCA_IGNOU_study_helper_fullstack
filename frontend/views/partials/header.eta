@@ -1,4 +1,7 @@
-<% const dashboardHeader = it.shell.variant === 'dashboard'; %>
+<% const dashboardHeader = it.shell.variant === 'dashboard';
+const adminNavigation = ['admin', 'admin-users', 'admin-database', 'admin-guide'].includes(it.shell.activePage);
+const editorNavigation = !adminNavigation && ((dashboardHeader && it.shell.action === 'dashboard') || it.shell.activePage === 'editor-guide');
+const managementNavigation = adminNavigation || editorNavigation; %>
 <header class="site-header<% if (it.shell.variant) { %> <%= it.shell.variant %>-header<% } %>">
 	<div class="header-content">
 		<div class="header-title">
@@ -41,10 +44,21 @@
 					<span><small>Welcome</small><strong data-user-name></strong><em data-user-role></em></span>
 				</a>
 				<a href="/admin" data-visible-for="admin" hidden>Admin</a>
+				<a href="/dashboard" data-visible-for="editor" hidden>Editor Dashboard</a>
 				<button type="button" class="logout-button" data-logout>Logout</button>
 			</div>
 			<% } %>
 		</div>
 	</div>
-	<% if (!dashboardHeader) { %><%~ include('./nav', it) %><% } %>
+	<% if (managementNavigation) { %>
+	<nav class="top-navigation management-navigation" aria-label="Management navigation">
+		<a href="/dashboard"<% if (editorNavigation && it.shell.activePage !== 'editor-guide') { %> class="active" aria-current="page"<% } %>>Dashboard</a>
+		<span aria-hidden="true">|</span>
+		<% if (adminNavigation) { %>
+		<a href="/admin-guide"<% if (it.shell.activePage === 'admin-guide') { %> class="active" aria-current="page"<% } %>>Admin Guide</a>
+		<% } else { %>
+		<a href="/editor-guide"<% if (it.shell.activePage === 'editor-guide') { %> class="active" aria-current="page"<% } %>>Editor Guide</a>
+		<% } %>
+	</nav>
+	<% } else if (!dashboardHeader) { %><%~ include('./nav', it) %><% } %>
 </header>

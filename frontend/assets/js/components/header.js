@@ -52,8 +52,9 @@ function actionMarkup(action, variant) {
 			<a class="header-profile-link" href="/profile">
 				<span class="header-avatar" aria-hidden="true" data-user-initial></span>
 				<span><small>Welcome</small><strong data-user-name></strong><em data-user-role></em></span>
-			</a>
+		</a>
 			<a href="/admin" data-visible-for="admin" hidden>Admin</a>
+			<a href="/dashboard" data-visible-for="editor" hidden>Editor Dashboard</a>
 			<button type="button" class="logout-button" data-logout>Logout</button>
 		</div>`);
 }

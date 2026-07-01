@@ -83,6 +83,48 @@ export const contentRepository = {
 			orderBy: [{ order: "asc" }, { title: "asc" }]
 		});
 	},
+	async subjectCodes() {
+		const subjects = await prisma.subject.findMany({ select: { code: true } });
+		return new Set(subjects.map((subject) => subject.code.toUpperCase()));
+	},
+	async syncLectureCatalog(items: any[], updateExisting: boolean) {
+		return prisma.$transaction(async (transaction) => {
+			const subjects = await transaction.subject.findMany({ select: { id: true, code: true } });
+			const subjectIds = new Map(subjects.map((subject) => [subject.code.toUpperCase(), subject.id]));
+			const existing = new Set((await transaction.lecture.findMany({
+				where: { id: { in: items.map((item) => item.id) } },
+				select: { id: true }
+			})).map((lecture) => lecture.id));
+			let added = 0;
+			let updated = 0;
+			let skipped = 0;
+			for (const item of items) {
+				const data = {
+					subjectId: subjectIds.get(item.subject)!,
+					title: item.title,
+					unit: item.unit || null,
+					description: item.description || null,
+					url: item.url,
+					teacher: item.teacher || null,
+					language: item.language,
+					order: item.order,
+					active: item.active
+				};
+				if (existing.has(item.id)) {
+					if (!updateExisting) {
+						skipped += 1;
+						continue;
+					}
+					await transaction.lecture.update({ where: { id: item.id }, data });
+					updated += 1;
+				} else {
+					await transaction.lecture.create({ data: { id: item.id, ...data } });
+					added += 1;
+				}
+			}
+			return { added, updated, skipped, errors: 0, total: items.length };
+		});
+	},
 	async saveLecture(item: any) {
 		const subject = await prisma.subject.findUnique({ where: { code: item.subject } });
 		if (!subject) throw new Error("Selected subject does not exist.");

@@ -1,10 +1,27 @@
 <% layout('../layouts/main') %>
-	<main class="info-page">
-		<article class="info-card">
-			<h2>Editor Guide</h2>
+	<div class="editor-guide-layout">
+		<aside class="editor-guide-sidebar" aria-label="Editor Guide sections">
+			<strong>Guide Sections</strong>
+			<nav>
+				<a href="#access-responsibilities">Access and Responsibilities</a>
+				<a href="#academic-operations">Academic Operations</a>
+				<a href="#study-materials">Study Materials</a>
+				<a href="#question-papers">Question Papers</a>
+				<a href="#paper-preview-cache">Paper Preview Cache</a>
+				<a href="#video-lectures">Video Lectures</a>
+				<a href="#lecture-json-catalog">Lecture JSON Catalog</a>
+				<a href="#banner-management">Banner Management</a>
+				<a href="#link-preview">Link Preview</a>
+				<a href="#contributors">Contributors</a>
+				<a href="#publishing-checklist">Publishing Checklist</a>
+				<a href="#common-problems">Common Problems</a>
+			</nav>
+		</aside>
+		<main class="editor-guide-content">
+			<section id="access-responsibilities" class="info-card guide-section">
+			<p class="dashboard-label">Editor Guide</p>
+			<h2>Access and Responsibilities</h2>
 			<p>This guide is for Editors, Moderators and Administrators who maintain published learning content.</p>
-
-			<h2>1. Access and Responsibilities</h2>
 			<ul>
 				<li>Sign in with an authorised account and open the Dashboard.</li>
 				<li>Edit only content that you have verified against a reliable source.</li>
@@ -12,14 +29,20 @@
 				<li>Do not use user-management or destructive operations unless your role explicitly permits them.</li>
 			</ul>
 
-			<h2>2. Subjects and Academic Structure</h2>
+			</section>
+			<section id="academic-operations" class="info-card guide-section">
+			<h2>Academic Operations</h2>
+			<a class="guide-dashboard-link" href="/dashboard/academic-operations">Open in Dashboard →</a>
 			<ol>
 				<li>Confirm the programme, semester, subject code and subject title.</li>
 				<li>Keep subject codes uppercase and consistent with existing records.</li>
 				<li>Check the student-facing Resources page after changing academic metadata.</li>
 			</ol>
 
-			<h2>3. Study Materials</h2>
+			</section>
+			<section id="study-materials" class="info-card guide-section">
+			<h2>Study Materials</h2>
+			<a class="guide-dashboard-link" href="/dashboard/study-materials">Open in Dashboard →</a>
 			<ul>
 				<li>Select the correct subject before adding a material record.</li>
 				<li>Provide a clear title, type, language availability and valid file information.</li>
@@ -27,14 +50,29 @@
 				<li>After saving, verify that the material opens from the subject card.</li>
 			</ul>
 
-			<h2>4. Question Papers</h2>
+			</section>
+			<section id="question-papers" class="info-card guide-section">
+			<h2>Question Papers</h2>
+			<a class="guide-dashboard-link" href="/dashboard/question-papers">Open in Dashboard →</a>
 			<ul>
 				<li>Record the subject, exam session, year and available English/Hindi files accurately.</li>
 				<li>Use consistent titles so gallery search and sorting remain useful.</li>
 				<li>Open the saved item in the PDF reader and test each available language.</li>
 			</ul>
 
-			<h2>5. Video Lectures</h2>
+			</section>
+			<section id="paper-preview-cache" class="info-card guide-section">
+			<h2>Paper Preview Cache</h2>
+			<a class="guide-dashboard-link" href="/dashboard#paperPreviewCache">Open in Dashboard →</a>
+			<ul>
+				<li>Refresh preview images after question-paper files change.</li>
+				<li>Review the operation summary and retry only failed items.</li>
+				<li>Do not repeatedly rebuild a healthy cache without a content change.</li>
+			</ul>
+			</section>
+			<section id="video-lectures" class="info-card guide-section">
+			<h2>Video Lectures</h2>
+			<a class="guide-dashboard-link" href="/dashboard#videoLectureManagement">Open in Dashboard →</a>
 			<ol>
 				<li>Select the subject and enter a complete YouTube video or playlist URL.</li>
 				<li>Add a useful title, unit, teacher, language, description and display order.</li>
@@ -42,14 +80,46 @@
 				<li>Keep the lecture inactive until its preview and subject association are correct.</li>
 			</ol>
 
-			<h2>6. Banners and Contributors</h2>
+			</section>
+			<section id="lecture-json-catalog" class="info-card guide-section">
+			<h2>Lecture JSON Catalog</h2>
+			<a class="guide-dashboard-link" href="/dashboard#lectureCatalogManagement">Open in Dashboard →</a>
+			<ul>
+				<li>Use stable unique IDs and valid database subject codes.</li>
+				<li>Validate before saving; invalid JSON never starts a sync.</li>
+				<li>Startup adds missing records, while manual sync also updates matching records.</li>
+				<li>Removing JSON entries never deletes database records.</li>
+			</ul>
+			</section>
+			<section id="banner-management" class="info-card guide-section">
+			<h2>Banner Management</h2>
+			<a class="guide-dashboard-link" href="/dashboard#bannerManagement">Open in Dashboard →</a>
 			<ul>
 				<li>Use concise accessible text and suitable images.</li>
 				<li>Check links before publishing a banner.</li>
-				<li>Use priority/order values intentionally and remove outdated entries only when permitted.</li>
+				<li>Use priority and active dates intentionally, then preview desktop and mobile layouts.</li>
 			</ul>
 
-			<h2>7. Publishing Checklist</h2>
+			</section>
+			<section id="link-preview" class="info-card guide-section">
+			<h2>Link Preview</h2>
+			<a class="guide-dashboard-link" href="/dashboard#linkPreviewManagement">Open in Dashboard →</a>
+			<ul>
+				<li>Provide a concise title, description and canonical URL.</li>
+				<li>Choose an image URL or upload and confirm the preview.</li>
+				<li>Use an approximately 1200 × 630 image for social sharing.</li>
+			</ul>
+			</section>
+			<section id="contributors" class="info-card guide-section">
+			<h2>Contributors</h2>
+			<a class="guide-dashboard-link" href="/dashboard#contributorManagement">Open in Dashboard →</a>
+			<ul>
+				<li>Use the contributor's preferred name and an accurate description.</li>
+				<li>Check avatar, profile link, contribution labels, order and active state.</li>
+			</ul>
+			</section>
+			<section id="publishing-checklist" class="info-card guide-section">
+			<h2>Publishing Checklist</h2>
 			<ol>
 				<li>Correct subject and semester selected.</li>
 				<li>Title, language, session and year verified.</li>
@@ -58,12 +128,15 @@
 				<li>Student-facing page checked on desktop and mobile layout.</li>
 			</ol>
 
-			<h2>8. Common Problems</h2>
+			</section>
+			<section id="common-problems" class="info-card guide-section">
+			<h2>Common Problems</h2>
 			<ul>
 				<li><strong>Save rejected:</strong> Review required fields and your current role.</li>
 				<li><strong>Upload rejected:</strong> Confirm the file type, size and connection, then retry once.</li>
 				<li><strong>Item not visible:</strong> Check its active/published state and subject association.</li>
 				<li><strong>Wrong content published:</strong> Unpublish or correct it promptly; do not create another duplicate.</li>
 			</ul>
-		</article>
-	</main>
+			</section>
+		</main>
+	</div>

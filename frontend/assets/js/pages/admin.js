@@ -55,10 +55,11 @@ const shareSettingsForm = document.getElementById("shareSettingsForm");
 const shareSettingsMessage = document.getElementById("shareSettingsMessage");
 const supportSettingsForm = document.getElementById("supportSettingsForm");
 const supportSettingsMessage = document.getElementById("supportSettingsMessage");
+const supportQrFallbackImage = "/assets/images/support-gyanpath-fallback.webp";
 
 const defaultShareSettings = {
 	title: "Share GyanPath",
-	description: "Scan the QR code or share it with another MCA student.",
+	description: "Share GyanPath with fellow IGNOU MCA students.",
 	shareText: "GyanPath - IGNOU MCA study resources",
 	url: "https://gyanpath.up.railway.app/",
 	qrImageSource: "generated",
@@ -70,12 +71,16 @@ const defaultSupportSettings = {
 	enabled: false,
 	title: "Support GyanPath",
 	description: "Your donation helps keep IGNOU MCA resources organized, updated and free for students.",
+	upiId: "",
+	payeeName: "GyanPath",
+	amount: "",
+	paymentNote: "Support GyanPath",
 	qrData: "",
 	qrImageSource: "generated",
 	qrImageUrl: "",
 	qrImagePath: "",
 	qrImageMeta: null,
-	buttonText: "Donation details coming soon",
+	buttonText: "Donate Now",
 	buttonUrl: ""
 };
 
@@ -283,17 +288,36 @@ function fillSupportSettings(setting = defaultSupportSettings) {
 	document.getElementById("supportEnabled").checked = Boolean(support.enabled);
 	document.getElementById("supportTitle").value = support.title;
 	document.getElementById("supportDescription").value = support.description;
-	document.getElementById("supportQrData").value = support.qrData || "";
+	document.getElementById("supportUpiId").value = support.upiId || "";
+	document.getElementById("supportPayeeName").value = support.payeeName || "";
+	document.getElementById("supportAmount").value = support.amount || "";
+	document.getElementById("supportPaymentNote").value = support.paymentNote || "";
+	document.getElementById("supportQrData").value = support.upiId ? "" : support.qrData || "";
 	document.getElementById("supportQrImageUrl").value = support.qrImageUrl || "";
 	supportQrUpload = { path: support.qrImagePath || "", meta: support.qrImageMeta || null, file: null };
 	document.getElementById("supportButtonText").value = support.buttonText || "";
-	document.getElementById("supportButtonUrl").value = support.buttonUrl || "";
+	document.getElementById("supportButtonUrl").value = support.upiId ? "" : support.buttonUrl || "";
 	setQrSource("support", support.qrImageSource || "generated");
 	updateSupportQrPreview();
 }
 
 function qrCodeImageUrl(data) {
 	return `https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=${encodeURIComponent(data)}`;
+}
+
+function supportPaymentUri() {
+	const upiId = document.getElementById("supportUpiId")?.value.trim() || "";
+	if (!upiId) return "";
+	const params = new URLSearchParams({
+		pa: upiId,
+		pn: document.getElementById("supportPayeeName")?.value.trim() || "GyanPath",
+		cu: "INR"
+	});
+	const amount = document.getElementById("supportAmount")?.value;
+	const note = document.getElementById("supportPaymentNote")?.value.trim();
+	if (amount) params.set("am", amount);
+	if (note) params.set("tn", note);
+	return `upi://pay?${params.toString()}`;
 }
 
 function formatBytes(size = 0) {
@@ -341,9 +365,19 @@ function updateQrPreview(imageId, textId, metaId, value, emptyText, options = {}
 	const meta = document.getElementById(metaId);
 	const data = value.trim();
 	if (!image || !text) return;
+	image.onerror = options.fallbackSrc ? () => {
+		image.onerror = null;
+		image.src = options.fallbackSrc;
+		image.hidden = false;
+	} : null;
 	if (!data) {
-		image.removeAttribute("src");
-		image.hidden = true;
+		if (options.fallbackSrc) {
+			image.src = options.fallbackSrc;
+			image.hidden = false;
+		} else {
+			image.removeAttribute("src");
+			image.hidden = true;
+		}
 		text.textContent = emptyText;
 		if (meta) meta.textContent = "";
 		return;
@@ -398,7 +432,7 @@ function updateSupportQrPreview() {
 			"supportQrPreviewMeta",
 			document.getElementById("supportQrImageUrl")?.value || "",
 			"Enter a Support QR image URL to preview.",
-			{ directImage: true }
+			{ directImage: true, fallbackSrc: supportQrFallbackImage }
 		);
 		return;
 	}
@@ -409,7 +443,7 @@ function updateSupportQrPreview() {
 			"supportQrPreviewMeta",
 			supportQrUpload.path,
 			"Choose and save a Support QR image to preview.",
-			{ directImage: true, meta: supportQrUpload.meta }
+			{ directImage: true, meta: supportQrUpload.meta, fallbackSrc: supportQrFallbackImage }
 		);
 		return;
 	}
@@ -417,8 +451,13 @@ function updateSupportQrPreview() {
 		"supportQrPreview",
 		"supportQrPreviewText",
 		"supportQrPreviewMeta",
-		document.getElementById("supportQrData")?.value || "",
-		"Enter a QR image URL or QR data / UPI link to preview."
+		supportQrUpload.path || supportPaymentUri() || document.getElementById("supportQrData")?.value || "",
+		"Enter a QR image URL or QR data / UPI link to preview.",
+		{
+			directImage: Boolean(supportQrUpload.path),
+			meta: supportQrUpload.meta,
+			fallbackSrc: supportQrFallbackImage
+		}
 	);
 }
 
@@ -780,7 +819,19 @@ document.getElementById("supportQrImageFile")?.addEventListener("change", async 
 		setMessage(supportSettingsMessage, error.message, "error");
 	}
 });
-document.getElementById("supportQrData")?.addEventListener("input", updateSupportQrPreview);
+function updateSupportPaymentPreview() {
+	if (selectedQrSource("support") === "generated") {
+		supportQrUpload = { path: "", meta: null, file: null };
+	}
+	updateSupportQrPreview();
+}
+document.getElementById("supportQrData")?.addEventListener("input", updateSupportPaymentPreview);
+[
+	"supportUpiId",
+	"supportPayeeName",
+	"supportAmount",
+	"supportPaymentNote"
+].forEach((id) => document.getElementById(id)?.addEventListener("input", updateSupportPaymentPreview));
 document.querySelectorAll('input[name="supportQrImageSource"]').forEach((input) => {
 	input.addEventListener("change", updateSupportQrPreview);
 });
@@ -917,6 +968,10 @@ supportSettingsForm.addEventListener("submit", async (event) => {
 			enabled: document.getElementById("supportEnabled").checked,
 			title: document.getElementById("supportTitle").value,
 			description: document.getElementById("supportDescription").value,
+			upiId: document.getElementById("supportUpiId").value || null,
+			payeeName: document.getElementById("supportPayeeName").value || null,
+			amount: document.getElementById("supportAmount").value || null,
+			paymentNote: document.getElementById("supportPaymentNote").value || null,
 			qrImageSource: selectedQrSource("support"),
 			qrData: document.getElementById("supportQrData").value || null,
 			qrImageUrl: document.getElementById("supportQrImageUrl").value || null,

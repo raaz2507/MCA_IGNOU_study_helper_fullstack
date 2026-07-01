@@ -1,4 +1,4 @@
-import { enhanceFooter } from "./footer.js";
+import { enhanceFooter } from "./footer.js?v=2";
 import { AccessController, AuthService } from "../utils/auth.js";
 import { renderBreadcrumb } from "./breadcrumb.js";
 import { recordPageVisit } from "../utils/analytics.js";

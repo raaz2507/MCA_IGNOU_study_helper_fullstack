@@ -20,7 +20,8 @@ test("frontend home page is served at the clean root route", async () => {
 	assert.match(response.text, /<footer class="site-footer">/);
 	assert.match(response.text, /data-qr-fallback-src="data:image\/png;base64,/);
 	assert.doesNotMatch(response.text, /data-share-qr hidden/);
-	assert.match(response.text, /data-qr-fallback-src="\/assets\/images\/support-gyanpath-fallback\.webp"/);
+	assert.match(response.text, /data-support-qr[^>]+data-qr-fallback-src="(?:data:image\/png;base64,|\/assets\/images\/support-gyanpath-fallback\.webp)/);
+	assert.match(response.text, /data-donation-dialog/);
 	assert.doesNotMatch(response.text, /<%=/);
 });
 
@@ -114,7 +115,7 @@ test("legacy HTML page URLs redirect to clean routes", async () => {
 });
 
 test("remaining public, protected and reader pages render through Eta", async () => {
-	const routes = ["/user-guide", "/video-lectures", "/chat", "/discussion", "/testing", "/profile", "/pdf-viewer"];
+	const routes = ["/user-guide", "/editor-guide", "/admin-guide", "/video-lectures", "/chat", "/discussion", "/testing", "/profile", "/pdf-viewer"];
 	for (const route of routes) {
 		const response = await request(createApp()).get(route);
 		assert.equal(response.status, 200);

@@ -1,0 +1,17 @@
+{
+  "schemaVersion": 1,
+  "lectures": [
+    {
+      "id": "mcs-213-Software Engring",
+      "subject": "MCS-213",
+      "title": "Software Engring",
+      "unit": "Unit 1",
+      "description": "Software Engineering Full Course!👇👇👇https://youtube.com/playlist?list=PLqleLpAMfxGB1g0xlYj2H6lyY2Q2ku7p9Don't forget to tag our Channel...!#LearnCoding#So...",
+      "url": "https://youtu.be/b7hmU72GRaE?si=3n0p_hLL29Eur2vR",
+      "teacher": "Learn Coding",
+      "language": "Hindi",
+      "order": 1,
+      "active": true
+    }
+  ]
+}

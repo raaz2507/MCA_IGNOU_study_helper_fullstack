@@ -5,6 +5,7 @@
 			<strong>Dashboard Sections</strong>
 			<nav>
 				<a href="#videoLectureManagement">Video Lectures</a>
+				<a href="#lectureCatalogManagement">Lecture JSON Catalog</a>
 				<a href="#bannerManagement">Banner Management</a>
 				<a href="#studyMaterialManagement">Study Materials</a>
 				<a href="#paperManagement">Question Papers</a>
@@ -17,6 +18,7 @@
 
 	<main class="dashboard-page">
 		<section id="videoLectureManagement" class="dashboard-panel lecture-manager" aria-labelledby="lectureManagerTitle">
+			<a class="section-help-link" href="/editor-guide#video-lectures" aria-label="Open Video Lectures documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
 				<h2 id="lectureManagerTitle">Video Lecture Management</h2>
@@ -81,7 +83,46 @@
 			<div id="lectureAdminList" class="lecture-admin-list"></div>
 		</section>
 
+		<section id="lectureCatalogManagement" class="dashboard-panel lecture-catalog-panel" aria-labelledby="lectureCatalogTitle">
+			<a class="section-help-link" href="/editor-guide#lecture-json-catalog" aria-label="Open Lecture JSON Catalog documentation" title="View documentation">ⓘ</a>
+			<div class="section-heading">
+				<p class="dashboard-label">Admin and Editor</p>
+				<h2 id="lectureCatalogTitle">Initial Lecture JSON Catalog</h2>
+				<p>Edit the deployment catalog, validate its structure and synchronize it with the lecture database.</p>
+			</div>
+			<div class="lecture-catalog-editor">
+				<label for="lectureCatalogJson">Catalog JSON</label>
+				<textarea id="lectureCatalogJson" rows="24" spellcheck="false" wrap="off" aria-describedby="lectureCatalogHelp lectureCatalogMessage" 
+				placeholder="{
+					&quot;schemaVersion&quot;: 1,
+					&quot;lectures&quot;: [
+						{
+						&quot;id&quot;: &quot;mcs-211-unit-1-introduction&quot;,
+						&quot;subject&quot;: &quot;MCS-211&quot;,
+						&quot;title&quot;: &quot;Introduction to Algorithms&quot;,
+						&quot;unit&quot;: &quot;Unit 1&quot;,
+						&quot;description&quot;: &quot;Basic concepts and examples.&quot;,
+						&quot;url&quot;: &quot;https://www.youtube.com/watch?v=VIDEO_ID&quot;,
+						&quot;teacher&quot;: &quot;Teacher Name&quot;,
+						&quot;language&quot;: &quot;Hindi + English&quot;,
+						&quot;order&quot;: 1,
+						&quot;active&quot;: true
+						}
+					]
+					}"
+				></textarea>
+				<small id="lectureCatalogHelp" class="field-help">Startup adds missing records automatically. Manual sync updates matching records. Missing JSON entries never delete database records.</small>
+				<div class="contributor-form-actions">
+					<button id="validateLectureCatalog" class="secondary-link" type="button">Validate JSON</button>
+					<button id="saveLectureCatalog" class="secondary-link" type="button">Save JSON</button>
+					<button id="syncLectureCatalog" class="logout-button" type="button">Save &amp; Sync Database</button>
+				</div>
+				<p id="lectureCatalogMessage" class="contributor-message lecture-catalog-message" aria-live="polite"></p>
+			</div>
+		</section>
+
 		<section id="bannerManagement" class="dashboard-panel banner-manager" aria-labelledby="bannerManagerTitle">
+			<a class="section-help-link" href="/editor-guide#banner-management" aria-label="Open Banner Management documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
 				<h2 id="bannerManagerTitle">Banner Content Management</h2>
@@ -179,6 +220,7 @@
 		</section>
 
 		<section id="studyMaterialManagement" class="dashboard-panel management-shortcut-panel" aria-labelledby="studyMaterialTitle">
+			<a class="section-help-link" href="/editor-guide#study-materials" aria-label="Open Study Materials documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
 				<h2 id="studyMaterialTitle">Study Material Management</h2>
@@ -190,6 +232,7 @@
 		</section>
 
 		<section id="paperManagement" class="dashboard-panel management-shortcut-panel" aria-labelledby="paperManagerTitle">
+			<a class="section-help-link" href="/editor-guide#question-papers" aria-label="Open Question Papers documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
 				<h2 id="paperManagerTitle">Question Paper Management</h2>
@@ -201,6 +244,7 @@
 		</section>
 
 		<section id="paperPreviewCache" class="dashboard-panel management-shortcut-panel" aria-labelledby="paperPreviewCacheTitle">
+			<a class="section-help-link" href="/editor-guide#paper-preview-cache" aria-label="Open Paper Preview Cache documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
 				<h2 id="paperPreviewCacheTitle">Question Paper Image Cache</h2>
@@ -231,6 +275,7 @@
 		</section>
 
 		<section id="linkPreviewManagement" class="dashboard-panel management-shortcut-panel" aria-labelledby="linkPreviewTitle">
+			<a class="section-help-link" href="/editor-guide#link-preview" aria-label="Open Link Preview documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin</p>
 				<h2 id="linkPreviewTitle">Link Preview Management</h2>
@@ -254,20 +299,35 @@
 					<input id="linkPreviewUrl" type="url" maxlength="300" required />
 				</label>
 				<div class="qr-source-options" role="radiogroup" aria-label="Thumbnail image source">
-					<label><input type="radio" name="linkPreviewImageSource" value="url" checked /> Image URL</label>
-					<label><input type="radio" name="linkPreviewImageSource" value="upload" /> Browse image</label>
+					<div class="qr-source-option qr-source-option-url">
+						<label class="qr-source-choice">
+							<input type="radio" name="linkPreviewImageSource" value="url" checked />
+							<span>Image URL</span>
+						</label>
+						<label data-link-preview-source="url">
+							<span>Thumbnail URL</span>
+							<input id="linkPreviewImageUrl" type="url" maxlength="500" placeholder="https://example.com/preview.jpg" />
+						</label>
+					</div>
+					<div class="qr-source-option qr-source-option-upload">
+						<label class="qr-source-choice">
+							<input type="radio" name="linkPreviewImageSource" value="upload" />
+							<span>Browse image</span>
+						</label>
+						<label data-link-preview-source="upload" hidden>
+							<span>Thumbnail image</span>
+							<input id="linkPreviewImageFile" type="file" accept="image/png,image/jpeg,image/webp" />
+							<small class="field-help">Recommended: 1200 x 630 px JPG, PNG or WebP.</small>
+						</label>
+					</div>
 				</div>
-				<label data-link-preview-source="url">
-					<span>Thumbnail URL</span>
-					<input id="linkPreviewImageUrl" type="url" maxlength="500" placeholder="https://example.com/preview.jpg" />
-				</label>
-				<label data-link-preview-source="upload" hidden>
-					<span>Thumbnail image</span>
-					<input id="linkPreviewImageFile" type="file" accept="image/png,image/jpeg,image/webp" />
-					<small class="field-help">Recommended: 1200 x 630 px JPG, PNG or WebP.</small>
-				</label>
 				<div class="link-preview-card">
-					<img id="linkPreviewImagePreview" hidden alt="Link preview thumbnail" />
+					<img
+						id="linkPreviewImagePreview"
+						src="/assets/images/gyanpath-link-preview-banner.jpg"
+						data-fallback-src="/assets/images/gyanpath-link-preview-banner.jpg"
+						alt="Link preview thumbnail"
+					/>
 					<div>
 						<strong id="linkPreviewPreviewTitle">Preview title</strong>
 						<p id="linkPreviewPreviewDescription">Preview description will appear here.</p>
@@ -284,6 +344,7 @@
 		</section>
 
 		<section id="adminOperations" class="dashboard-panel management-shortcut-panel" aria-labelledby="adminOperationsTitle">
+			<a class="section-help-link" href="/editor-guide#academic-operations" aria-label="Open Academic Operations documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
 				<h2 id="adminOperationsTitle">Academic Operations</h2>
@@ -294,6 +355,7 @@
 			</div>
 		</section>
 		<section id="contributorManagement" class="dashboard-panel contributor-manager" aria-labelledby="contributorManagerTitle">
+			<a class="section-help-link" href="/editor-guide#contributors" aria-label="Open Contributors documentation" title="View documentation">ⓘ</a>
 			<div class="section-heading">
 				<p class="dashboard-label">Admin and Editor</p>
 				<h2 id="contributorManagerTitle">Manage Contributors</h2>

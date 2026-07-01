@@ -1,0 +1,138 @@
+<% layout('../layouts/main') %>
+	<div class="editor-guide-layout">
+		<aside class="editor-guide-sidebar" aria-label="Admin Guide sections">
+			<strong>Admin Guide Sections</strong>
+			<nav>
+				<a href="#platform-overview">Platform Overview</a>
+				<a href="#user-role-management">Users and Roles</a>
+				<a href="#content-control">Content Control</a>
+				<a href="#email-verification">Email Verification</a>
+				<a href="#share-qr-settings">Share and QR</a>
+				<a href="#analytics-retention">Analytics Retention</a>
+				<a href="#support-settings">Support Settings</a>
+				<a href="#database-operations">Database Provider and Backup</a>
+				<a href="#system-status">System Status</a>
+				<a href="#admin-safety-checklist">Safety Checklist</a>
+			</nav>
+		</aside>
+
+		<main class="editor-guide-content">
+			<section id="platform-overview" class="info-card guide-section">
+				<p class="dashboard-label">Admin only</p>
+				<h2>Platform Overview</h2>
+				<a class="guide-dashboard-link" href="/admin#adminOverview">Open in Admin →</a>
+				<ul>
+					<li>Use overview cards to check account, content and traffic health before changing settings.</li>
+					<li>Investigate unusual activity using the relevant management page rather than editing records blindly.</li>
+				</ul>
+			</section>
+
+			<section id="user-role-management" class="info-card guide-section">
+				<h2>User and Role Management</h2>
+				<a class="guide-dashboard-link" href="/admin/users">Open in Admin →</a>
+				<ul>
+					<li>Verify identity and responsibility before approving users or changing roles.</li>
+					<li>Apply the least-privileged role required for the person's work.</li>
+					<li>Review status, audit history and confirmation prompts before account actions.</li>
+				</ul>
+			</section>
+
+			<section id="content-control" class="info-card guide-section">
+				<h2>Content Control</h2>
+				<a class="guide-dashboard-link" href="/admin#adminContent">Open in Admin →</a>
+				<ul>
+					<li>Use Dashboard for ordinary content editing and Admin controls for oversight.</li>
+					<li>Confirm public content after changes and avoid duplicate management records.</li>
+				</ul>
+			</section>
+
+			<section id="email-verification" class="info-card guide-section">
+				<h2>Email Verification</h2>
+				<a class="guide-dashboard-link" href="/admin#adminEmailVerification">Open in Admin →</a>
+				<ul>
+					<li>Confirm Resend API and sender configuration before enabling verification.</li>
+					<li>Test a new account flow and verify that the 24-hour link arrives successfully.</li>
+				</ul>
+			</section>
+
+			<section id="share-qr-settings" class="info-card guide-section">
+				<h2>Share and QR Settings</h2>
+				<a class="guide-dashboard-link" href="/admin#adminShare">Open in Admin →</a>
+				<ul>
+					<li>Choose generated, URL or uploaded QR source and verify the preview.</li>
+					<li>Check share title, description, text and destination URL before saving.</li>
+				</ul>
+			</section>
+
+			<section id="analytics-retention" class="info-card guide-section">
+				<h2>Analytics Data Retention</h2>
+				<a class="guide-dashboard-link" href="/admin#adminPrivacy">Open in Admin →</a>
+				<ul>
+					<li>Select retention period and cleanup action according to the privacy policy.</li>
+					<li>Understand the difference between deletion and anonymisation before enabling cleanup.</li>
+				</ul>
+			</section>
+
+			<section id="support-settings" class="info-card guide-section">
+				<h2>Support GyanPath Settings</h2>
+				<a class="guide-dashboard-link" href="/admin#adminSupport">Open in Admin →</a>
+				<ul>
+					<li>Add the UPI ID, payee name, optional amount and payment note; the payment link and generated QR are created automatically.</li>
+					<li>Use Advanced QR data or a fallback button URL only when no UPI ID is configured.</li>
+					<li>Verify the QR preview, save the settings, then test Donate Now on a phone with a UPI app.</li>
+				</ul>
+			</section>
+
+			<section id="database-operations" class="info-card guide-section">
+				<h2>Database Provider, Backup and Restore</h2>
+				<a class="guide-dashboard-link" href="/admin/database">Open in Admin →</a>
+				<p>Database provider changes are deployment operations. They cannot be completed from the Admin screen alone.</p>
+				<h3>Before changing a provider</h3>
+				<ul>
+					<li>Create and safely store a current backup from Database Operations.</li>
+					<li>Use a maintenance window and stop writes while copying or restoring data.</li>
+					<li>Keep the previous provider and credentials available until verification is complete.</li>
+				</ul>
+				<h3>Use PostgreSQL (recommended full application database)</h3>
+				<ol>
+					<li>Create an empty PostgreSQL database and copy its connection URL.</li>
+					<li>Set <code>DATABASE_ADAPTER=prisma</code>, <code>DATABASE_PROVIDER=postgresql</code> and <code>DATABASE_URL=postgresql://...</code> in the server or Railway environment.</li>
+					<li>Run <code>npm run prisma:generate:postgresql</code>, followed by <code>npm run prisma:deploy:postgresql</code>. Production startup also applies pending canonical PostgreSQL migrations.</li>
+					<li>Restore or seed the required records, restart the application, then check System Status.</li>
+				</ol>
+				<h3>Use Firebase / Cloud Firestore</h3>
+				<p><strong>Important:</strong> Firestore support is currently partial. Catalog and feedback repositories can use Firestore, but authentication, users, admin settings and other modules still use Prisma/PostgreSQL. Keep a valid PostgreSQL <code>DATABASE_URL</code>; do not decommission PostgreSQL.</p>
+				<ol>
+					<li>Create a Firebase project, enable Cloud Firestore and create a server-side service account.</li>
+					<li>Set <code>FIREBASE_PROJECT_ID</code>, <code>FIREBASE_CLIENT_EMAIL</code>, <code>FIREBASE_PRIVATE_KEY</code> and, when needed, <code>FIRESTORE_DATABASE_ID</code>. Preserve escaped <code>\n</code> characters in the private key.</li>
+					<li>Keep <code>DATABASE_ADAPTER=prisma</code> during migration. Run <code>npm run firestore:migrate:dry-run</code>, review collection counts, then run <code>npm run firestore:migrate</code>.</li>
+					<li>Run <code>npm run firestore:verify</code>. Only after it passes, set <code>DATABASE_ADAPTER=firestore</code> and restart the service.</li>
+				</ol>
+				<h3>Verification and rollback</h3>
+				<ul>
+					<li>Test login, Resources, feedback submission, Admin overview and a backup export.</li>
+					<li>If Firestore verification fails, restore <code>DATABASE_ADAPTER=prisma</code> and restart; PostgreSQL remains the rollback source.</li>
+					<li>Never place database URLs or Firebase private keys in the guide, browser, source control or support screenshots.</li>
+				</ul>
+			</section>
+
+			<section id="system-status" class="info-card guide-section">
+				<h2>System Status</h2>
+				<a class="guide-dashboard-link" href="/admin#adminSystem">Open in Admin →</a>
+				<ul>
+					<li>Review database, cache, mail and service status before troubleshooting user reports.</li>
+					<li>Record repeated failures and inspect server logs instead of repeatedly retrying actions.</li>
+				</ul>
+			</section>
+
+			<section id="admin-safety-checklist" class="info-card guide-section">
+				<h2>Administrative Safety Checklist</h2>
+				<ol>
+					<li>Confirm the target environment and affected records.</li>
+					<li>Create a backup before destructive or bulk operations.</li>
+					<li>Verify permissions, settings and external credentials.</li>
+					<li>Test the affected public and protected flows after saving.</li>
+				</ol>
+			</section>
+		</main>
+	</div>

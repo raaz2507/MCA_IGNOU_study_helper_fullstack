@@ -51,7 +51,7 @@ const pdfPreviewCacheDir = path.join(env.frontendRoot, "assets", "images", "pdf-
 const resourceCatalogScript = path.join(env.frontendRoot, "tools", "generate-resource-catalog.py");
 const defaultShareSettings = {
 	title: "Share GyanPath",
-	description: "Scan the QR code or share it with another MCA student.",
+	description: "Share GyanPath with fellow IGNOU MCA students.",
 	shareText: "GyanPath - IGNOU MCA study resources",
 	url: "https://gyanpath.up.railway.app/",
 	qrImageSource: "generated",
@@ -63,12 +63,16 @@ const defaultSupportSettings = {
 	enabled: false,
 	title: "Support GyanPath",
 	description: "Your donation helps keep IGNOU MCA resources organized, updated and free for students.",
+	upiId: null,
+	payeeName: "GyanPath",
+	amount: null,
+	paymentNote: "Support GyanPath",
 	qrData: null,
 	qrImageSource: "generated",
 	qrImageUrl: null,
 	qrImagePath: null,
 	qrImageMeta: null,
-	buttonText: "Donation details coming soon",
+	buttonText: "Donate Now",
 	buttonUrl: null
 };
 const defaultLinkPreviewSettings = {
@@ -219,6 +223,10 @@ type SupportSettings = {
 	enabled: boolean;
 	title: string;
 	description: string;
+	upiId?: string | null;
+	payeeName?: string | null;
+	amount?: number | null;
+	paymentNote?: string | null;
 	qrData?: string | null;
 	qrImageSource: "generated" | "url" | "upload";
 	qrImageUrl?: string | null;
@@ -227,6 +235,22 @@ type SupportSettings = {
 	buttonText?: string | null;
 	buttonUrl?: string | null;
 };
+
+function withSupportPaymentUri(setting: SupportSettings): SupportSettings {
+	const legacyQrValue = setting.qrData?.trim() || "";
+	const legacyUpiId = /^[A-Za-z0-9._-]{2,}@[A-Za-z0-9.-]{2,}$/.test(legacyQrValue) ? legacyQrValue : "";
+	const upiId = setting.upiId?.trim() || legacyUpiId;
+	if (!upiId) return setting;
+	const params = new URLSearchParams({
+		pa: upiId,
+		pn: setting.payeeName?.trim() || setting.title || "GyanPath",
+		cu: "INR"
+	});
+	if (setting.amount) params.set("am", String(setting.amount));
+	if (setting.paymentNote?.trim()) params.set("tn", setting.paymentNote.trim());
+	const paymentUri = `upi://pay?${params.toString()}`;
+	return { ...setting, upiId, qrData: paymentUri, buttonUrl: paymentUri };
+}
 
 const emptyBackupModels = () => Object.fromEntries(
 	backupModelNames.map((name) => [name, []])
@@ -977,7 +1001,10 @@ export async function readShareSettings() {
 	return readCachedSetting(shareSettingsKey, async () => {
 		const setting = await adminRepository.setting(shareSettingsKey);
 		const parsed = shareSettingsSchema.safeParse(setting?.value);
-		const current = parsed.success ? { ...defaultShareSettings, ...parsed.data } : defaultShareSettings;
+		const current = parsed.success ? { ...defaultShareSettings, ...parsed.data } : { ...defaultShareSettings };
+		if (current.description === "Scan the QR code or share it with another MCA student.") {
+			current.description = defaultShareSettings.description;
+		}
 		const next = await ensureGeneratedShareQr(current as ShareSettings);
 		if (next !== current) {
 			await adminRepository.saveSetting(shareSettingsKey, next);
@@ -1026,10 +1053,17 @@ export async function readSupportSettings() {
 	return readCachedSetting(supportSettingsKey, async () => {
 		const setting = await adminRepository.setting(supportSettingsKey);
 		const parsed = supportSettingsSchema.safeParse(setting?.value);
-		const current = parsed.success ? { ...defaultSupportSettings, ...parsed.data } : defaultSupportSettings;
-		const next = await ensureGeneratedSupportQr(current as SupportSettings);
-		if (next !== current) {
+		const storedButtonText = parsed.success ? parsed.data.buttonText : null;
+		const stored = parsed.success ? { ...defaultSupportSettings, ...parsed.data } : { ...defaultSupportSettings };
+		if (!stored.buttonText || stored.buttonText === "Donation details coming soon") {
+			stored.buttonText = defaultSupportSettings.buttonText;
+		}
+		const current = withSupportPaymentUri(stored as SupportSettings);
+		const paymentDataChanged = current.qrData !== stored.qrData;
+		const next = await ensureGeneratedSupportQr(current as SupportSettings, paymentDataChanged);
+		if (next !== current || stored.buttonText !== storedButtonText) {
 			await adminRepository.saveSetting(supportSettingsKey, next);
+			if (paymentDataChanged) await cleanupReplacedUpload(stored.qrImagePath, next.qrImagePath);
 		}
 		return next;
 	});
@@ -1042,7 +1076,7 @@ export const getSupportSettings: RequestHandler = asyncHandler(async (_request, 
 export const saveSupportSettings: RequestHandler = asyncHandler(async (request, response) => {
 	const previous = await readSupportSettings();
 	const input = supportSettingsSchema.parse(request.body);
-	const setting = await ensureGeneratedSupportQr({ ...defaultSupportSettings, ...input });
+	const setting = await ensureGeneratedSupportQr(withSupportPaymentUri({ ...defaultSupportSettings, ...input } as SupportSettings));
 	await adminRepository.saveSetting(supportSettingsKey, setting);
 	cacheSetting(supportSettingsKey, setting);
 	await cleanupReplacedUpload(previous.qrImagePath, setting.qrImagePath);

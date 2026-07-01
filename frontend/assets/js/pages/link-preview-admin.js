@@ -21,6 +21,7 @@ const previewUrl = document.getElementById("linkPreviewPreviewUrl");
 const imageMeta = document.getElementById("linkPreviewImageMeta");
 const message = document.getElementById("linkPreviewMessage");
 const resetButton = document.getElementById("resetLinkPreviewSettings");
+const fallbackPreviewImage = imagePreview?.dataset.fallbackSrc || "/assets/images/gyanpath-link-preview-banner.jpg";
 
 let uploadState = { path: "", file: null, meta: null };
 
@@ -60,10 +61,13 @@ function updateSourceFields() {
 
 function updatePreview() {
 	const source = selectedSource();
-	const image = source === "upload" ? uploadState.path : imageUrl?.value.trim();
+	const configuredImageUrl = imageUrl?.value.trim() || "";
+	const image = source === "upload"
+		? uploadState.path || configuredImageUrl || fallbackPreviewImage
+		: configuredImageUrl || uploadState.path || fallbackPreviewImage;
 	if (imagePreview) {
-		imagePreview.hidden = !image;
-		if (image) imagePreview.src = image;
+		imagePreview.hidden = false;
+		if (imagePreview.getAttribute("src") !== image) imagePreview.src = image;
 	}
 	if (previewTitle) previewTitle.textContent = title?.value.trim() || "Preview title";
 	if (previewDescription) previewDescription.textContent = description?.value.trim() || "Preview description will appear here.";
@@ -190,6 +194,10 @@ document.querySelectorAll('input[name="linkPreviewImageSource"]').forEach((input
 	});
 });
 [title, description, url, imageUrl].forEach((input) => input?.addEventListener("input", updatePreview));
+
+imagePreview?.addEventListener("error", () => {
+	if (imagePreview.getAttribute("src") !== fallbackPreviewImage) imagePreview.src = fallbackPreviewImage;
+});
 
 loadSettings();
 	}

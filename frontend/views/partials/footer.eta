@@ -14,7 +14,7 @@ const shareMessage = `${share.shareText}: ${share.url}`; %>
 		<p>Question papers, practicals and study material in one place.</p>
 		<p class="footer-disclaimer">This is an independent study helper, not an official IGNOU application.</p>
 	</div>
-	<section class="share-gyanpath" aria-labelledby="shareGyanPathTitle">
+	<section class="footer-action-card share-gyanpath" aria-labelledby="shareGyanPathTitle">
 		<img data-share-qr data-qr-fallback-src="<%= share.qrFallbackDataUrl %>"<% if (!shareQrImage) { %> hidden<% } %> src="<%= shareQrImage %>" alt="QR code to open GyanPath" width="112" height="112" />
 		<div>
 			<strong id="shareGyanPathTitle"><%= share.title %></strong>
@@ -25,17 +25,30 @@ const shareMessage = `${share.shareText}: ${share.url}`; %>
 			</div>
 		</div>
 	</section>
-	<section class="donation-section" aria-labelledby="donationTitle" data-support-section<% if (!support.enabled) { %> hidden<% } %>>
+	<section class="footer-action-card donation-section" aria-labelledby="donationTitle" data-support-section<% if (!support.enabled) { %> hidden<% } %>>
 		<img data-support-qr data-qr-fallback-src="<%= supportQrFallbackImage %>" data-qr-fallback-alt="Support GyanPath" src="<%= supportQrImage %>" alt="<%= supportImageIsQrCode ? 'QR code to support GyanPath' : 'Support GyanPath' %>" width="112" height="112" />
 		<div>
 			<strong id="donationTitle"><%= support.title %></strong>
 			<p data-support-description><%= support.description %></p>
-			<a data-support-action<% if (support.buttonUrl) { %> href="<%= support.buttonUrl %>" class="donation-button"<% } else { %> class="donation-button donation-button-disabled" aria-disabled="true"<% } %> target="_blank" rel="noopener noreferrer"><%= support.buttonText %></a>
+			<a data-support-action<% if (support.upiId) { %> data-upi-id="<%= support.upiId %>"<% } %><% if (support.buttonUrl) { %> href="<%= support.buttonUrl %>" class="donation-button"<% } else { %> class="donation-button donation-button-disabled" aria-disabled="true"<% } %> rel="noopener noreferrer"><%= support.buttonText || 'Donate Now' %></a>
 		</div>
 	</section>
+	<dialog class="donation-dialog" data-donation-dialog aria-labelledby="donationDialogTitle">
+		<button class="donation-dialog-close" type="button" data-donation-close aria-label="Close donation instructions">&times;</button>
+		<p class="dashboard-label">UPI donation</p>
+		<h2 id="donationDialogTitle">Scan and donate from your phone</h2>
+		<p>PhonePe, Google Pay, Paytm or another UPI app se QR code scan karein.</p>
+		<img data-donation-dialog-qr alt="UPI QR code to support GyanPath" width="220" height="220" />
+		<div class="donation-upi-copy" data-donation-upi-row hidden>
+			<span>UPI ID</span>
+			<strong data-donation-upi-id></strong>
+			<button type="button" data-donation-copy>Copy UPI ID</button>
+		</div>
+		<p class="donation-copy-status" data-donation-copy-status role="status" aria-live="polite"></p>
+	</dialog>
 	<nav class="footer-navigation" aria-label="Footer navigation">
 		<a href="/">Home</a><a href="/resources">Resources</a>
-		<a href="/about">About</a><a href="/user-guide">User Guide</a><a href="/dashboard">Dashboard</a>
+		<a href="/about">About</a><a href="/user-guide">User Guide</a>
 	</nav>
 	<div class="footer-credit-strip">Developed by <strong>Rajaanha</strong>.</div>
 </footer>

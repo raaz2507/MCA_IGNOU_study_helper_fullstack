@@ -7,7 +7,7 @@
     "dev": "tsx watch backend/src/server.ts",
     "clean": "node -e \"require('node:fs').rmSync('backend/dist',{recursive:true,force:true})\"",
     "build": "npm run clean && npm run prisma:generate && tsc -p backend/tsconfig.json",
-    "start": "node backend/dist/src/server.js",
+    "start": "node backend/dist/prisma/deploy-runtime.js && node backend/dist/src/server.js",
     "test": "tsx --test backend/src/tests/*.test.ts",
     "prisma:schemas": "tsx backend/prisma/generate-provider-schemas.ts",
     "prisma:generate": "npm run prisma:schemas && prisma generate --schema backend/prisma/providers/postgresql/schema.prisma",

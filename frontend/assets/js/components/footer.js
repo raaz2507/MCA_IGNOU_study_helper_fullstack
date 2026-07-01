@@ -1,6 +1,6 @@
 const defaultShareSettings = {
 	title: "Share GyanPath",
-	description: "Scan the QR code or share it with another MCA student.",
+	description: "Share GyanPath with fellow IGNOU MCA students.",
 	shareText: "GyanPath - IGNOU MCA study resources",
 	url: "https://gyanpath.up.railway.app/",
 	qrImageSource: "generated",
@@ -15,7 +15,7 @@ const defaultSupportSettings = {
 	qrImageSource: "generated",
 	qrImageUrl: "",
 	qrImagePath: "",
-	buttonText: "Donation details coming soon",
+	buttonText: "Donate Now",
 	buttonUrl: ""
 };
 
@@ -78,6 +78,8 @@ function updateSupportSection(container, settings) {
 	displayQrImageWithFallback(qr, selectConfiguredQrImage(support));
 	if (action) {
 		action.textContent = support.buttonText || defaultSupportSettings.buttonText;
+		if (support.upiId) action.dataset.upiId = support.upiId;
+		else action.removeAttribute("data-upi-id");
 		if (support.buttonUrl) {
 			action.href = support.buttonUrl;
 			action.className = "donation-button";
@@ -90,11 +92,84 @@ function updateSupportSection(container, settings) {
 	}
 }
 
+function upiIdFromAction(action) {
+	if (action?.dataset.upiId) return action.dataset.upiId;
+	const href = action?.getAttribute("href") || "";
+	if (!href.toLowerCase().startsWith("upi://")) return "";
+	try {
+		return new URL(href).searchParams.get("pa") || "";
+	} catch {
+		return "";
+	}
+}
+
+function isLikelyMobileDevice() {
+	return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent)
+		|| (navigator.maxTouchPoints > 1 && window.innerWidth <= 1024);
+}
+
+async function copyText(value) {
+	if (navigator.clipboard?.writeText) {
+		await navigator.clipboard.writeText(value);
+		return;
+	}
+	const field = document.createElement("textarea");
+	field.value = value;
+	field.setAttribute("readonly", "");
+	field.style.position = "fixed";
+	field.style.opacity = "0";
+	document.body.append(field);
+	field.select();
+	document.execCommand("copy");
+	field.remove();
+}
+
+function enhanceDonationDialog(container) {
+	const action = container.querySelector("[data-support-action]");
+	const dialog = container.querySelector("[data-donation-dialog]");
+	const close = dialog?.querySelector("[data-donation-close]");
+	const dialogQr = dialog?.querySelector("[data-donation-dialog-qr]");
+	const footerQr = container.querySelector("[data-support-qr]");
+	const upiRow = dialog?.querySelector("[data-donation-upi-row]");
+	const upiText = dialog?.querySelector("[data-donation-upi-id]");
+	const copy = dialog?.querySelector("[data-donation-copy]");
+	const status = dialog?.querySelector("[data-donation-copy-status]");
+	if (!action || !dialog || action.dataset.dialogEnhanced === "true") return;
+	action.dataset.dialogEnhanced = "true";
+
+	action.addEventListener("click", (event) => {
+		if (action.getAttribute("aria-disabled") === "true" || isLikelyMobileDevice()) return;
+		event.preventDefault();
+		const upiId = upiIdFromAction(action);
+		if (dialogQr && footerQr?.src) dialogQr.src = footerQr.src;
+		if (upiText) upiText.textContent = upiId;
+		if (upiRow) upiRow.hidden = !upiId;
+		if (status) status.textContent = "";
+		dialog.showModal();
+	});
+
+	close?.addEventListener("click", () => dialog.close());
+	dialog.addEventListener("click", (event) => {
+		if (event.target === dialog) dialog.close();
+	});
+	copy?.addEventListener("click", async () => {
+		const upiId = upiIdFromAction(action);
+		if (!upiId) return;
+		try {
+			await copyText(upiId);
+			if (status) status.textContent = "UPI ID copied.";
+		} catch {
+			if (status) status.textContent = "Could not copy automatically. Select the UPI ID above.";
+		}
+	});
+}
+
 export function enhanceFooter(container) {
 	if (!container) return;
 
 	const hasServerMarkup = Boolean(container.querySelector(".site-footer"));
 	if (!hasServerMarkup) return;
+	enhanceDonationDialog(container);
 	fetch("/api/share-settings")
 		.then((response) => response.ok ? response.json() : null)
 		.then((settings) => {
