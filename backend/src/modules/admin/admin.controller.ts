@@ -38,7 +38,7 @@ async function audit(actorId: string | null | undefined, action: string, entityT
 const shareSettingsKey = "share-settings";
 const supportSettingsKey = "support-settings";
 const linkPreviewSettingsKey = "link-preview-settings";
-const defaultLinkPreviewImageUrl = "https://raaz2507.github.io/MCA_IGNOU_study_helper_fullstack/frontend/assets/images/gyanpath-link-preview-banner.jpg";
+const defaultLinkPreviewImageUrl = "/assets/images/fallback_images/gyanpath-link-preview-banner.jpg";
 const defaultLinkPreviewImageMeta = {
 	name: "gyanpath-link-preview-banner.jpg",
 	type: "image/jpeg",

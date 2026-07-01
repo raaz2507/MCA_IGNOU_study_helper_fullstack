@@ -1,4 +1,4 @@
-<% const avatar = it.contributor.avatar || (it.contributor.id === 'rajaanha' ? '/assets/images/contributors/rajaanha-guinea-pig.webp' : '');
+<% const avatar = it.contributor.avatar || (it.contributor.id === 'rajaanha' ? '/assets/images/contributors/rajaanha-guinea-pig.webp' : '/assets/images/fallback_images/avatar-fallback.svg');
 const contributions = Array.isArray(it.contributor.contributions) ? it.contributor.contributions : [];
 const initials = String(it.contributor.name || '?').trim().split(/\s+/).slice(0, 2).map((part) => part[0]?.toUpperCase() || '').join('') || '?'; %>
 <article class="contributor-card"<% if (avatar) { %> style="--contributor-photo: url('<%= avatar %>')"<% } %>>

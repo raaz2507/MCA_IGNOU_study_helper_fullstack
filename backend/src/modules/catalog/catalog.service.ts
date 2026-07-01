@@ -6,7 +6,7 @@ import { env } from "../../config/env.js";
 const contentRoot = path.join(env.frontendRoot, "assets", "resources", "MCA_new");
 const pdfContentRoot = path.join(env.localResourcesRoot, "MCA_new");
 const pdfManifestPath = path.join(env.frontendRoot, "pdf-resources.manifest.json");
-const fallbackPreview = "/assets/images/pdf-preview-fallback.svg";
+const fallbackPreview = "/assets/images/fallback_images/pdf-preview-fallback.svg";
 const config = JSON.parse(readFileSync(path.join(env.frontendRoot, "resource-paths.json"), "utf8"));
 const pdfManifest = existsSync(pdfManifestPath)
 	? JSON.parse(readFileSync(pdfManifestPath, "utf8"))

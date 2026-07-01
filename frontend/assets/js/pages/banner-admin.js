@@ -39,7 +39,7 @@ function showMessage(text, type = "") {
 
 function renderPreview() {
 	const banner = readForm(false);
-	preview.style.backgroundImage = `linear-gradient(90deg, rgba(4, 18, 42, .92), rgba(4, 18, 42, .3)), url("${banner.image || "../assets/images/banner-exam.svg"}")`;
+	preview.style.backgroundImage = `linear-gradient(90deg, rgba(4, 18, 42, .92), rgba(4, 18, 42, .3)), url("${banner.image || "/assets/images/fallback_images/banner-exam.svg"}")`;
 	preview.querySelector("[data-preview-category]").textContent = banner.category || "Category";
 	preview.querySelector("[data-preview-title]").textContent = banner.title || "Banner title";
 	preview.querySelector("[data-preview-description]").textContent =
@@ -124,7 +124,7 @@ function renderList() {
 			const item = document.createElement("article");
 			item.className = "banner-admin-item";
 			const thumbnail = document.createElement("img");
-			thumbnail.src = banner.image || "../assets/images/banner-exam.svg";
+			thumbnail.src = banner.image || "/assets/images/fallback_images/banner-exam.svg";
 			thumbnail.alt = "";
 
 			const content = document.createElement("div");

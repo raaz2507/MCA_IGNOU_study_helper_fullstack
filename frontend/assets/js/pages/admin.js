@@ -55,7 +55,7 @@ const shareSettingsForm = document.getElementById("shareSettingsForm");
 const shareSettingsMessage = document.getElementById("shareSettingsMessage");
 const supportSettingsForm = document.getElementById("supportSettingsForm");
 const supportSettingsMessage = document.getElementById("supportSettingsMessage");
-const supportQrFallbackImage = "/assets/images/support-gyanpath-fallback.webp";
+const supportQrFallbackImage = "/assets/images/fallback_images/support-gyanpath-fallback.webp";
 
 const defaultShareSettings = {
 	title: "Share GyanPath",

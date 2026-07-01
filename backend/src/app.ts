@@ -29,7 +29,7 @@ const eta = new Eta({
 
 const socialDescription = "Watermark-Free Study PDFs • Hindi-Translated Study Material • Previous-Year Papers • Smart Question Bank • English & Hinglish Answers • Related Video Lecture Links • Revision Lists • Learning Milestones";
 const socialTitle = "GyanPath | IGNOU MCA Study Companion";
-const socialImage = `${env.siteUrl}/assets/images/gyanpath-link-preview-banner.jpg`;
+const socialImage = `${env.siteUrl}/assets/images/fallback_images/gyanpath-link-preview-banner.jpg`;
 const generatedQrCodeDataUrlCache = new Map<string, string>();
 
 async function generateQrCodeFallbackDataUrl(qrCodeContent: string | null | undefined) {
@@ -109,7 +109,7 @@ async function sendPage(response: express.Response, filePath: string, data: Reco
 	if (settings.enabled) {
 		const image = settings.imageSource === "upload" && settings.imagePath
 			? absoluteUrl(settings.imagePath)
-			: settings.imageUrl || "";
+			: settings.imageUrl ? absoluteUrl(settings.imageUrl) : "";
 		const imageType = imageMimeType(image, settings.imageMeta?.type);
 		const imageWidth = settings.imageMeta?.width || 1731;
 		const imageHeight = settings.imageMeta?.height || 909;

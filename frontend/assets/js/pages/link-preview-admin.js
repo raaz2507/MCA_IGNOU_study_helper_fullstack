@@ -21,7 +21,7 @@ const previewUrl = document.getElementById("linkPreviewPreviewUrl");
 const imageMeta = document.getElementById("linkPreviewImageMeta");
 const message = document.getElementById("linkPreviewMessage");
 const resetButton = document.getElementById("resetLinkPreviewSettings");
-const fallbackPreviewImage = imagePreview?.dataset.fallbackSrc || "/assets/images/gyanpath-link-preview-banner.jpg";
+const fallbackPreviewImage = imagePreview?.dataset.fallbackSrc || "/assets/images/fallback_images/gyanpath-link-preview-banner.jpg";
 
 let uploadState = { path: "", file: null, meta: null };
 

@@ -4,7 +4,7 @@ import { papers as localPapers } from "./catalog.service.js";
 
 const catalogRepository = container.catalogRepository;
 
-const fallbackPreview = "/assets/images/pdf-preview-fallback.svg";
+const fallbackPreview = "/assets/images/fallback_images/pdf-preview-fallback.svg";
 
 function pdfPath(filePath: string | null) {
 	if (!filePath) return "";

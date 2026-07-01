@@ -2,8 +2,10 @@
 const support = it.footer.support;
 const sharePrimaryQrImage = share.qrImagePath || (share.qrImageSource === 'url' ? share.qrImageUrl : '');
 const supportPrimaryQrImage = support.qrImagePath || (support.qrImageSource === 'url' ? support.qrImageUrl : '');
-const supportStaticFallbackImagePath = '/assets/images/support-gyanpath-fallback.webp';
-const shareQrImage = sharePrimaryQrImage || share.qrFallbackDataUrl;
+const shareStaticFallbackImagePath = '/assets/images/fallback_images/gyanpath-qr.png';
+const supportStaticFallbackImagePath = '/assets/images/fallback_images/support-gyanpath-fallback.webp';
+const shareQrFallbackImage = share.qrFallbackDataUrl || shareStaticFallbackImagePath;
+const shareQrImage = sharePrimaryQrImage || shareQrFallbackImage;
 const supportQrFallbackImage = support.qrFallbackDataUrl || supportStaticFallbackImagePath;
 const supportQrImage = supportPrimaryQrImage || supportQrFallbackImage;
 const supportImageIsQrCode = Boolean(supportPrimaryQrImage || support.qrFallbackDataUrl);
@@ -15,7 +17,7 @@ const shareMessage = `${share.shareText}: ${share.url}`; %>
 		<p class="footer-disclaimer">This is an independent study helper, not an official IGNOU application.</p>
 	</div>
 	<section class="footer-action-card share-gyanpath" aria-labelledby="shareGyanPathTitle">
-		<img data-share-qr data-qr-fallback-src="<%= share.qrFallbackDataUrl %>"<% if (!shareQrImage) { %> hidden<% } %> src="<%= shareQrImage %>" alt="QR code to open GyanPath" width="112" height="112" />
+		<img data-share-qr data-qr-fallback-src="<%= shareQrFallbackImage %>" src="<%= shareQrImage %>" alt="QR code to open GyanPath" width="112" height="112" />
 		<div>
 			<strong id="shareGyanPathTitle"><%= share.title %></strong>
 			<p data-share-description><%= share.description %></p>

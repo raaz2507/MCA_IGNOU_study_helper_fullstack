@@ -7,7 +7,7 @@ const defaultContributorAvatars = {
 };
 
 function contributorCard(contributor) {
-	const avatarUrl = contributor.avatar || defaultContributorAvatars[contributor.id] || "";
+	const avatarUrl = contributor.avatar || defaultContributorAvatars[contributor.id] || "/assets/images/fallback_images/avatar-fallback.svg";
 	const card = document.createElement("article");
 	card.className = "contributor-card";
 	if (avatarUrl) {

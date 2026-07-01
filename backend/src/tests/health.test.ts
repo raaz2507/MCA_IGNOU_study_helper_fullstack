@@ -18,9 +18,9 @@ test("frontend home page is served at the clean root route", async () => {
 	assert.match(response.text, /href="\/resources">Browse Study Resources<\/a>/);
 	assert.match(response.text, /<header class="site-header">/);
 	assert.match(response.text, /<footer class="site-footer">/);
-	assert.match(response.text, /data-qr-fallback-src="data:image\/png;base64,/);
+	assert.match(response.text, /data-qr-fallback-src="(?:data:image\/png;base64,|\/assets\/images\/fallback_images\/gyanpath-qr\.png)/);
 	assert.doesNotMatch(response.text, /data-share-qr hidden/);
-	assert.match(response.text, /data-support-qr[^>]+data-qr-fallback-src="(?:data:image\/png;base64,|\/assets\/images\/support-gyanpath-fallback\.webp)/);
+	assert.match(response.text, /data-support-qr[^>]+data-qr-fallback-src="(?:data:image\/png;base64,|\/assets\/images\/fallback_images\/support-gyanpath-fallback\.webp)/);
 	assert.match(response.text, /data-donation-dialog/);
 	assert.doesNotMatch(response.text, /<%=/);
 });

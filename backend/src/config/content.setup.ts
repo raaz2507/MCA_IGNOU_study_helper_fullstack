@@ -26,10 +26,11 @@ export const contentSetup = Object.freeze({
 		title: "Master of Computer Applications"
 	},
 	fallbacks: {
-		pdfPreview: "/assets/images/pdf-preview-fallback.svg",
-		banner: "/assets/images/gyanpath-link-preview-banner.webp",
-		contributor: "/assets/images/avatar-fallback.webp",
-		supportQr: "/assets/images/support-gyanpath-fallback.webp"
+		pdfPreview: "/assets/images/fallback_images/pdf-preview-fallback.svg",
+		banner: "/assets/images/fallback_images/banner-exam.svg",
+		contributor: "/assets/images/fallback_images/avatar-fallback.svg",
+		shareQr: "/assets/images/fallback_images/gyanpath-qr.png",
+		supportQr: "/assets/images/fallback_images/support-gyanpath-fallback.webp"
 	},
 	folders: {
 		contentRoot: "MCA_new",

@@ -44,7 +44,7 @@ npm.cmd start
 
 The application uses the locally installed Windows PostgreSQL server through
 Prisma. Docker is not used by this project. Configure the connection in
-`backend/.env` using `backend/.env.example` as the safe template.
+the root `.env` using the root `.env.example` as the safe template.
 
 ## Email verification configuration
 

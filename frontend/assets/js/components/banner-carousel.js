@@ -36,7 +36,7 @@ function showBannerDetails(banner) {
 	const start = detailsDialog.querySelector("[data-details-start]");
 	const end = detailsDialog.querySelector("[data-details-end]");
 
-	detailsDialog.querySelector("[data-details-image]").src = banner.image || "../assets/images/banner-exam.svg";
+	detailsDialog.querySelector("[data-details-image]").src = banner.image || "/assets/images/fallback_images/banner-exam.svg";
 	detailsDialog.querySelector("[data-details-category]").textContent = banner.category;
 	detailsDialog.querySelector("[data-details-title]").textContent = banner.title;
 	detailsDialog.querySelector("[data-details-description]").textContent = banner.description;
@@ -80,7 +80,7 @@ function createSlide(banner, index) {
 
 	const image = document.createElement("img");
 	image.className = "announcement-image";
-	image.src = banner.image || "../assets/images/banner-exam.svg";
+	image.src = banner.image || "/assets/images/fallback_images/banner-exam.svg";
 	image.alt = "";
 
 	const shade = document.createElement("div");

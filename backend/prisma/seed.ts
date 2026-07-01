@@ -182,7 +182,7 @@ async function seedContent() {
 			title: "Prepare Smarter for Your MCA Exams",
 			description: "Open previous-year papers, important questions and study material from one place.",
 			category: "Exam",
-			image: "../assets/images/banner-exam.svg",
+			image: "/assets/images/fallback_images/banner-exam.svg",
 			buttonText: "Explore Resources",
 			buttonUrl: "#semesterContainer",
 			priority: 1

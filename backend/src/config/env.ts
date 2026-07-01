@@ -4,7 +4,7 @@ import { z } from "zod";
 
 const projectRoot = process.cwd();
 const backendRoot = path.join(projectRoot, "backend");
-dotenv.config({ path: path.join(backendRoot, ".env") });
+dotenv.config({ path: path.join(projectRoot, ".env") });
 
 const schema = z.object({
 	NODE_ENV: z.enum(["development", "test", "production"]).default("development"),

@@ -35,7 +35,7 @@ npm.cmd run build
 npm.cmd start
 ```
 
-Copy `backend/.env.example` to `backend/.env` and set `DATABASE_URL` before
+Copy `.env.example` to `.env` and set `DATABASE_URL` before
 running Prisma commands. The Express server serves the frontend and owns
 application data, authentication, progress and admin APIs. Opening HTML files
 directly is no longer the primary application mode.
@@ -43,7 +43,7 @@ directly is no longer the primary application mode.
 ### Resend email verification
 
 Email verification is implemented through the Resend Email API. Add these
-values to `backend/.env` before enabling it:
+values to `.env` before enabling it:
 
 ```text
 SITE_URL=https://your-public-domain.example
@@ -342,8 +342,8 @@ mca-study-helper/
 `-- .gitignore
 ```
 
-> Important: `backend/.env` will contain local secrets and must not be
-> committed. A safe `backend/.env.example` file should be committed instead.
+> Important: `.env` will contain local secrets and must not be
+> committed. A safe `.env.example` file should be committed instead.
 
 Shared headers, footers and cards are rendered by reusable client-side
 components. Page files contain placeholders and page-specific content instead

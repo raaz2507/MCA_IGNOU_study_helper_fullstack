@@ -324,8 +324,8 @@
 				<div class="link-preview-card">
 					<img
 						id="linkPreviewImagePreview"
-						src="/assets/images/gyanpath-link-preview-banner.jpg"
-						data-fallback-src="/assets/images/gyanpath-link-preview-banner.jpg"
+								src="/assets/images/fallback_images/gyanpath-link-preview-banner.jpg"
+						data-fallback-src="/assets/images/fallback_images/gyanpath-link-preview-banner.jpg"
 						alt="Link preview thumbnail"
 					/>
 					<div>
