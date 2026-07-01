@@ -378,7 +378,7 @@ On each successful Railway deployment, startup performs this sequence once:
 3. Upsert discovered semester subjects, exam papers and study material.
 4. Start the web server.
 
-GitHub sync does not delete existing records, so manually managed academic records are preserved. A temporary GitHub failure is logged but does not prevent the server from starting.
+GitHub sync mirrors repository-managed academic content. Papers and study materials under `PDF_RESOURCE_BASE_URL` are removed from the database when their GitHub files disappear; subjects under `MCA_new/Semester_*` are removed when their complete GitHub subject folder disappears. Records outside those managed paths are preserved. A temporary GitHub failure is logged but does not prevent the server from starting.
 
 Admin and Editor users can retry without redeploying from **Dashboard → Academic Operations → GitHub Content Sync**. The equivalent Railway shell command is:
 

@@ -365,7 +365,8 @@ export function createApp() {
 	app.get("/user-guide", (_request, response) => standardPage(response, {
 		view: "user-guide", activePage: "guide", title: "User Guide | GyanPath",
 		description: "Learn how to use GyanPath to find IGNOU MCA semester resources, question papers, assignments and question banks.",
-		headerTitle: "User Guide", headerSubtitle: "How to use the MCA Study Helper.", stylesheets: ["/assets/css/index.css?v=41"]
+		headerTitle: "User Guide", headerSubtitle: "How to use the MCA Study Helper.", stylesheets: ["/assets/css/index.css?v=41"],
+		scripts: [{ src: "/assets/js/pages/user-guide.js", module: true }]
 	}));
 	app.get("/editor-guide", (_request, response) => standardPage(response, {
 		view: "editor-guide", activePage: "editor-guide", title: "Editor Guide | GyanPath",

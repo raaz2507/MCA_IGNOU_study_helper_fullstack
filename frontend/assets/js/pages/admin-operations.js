@@ -316,7 +316,8 @@ document.getElementById("syncGitHubContent")?.addEventListener("click", async (e
 	setMessage(message, "GitHub repository scan and database sync is running…", "info");
 	try {
 		const result = await syncGitHubAcademicContent();
-		setMessage(message, `Sync complete: ${result.subjects} subjects, ${result.papers} papers and ${result.studyMaterials} study materials found.`, "success");
+		const removed = result.removed || {};
+		setMessage(message, `Sync successful — ${result.semesters} semesters, ${result.subjects} subjects and ${result.scannedFiles} PDF files scanned; ${result.papers} papers and ${result.studyMaterials} study materials synced. Removed: ${removed.subjects || 0} subjects, ${removed.papers || 0} papers, ${removed.studyMaterials || 0} study materials.`, "success");
 		await loadOperations();
 	} catch (error) {
 		setMessage(message, error.message, "error");

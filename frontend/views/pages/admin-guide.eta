@@ -4,8 +4,10 @@
 			<strong>Admin Guide Sections</strong>
 			<nav>
 				<a href="#platform-overview">Platform Overview</a>
+				<a href="#admin-page-links">Admin Page Links</a>
 				<a href="#user-role-management">Users and Roles</a>
 				<a href="#content-control">Content Control</a>
+				<a href="#github-sync-oversight">GitHub Sync Oversight</a>
 				<a href="#email-verification">Email Verification</a>
 				<a href="#share-qr-settings">Share and QR</a>
 				<a href="#analytics-retention">Analytics Retention</a>
@@ -27,6 +29,18 @@
 				</ul>
 			</section>
 
+			<section id="admin-page-links" class="info-card guide-section">
+				<h2>Admin Page Links</h2>
+				<p>Admin और shared Editor operations के direct links:</p>
+				<ul>
+					<li><a href="/admin">Admin Overview</a> — platform overview, settings और system status देखें।</li>
+					<li><a href="/admin/users">User Management</a> — users, roles, status और password actions manage करें।</li>
+					<li><a href="/admin/database">Database Operations</a> — backup, restore और upload storage operations चलाएँ।</li>
+					<li><a href="/dashboard/academic-operations">Academic Operations</a> — semesters, subjects और GitHub sync की निगरानी करें।</li>
+					<li><a href="/admin-guide">Admin Guide</a> — administrative documentation खोलें।</li>
+				</ul>
+			</section>
+
 			<section id="user-role-management" class="info-card guide-section">
 				<h2>User and Role Management</h2>
 				<a class="guide-dashboard-link" href="/admin/users">Open in Admin →</a>
@@ -43,6 +57,22 @@
 				<ul>
 					<li>Use Dashboard for ordinary content editing and Admin controls for oversight.</li>
 					<li>Confirm public content after changes and avoid duplicate management records.</li>
+				</ul>
+			</section>
+
+			<section id="github-sync-oversight" class="info-card guide-section">
+				<h2>GitHub Content Sync Oversight</h2>
+				<a class="guide-dashboard-link" href="/dashboard/academic-operations#githubContentSync">Open GitHub Sync →</a>
+				<figure class="guide-figure">
+					<img src="/assets/images/guide/railway-admin-check-flow.svg" alt="Railway deployment, migration, GitHub sync और Admin verification का workflow" loading="lazy" />
+					<figcaption>हर deployment पर migration और sync के बाद Admin result counts तथा public Resources page verify करता है।</figcaption>
+				</figure>
+				<ul>
+					<li>Railway deployment पर migration के बाद sync एक बार चलता है; हर request पर नहीं।</li>
+					<li>Manual result में discovered और removed counts review करें। Unexpected deletion count हो तो <a href="/resources">Resources page</a> तुरंत verify करें।</li>
+					<li><code>PDF_RESOURCE_BASE_URL</code> को raw GitHub <code>MCA_new</code> folder पर रखें। Private repository के लिए read-only <code>GITHUB_TOKEN</code> configure करें।</li>
+					<li>Successful manual sync audit log में <code>GITHUB_CONTENT_SYNCED</code> action दर्ज करती है।</li>
+					<li>GitHub scan fail होने पर server startup जारी रहता है; Academic Operations से manual retry करें।</li>
 				</ul>
 			</section>
 

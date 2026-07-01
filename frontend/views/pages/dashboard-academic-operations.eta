@@ -76,7 +76,7 @@
 				<div class="section-heading">
 					<p class="dashboard-label">Automatic discovery</p>
 					<h2 id="githubContentSyncTitle">GitHub Content Sync</h2>
-					<p>Scan the configured GitHub PDF repository and add or update discovered semesters, subjects, papers and study material.</p>
+					<p>Mirror the configured GitHub PDF repository: add or update discovered content and remove database records for deleted GitHub files.</p>
 				</div>
 				<div class="admin-form-actions">
 					<button id="syncGitHubContent" class="logout-button" type="button">Sync GitHub Content</button>

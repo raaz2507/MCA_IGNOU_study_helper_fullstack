@@ -72,11 +72,18 @@ export async function syncGitHubContent() {
 		(category === "exam_papers" ? group.exam : group.study).push({ ...file, path: relative });
 		grouped.set(key, group);
 	}
+	if (!grouped.size) {
+		throw new Error("GitHub scan found no semester subject PDFs; database cleanup was cancelled for safety.");
+	}
 
 	let subjects = 0, papers = 0, studyMaterials = 0;
+	const syncedSubjectFolders: string[] = [];
+	const syncedPaperPaths: string[] = [];
+	const syncedStudyPaths: string[] = [];
 	for (const group of grouped.values()) {
 		const code = subjectCode(group.folder);
 		const folderPath = `MCA_new/Semester_${group.semester}/${group.folder}`;
+		syncedSubjectFolders.push(folderPath);
 		const subject = await prisma.subject.upsert({
 			where: { code },
 			update: { semester: group.semester, folderPath },
@@ -85,28 +92,49 @@ export async function syncGitHubContent() {
 		subjects++;
 		const examLookup = new Map(group.exam.map((item) => [item.path.toLowerCase(), item]));
 		for (const item of group.exam.filter((file) => !/-hi\.pdf$/i.test(file.path))) {
+			const englishPath = publicUrl(item.path);
+			syncedPaperPaths.push(englishPath);
 			const hindi = examLookup.get(item.path.replace(/\.pdf$/i, "-hi.pdf").toLowerCase());
 			await prisma.paper.upsert({
-				where: { subjectId_englishPath: { subjectId: subject.id, englishPath: publicUrl(item.path) } },
+				where: { subjectId_englishPath: { subjectId: subject.id, englishPath } },
 				update: { hindiPath: hindi ? publicUrl(hindi.path) : null, fileSize: item.size || null, updatedAt: new Date() },
-				create: { subjectId: subject.id, title: titleFromFile(item.path), session: sessionFromFile(item.path), fileName: path.posix.basename(item.path), englishPath: publicUrl(item.path), hindiPath: hindi ? publicUrl(hindi.path) : null, fileSize: item.size || null, updatedAt: new Date() }
+				create: { subjectId: subject.id, title: titleFromFile(item.path), session: sessionFromFile(item.path), fileName: path.posix.basename(item.path), englishPath, hindiPath: hindi ? publicUrl(hindi.path) : null, fileSize: item.size || null, updatedAt: new Date() }
 			});
 			papers++;
 		}
 		const studyLookup = new Map(group.study.map((item) => [item.path.toLowerCase(), item]));
 		for (const item of group.study.filter((file) => !/-hi\.pdf$/i.test(file.path))) {
+			const filePath = publicUrl(item.path);
+			syncedStudyPaths.push(filePath);
 			const hindi = studyLookup.get(item.path.replace(/\.pdf$/i, "-hi.pdf").toLowerCase());
 			const relativeParts = item.path.split("/");
 			const groupName = relativeParts.length > 4 ? relativeParts[3].replace(/[_-]+/g, " ") : "Study Material";
 			await prisma.studyMaterial.upsert({
-				where: { filePath: publicUrl(item.path) },
+				where: { filePath },
 				update: { subjectId: subject.id, groupName, title: titleFromFile(item.path), hindiPath: hindi ? publicUrl(hindi.path) : null },
-				create: { subjectId: subject.id, groupName, title: titleFromFile(item.path), filePath: publicUrl(item.path), hindiPath: hindi ? publicUrl(hindi.path) : null }
+				create: { subjectId: subject.id, groupName, title: titleFromFile(item.path), filePath, hindiPath: hindi ? publicUrl(hindi.path) : null }
 			});
 			studyMaterials++;
 		}
 	}
-	return { subjects, papers, studyMaterials, scannedFiles: files.length, repository: `${repository.owner}/${repository.repository}` };
+	const removedPapers = await prisma.paper.deleteMany({
+		where: { englishPath: { startsWith: `${env.pdfResourceBaseUrl}/`, notIn: syncedPaperPaths } }
+	});
+	const removedStudyMaterials = await prisma.studyMaterial.deleteMany({
+		where: { filePath: { startsWith: `${env.pdfResourceBaseUrl}/`, notIn: syncedStudyPaths } }
+	});
+	const removedSubjects = await prisma.subject.deleteMany({
+		where: { folderPath: { startsWith: "MCA_new/Semester_", notIn: syncedSubjectFolders } }
+	});
+	return {
+		semesters: new Set([...grouped.values()].map((group) => group.semester)).size,
+		subjects,
+		papers,
+		studyMaterials,
+		scannedFiles: files.length,
+		removed: { subjects: removedSubjects.count, papers: removedPapers.count, studyMaterials: removedStudyMaterials.count },
+		repository: `${repository.owner}/${repository.repository}`
+	};
 }
 
 const invokedFile = process.argv[1] ? path.resolve(process.argv[1]) : "";

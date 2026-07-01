@@ -71,6 +71,10 @@
 			</dl>
 			<div class="announcement-dialog-actions">
 				<a class="announcement-action" data-details-action hidden></a>
+				<button class="announcement-dialog-dismiss" type="button" data-banner-share>Share</button>
+				<button class="announcement-dialog-dismiss" type="button" data-banner-copy>Copy Link</button>
+				<a class="announcement-dialog-dismiss" data-banner-whatsapp target="_blank" rel="noopener noreferrer">WhatsApp</a>
+				<a class="announcement-dialog-dismiss" data-banner-telegram target="_blank" rel="noopener noreferrer">Telegram</a>
 				<button id="announcementDetailsDismiss" class="announcement-dialog-dismiss" type="button">Close</button>
 			</div>
 		</div>

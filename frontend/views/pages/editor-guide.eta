@@ -4,7 +4,9 @@
 			<strong>Guide Sections</strong>
 			<nav>
 				<a href="#access-responsibilities">Access and Responsibilities</a>
+				<a href="#editor-page-links">Editor Page Links</a>
 				<a href="#academic-operations">Academic Operations</a>
+				<a href="#github-content-sync">GitHub Content Sync</a>
 				<a href="#study-materials">Study Materials</a>
 				<a href="#question-papers">Question Papers</a>
 				<a href="#paper-preview-cache">Paper Preview Cache</a>
@@ -30,6 +32,17 @@
 			</ul>
 
 			</section>
+			<section id="editor-page-links" class="info-card guide-section">
+			<h2>Editor Dashboard Page Links</h2>
+			<p>हर management page को सीधे खोलने के लिए ये links इस्तेमाल करें:</p>
+			<ul>
+				<li><a href="/dashboard">Main Editor Dashboard</a> — banners, video lectures, contributors और link preview manage करें।</li>
+				<li><a href="/dashboard/academic-operations">Academic Operations</a> — semesters, subjects, assignments और GitHub Content Sync manage करें।</li>
+				<li><a href="/dashboard/study-materials">Study Materials</a> — saved study-material records देखें और edit करें।</li>
+				<li><a href="/dashboard/question-papers">Question Papers</a> — paper metadata, language files और preview details manage करें।</li>
+				<li><a href="/editor-guide">Editor Guide</a> — सभी Editor workflows की documentation पढ़ें।</li>
+			</ul>
+			</section>
 			<section id="academic-operations" class="info-card guide-section">
 			<h2>Academic Operations</h2>
 			<a class="guide-dashboard-link" href="/dashboard/academic-operations">Open in Dashboard →</a>
@@ -39,6 +52,23 @@
 				<li>Check the student-facing Resources page after changing academic metadata.</li>
 			</ol>
 
+			</section>
+			<section id="github-content-sync" class="info-card guide-section">
+			<h2>GitHub Content Sync</h2>
+			<a class="guide-dashboard-link" href="/dashboard/academic-operations#githubContentSync">Open GitHub Sync →</a>
+			<figure class="guide-figure">
+				<img src="/assets/images/guide/github-content-sync-flow.svg" alt="GitHub repository से semester और PDF scan होकर PostgreSQL तथा Resources page तक जाने का workflow" loading="lazy" />
+				<figcaption>GitHub folders source of truth हैं; sync discovered records को PostgreSQL और Resources page तक पहुँचाती है।</figcaption>
+			</figure>
+			<ul>
+				<li><strong>Sync कब करें:</strong> GitHub repository में PDF add, rename, move या delete करने के बाद manual sync चलाएँ। Railway deployment पर भी sync एक बार automatically चलता है।</li>
+				<li><strong>Source:</strong> System <code>PDF_RESOURCE_BASE_URL</code> से repository, branch और <code>MCA_new</code> root पहचानता है।</li>
+				<li><strong>Discovery:</strong> <code>Semester_*</code>, subject folder, <code>exam_papers</code> और <code>study_material</code> folders automatically scan होते हैं।</li>
+				<li><strong>Result:</strong> Message में semesters, subjects, scanned PDFs, synced papers, synced study materials और removed records की संख्या दिखाई देती है।</li>
+				<li><strong>Deletion:</strong> GitHub से managed PDF हटने पर अगली sync उसका database record हटाती है। पूरा subject folder हटने पर managed subject भी हटता है।</li>
+				<li><strong>Safety:</strong> अगर scan में कोई semester PDF नहीं मिले, cleanup cancel हो जाता है ताकि temporary GitHub problem database खाली न करे।</li>
+				<li><strong>Failure:</strong> Error पढ़ें, repository access check करें और फिर retry करें। बार-बार button click न करें।</li>
+			</ul>
 			</section>
 			<section id="study-materials" class="info-card guide-section">
 			<h2>Study Materials</h2>

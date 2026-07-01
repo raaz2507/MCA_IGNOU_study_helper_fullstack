@@ -8,6 +8,7 @@ const detailsDismiss = document.getElementById("announcementDetailsDismiss");
 let banners = [];
 let activeIndex = 0;
 let timer = null;
+let openedBanner = null;
 const AUTO_SLIDE_DELAY = 5000;
 
 function safeLink(value) {
@@ -29,8 +30,22 @@ function formatDate(value) {
 	}).format(date);
 }
 
-function showBannerDetails(banner) {
+function bannerUrl(banner) {
+	const url = new URL(window.location.href);
+	url.searchParams.set("banner", banner.id);
+	return url.toString();
+}
+
+function clearBannerUrl() {
+	const url = new URL(window.location.href);
+	if (!url.searchParams.has("banner")) return;
+	url.searchParams.delete("banner");
+	window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+function showBannerDetails(banner, updateUrl = true) {
 	if (!detailsDialog) return;
+	openedBanner = banner;
 	const link = safeLink(banner.buttonUrl);
 	const action = detailsDialog.querySelector("[data-details-action]");
 	const start = detailsDialog.querySelector("[data-details-start]");
@@ -53,6 +68,13 @@ function showBannerDetails(banner) {
 		action.target = /^https?:\/\//i.test(link) ? "_blank" : "_self";
 		action.rel = action.target === "_blank" ? "noopener noreferrer" : "";
 	}
+	const shareUrl = bannerUrl(banner);
+	const shareText = `${banner.title} — ${banner.description}`;
+	const whatsapp = detailsDialog.querySelector("[data-banner-whatsapp]");
+	const telegram = detailsDialog.querySelector("[data-banner-telegram]");
+	whatsapp.href = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${shareUrl}`)}`;
+	telegram.href = `https://t.me/share/url?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareText)}`;
+	if (updateUrl) window.history.pushState({ banner: banner.id }, "", new URL(shareUrl).pathname + new URL(shareUrl).search);
 
 	window.clearInterval(timer);
 	openModal(detailsDialog);
@@ -189,6 +211,20 @@ async function render() {
 		else startTimer();
 	});
 	showSlide(0);
+	const requestedBannerId = new URLSearchParams(window.location.search).get("banner");
+	if (requestedBannerId) {
+		const requestedIndex = banners.findIndex((banner) => banner.id === requestedBannerId);
+		if (requestedIndex >= 0) {
+			showSlide(requestedIndex, false);
+			showBannerDetails(banners[requestedIndex], false);
+		} else {
+			const message = document.createElement("p");
+			message.className = "announcement-deep-link-message";
+			message.textContent = "The shared announcement is unavailable or no longer active.";
+			root.prepend(message);
+			clearBannerUrl();
+		}
+	}
 }
 
 render();
@@ -200,4 +236,17 @@ if (detailsDialog) {
 		if (event.target === detailsDialog) closeModal(detailsDialog);
 	});
 	detailsDialog.addEventListener("close", startTimer);
+	detailsDialog.addEventListener("close", () => { openedBanner = null; clearBannerUrl(); });
+	detailsDialog.querySelector("[data-banner-copy]")?.addEventListener("click", async (event) => {
+		if (!openedBanner) return;
+		await navigator.clipboard.writeText(bannerUrl(openedBanner));
+		event.currentTarget.textContent = "Copied";
+		window.setTimeout(() => { event.currentTarget.textContent = "Copy Link"; }, 1600);
+	});
+	detailsDialog.querySelector("[data-banner-share]")?.addEventListener("click", async () => {
+		if (!openedBanner) return;
+		const data = { title: openedBanner.title, text: openedBanner.description, url: bannerUrl(openedBanner) };
+		if (navigator.share) await navigator.share(data);
+		else await navigator.clipboard.writeText(data.url);
+	});
 }

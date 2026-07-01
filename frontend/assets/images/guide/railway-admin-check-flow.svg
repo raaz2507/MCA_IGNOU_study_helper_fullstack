@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" role="img" aria-labelledby="title desc">
+  <title id="title">Railway deployment verification workflow</title>
+  <desc id="desc">Deployment applies migrations, synchronizes GitHub content, starts the server, and is verified by an administrator.</desc>
+  <rect width="1200" height="340" rx="28" fill="#f8fafc"/>
+  <g font-family="Arial, sans-serif">
+    <path d="M125 168h900" stroke="#c4b5fd" stroke-width="12" stroke-linecap="round"/>
+    <g text-anchor="middle" font-weight="700">
+      <g transform="translate(140 70)"><circle cx="0" cy="98" r="54" fill="#7c3aed"/><text y="107" fill="#fff" font-size="32">1</text><text y="190" fill="#4c1d95" font-size="20">Deploy</text><text y="218" fill="#64748b" font-size="16">Railway build</text></g>
+      <g transform="translate(440 70)"><circle cx="0" cy="98" r="54" fill="#2563eb"/><text y="107" fill="#fff" font-size="32">2</text><text y="190" fill="#1e3a8a" font-size="20">Migrate</text><text y="218" fill="#64748b" font-size="16">Database schema</text></g>
+      <g transform="translate(740 70)"><circle cx="0" cy="98" r="54" fill="#0891b2"/><text y="107" fill="#fff" font-size="32">3</text><text y="190" fill="#164e63" font-size="20">GitHub Sync</text><text y="218" fill="#64748b" font-size="16">Academic content</text></g>
+      <g transform="translate(1040 70)"><circle cx="0" cy="98" r="54" fill="#16a34a"/><text y="107" fill="#fff" font-size="32">✓</text><text y="190" fill="#14532d" font-size="20">Admin Verify</text><text y="218" fill="#64748b" font-size="16">Counts &amp; Resources</text></g>
+    </g>
+  </g>
+</svg>
