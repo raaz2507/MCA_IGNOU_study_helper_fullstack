@@ -1,11 +1,13 @@
-﻿import { PrismaClient, QuestionStatus, UserRole } from "@prisma/client";
+﻿import { prisma } from "../src/config/prisma.js";
+const UserRole = { ADMIN: "ADMIN", EDITOR: "EDITOR", USER: "USER" } as const;
+const QuestionStatus = { PENDING: "PENDING", PUBLISHED: "PUBLISHED" } as const;
 import bcrypt from "bcryptjs";
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { catalog, papers } from "../src/modules/catalog/catalog.service.js";
 import { env } from "../src/config/env.js";
 
-const prisma = new PrismaClient();
+// prisma imported from config
 
 function questionFile(subjectFolder: string, fileName: string) {
 	return path.join(

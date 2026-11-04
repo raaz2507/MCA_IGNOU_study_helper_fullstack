@@ -1,6 +1,8 @@
-﻿import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
+import { PrismaLibSql } from "@prisma/adapter-libsql";
 
-import { env } from "./env.js";
+const adapter = new PrismaLibSql({
+  url: "file:./gyanpath.db"
+});
 
-export const prisma = new PrismaClient({ datasourceUrl: env.databaseUrl });
-
+export const prisma = new PrismaClient({ adapter });

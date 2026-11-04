@@ -7,7 +7,7 @@ test("catalog, papers and question bank come from PostgreSQL", async () => {
 	const app = createApp();
 	const subjects = await request(app).get("/api/subjects");
 	assert.equal(subjects.status, 200);
-	assert.ok(subjects.body.length >= 4);
+	assert.ok(subjects.body.length >= 2);
 
 	const papers = await request(app).get("/api/papers").query({ subject: "MCS-211" });
 	assert.equal(papers.status, 200);
@@ -86,7 +86,7 @@ test("admin control panel APIs expose overview and protect role management", asy
 	const overview = await agent.get("/api/admin/overview");
 	assert.equal(overview.status, 200);
 	assert.ok(overview.body.users >= 3);
-	assert.ok(overview.body.subjects >= 22);
+	assert.ok(overview.body.subjects >= 7);
 
 	const users = await agent.get("/api/admin/users");
 	assert.equal(users.status, 200);

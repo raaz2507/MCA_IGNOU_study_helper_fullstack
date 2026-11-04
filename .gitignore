@@ -2,7 +2,6 @@
 node_modules/
 package-lock.json
 
-
 # Build output and coverage
 dist/
 build/
@@ -46,6 +45,8 @@ frontend/assets/resources/MCA_new/**/exam_papers/*.pdf
 frontend/assets/resources/MCA_new/**/study_material/**/*.pdf
 
 # User uploads (retain directory placeholders)
+uploads/*
+!uploads/.gitkeep
 backend/uploads/*
 !backend/uploads/pdfs/
 !backend/uploads/images/
@@ -53,4 +54,19 @@ backend/uploads/*
 backend/uploads/pdfs/*
 backend/uploads/images/*
 backend/uploads/exports/*
-package-lock.json
+
+# SQLite & Local Databases
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+gyanpath.db*
+
+# Android build and local properties
+.gradle/
+android/.gradle/
+android/local.properties
+android/adb
+android/app/build/
+*.apk
+*.aab

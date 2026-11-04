@@ -1,4 +1,4 @@
-﻿import path from "node:path";
+import path from "node:path";
 import { readFile } from "node:fs/promises";
 import express from "express";
 import cors from "cors";
@@ -6,7 +6,6 @@ import helmet from "helmet";
 import cookieParser from "cookie-parser";
 import rateLimit from "express-rate-limit";
 import { Eta } from "eta";
-import { pinoHttp } from "pino-http";
 import QRCode from "qrcode";
 import { env } from "./config/env.js";
 import { authRouter } from "./modules/auth/auth.routes.js";
@@ -63,16 +62,6 @@ async function footerData() {
 		support: { ...support, qrFallbackDataUrl: supportQrFallbackDataUrl }
 	};
 }
-
-const prettyLoggerStream = {
-	write(message: string) {
-		try {
-			console.log(JSON.stringify(JSON.parse(message), null, 2));
-		} catch {
-			console.log(message.trimEnd());
-		}
-	}
-};
 
 function escapeHtml(value: string) {
 	return value
@@ -155,7 +144,6 @@ export function createApp() {
 	};
 
 	app.disable("x-powered-by");
-	app.use(pinoHttp({}, prettyLoggerStream));
 	app.use(helmet({
 		contentSecurityPolicy: false,
 		crossOriginResourcePolicy: { policy: "cross-origin" }

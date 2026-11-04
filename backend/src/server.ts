@@ -1,10 +1,7 @@
-﻿import { createServer } from "node:http";
+import { createServer } from "node:http";
 import { createApp } from "./app.js";
 import { env } from "./config/env.js";
 import { prisma } from "./config/prisma.js";
-import { connectRedis } from "./config/redis.js";
-import { createSocketServer } from "./config/socket.js";
-import { createQueues } from "./queues/index.js";
 import { lectureCatalogService } from "./modules/content/lecture-catalog.service.js";
 
 async function start() {
@@ -15,12 +12,9 @@ async function start() {
 	} catch (error) {
 		console.warn("Lecture catalog startup sync skipped:", error instanceof Error ? error.message : error);
 	}
-	const redisReady = await connectRedis();
 
 	const app = createApp();
 	const server = createServer(app);
-	createSocketServer(server);
-	createQueues(redisReady);
 
 	server.listen(env.port, "0.0.0.0", () => {
 		console.log(`GyanPath Express app: http://0.0.0.0:${env.port}`);
@@ -39,4 +33,3 @@ start().catch((error) => {
 	console.error(error);
 	process.exit(1);
 });
-

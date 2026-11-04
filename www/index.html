@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="hi">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+	<title>GyanPath | IGNOU MCA Study Companion</title>
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			min-height: 100vh;
+			display: grid;
+			place-items: center;
+			background: radial-gradient(circle at 50% 25%, #1e293b 0%, #0a0f1d 100%);
+			color: #f8fafc;
+			font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			padding: 24px 16px;
+			user-select: none;
+		}
+
+		.container {
+			max-width: 380px;
+			width: 100%;
+			text-align: center;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 16px;
+		}
+
+		.app-icon {
+			width: 96px;
+			height: 96px;
+			border-radius: 24px;
+			box-shadow: 0 12px 32px rgba(37, 99, 235, 0.4);
+			object-fit: cover;
+			background: #1e293b;
+			border: 2px solid rgba(255, 255, 255, 0.12);
+			animation: float 3s ease-in-out infinite;
+		}
+
+		@keyframes float {
+			0%, 100% { transform: translateY(0); }
+			50% { transform: translateY(-6px); }
+		}
+
+		h1 {
+			font-size: 1.8rem;
+			font-weight: 800;
+			color: #ffffff;
+			letter-spacing: -0.5px;
+		}
+
+		.subtitle {
+			font-size: 0.92rem;
+			color: #94a3b8;
+			margin-top: 4px;
+		}
+
+		.card {
+			width: 100%;
+			background: rgba(255, 255, 255, 0.04);
+			border: 1px solid rgba(255, 255, 255, 0.08);
+			border-radius: 16px;
+			padding: 18px 16px;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 12px;
+		}
+
+		.spinner {
+			width: 32px;
+			height: 32px;
+			border: 3px solid rgba(255, 255, 255, 0.15);
+			border-top-color: #38bdf8;
+			border-radius: 50%;
+			animation: spin 0.8s linear infinite;
+		}
+
+		@keyframes spin {
+			to { transform: rotate(360deg); }
+		}
+
+		.status-text {
+			font-size: 0.9rem;
+			color: #38bdf8;
+			font-weight: 500;
+			line-height: 1.4;
+			min-height: 24px;
+		}
+
+		.error-text {
+			color: #f87171 !important;
+		}
+
+		.btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 10px 20px;
+			border-radius: 10px;
+			font-size: 0.9rem;
+			font-weight: 600;
+			cursor: pointer;
+			border: none;
+			outline: none;
+			transition: all 0.2s ease;
+			text-decoration: none;
+			width: 100%;
+		}
+
+		.btn-primary {
+			background: #2563eb;
+			color: #ffffff;
+		}
+
+		.btn-primary:active {
+			background: #1d4ed8;
+			transform: scale(0.98);
+		}
+
+		.btn-secondary {
+			background: rgba(255, 255, 255, 0.07);
+			color: #cbd5e1;
+			border: 1px solid rgba(255, 255, 255, 0.12);
+			font-size: 0.82rem;
+			padding: 8px 14px;
+		}
+
+		.settings-box {
+			width: 100%;
+			display: none;
+			flex-direction: column;
+			gap: 10px;
+			text-align: left;
+			margin-top: 6px;
+			padding-top: 12px;
+			border-top: 1px solid rgba(255, 255, 255, 0.08);
+		}
+
+		.settings-box.open {
+			display: flex;
+		}
+
+		label {
+			font-size: 0.78rem;
+			color: #94a3b8;
+			text-transform: uppercase;
+			letter-spacing: 0.5px;
+		}
+
+		input[type="text"] {
+			width: 100%;
+			background: rgba(0, 0, 0, 0.35);
+			border: 1px solid rgba(255, 255, 255, 0.16);
+			border-radius: 8px;
+			padding: 10px 12px;
+			color: #ffffff;
+			font-size: 0.88rem;
+			outline: none;
+		}
+
+		input[type="text"]:focus {
+			border-color: #38bdf8;
+		}
+
+		.quick-links {
+			display: flex;
+			gap: 6px;
+			flex-wrap: wrap;
+		}
+
+		.chip {
+			font-size: 0.74rem;
+			padding: 4px 8px;
+			background: rgba(255, 255, 255, 0.06);
+			border: 1px solid rgba(255, 255, 255, 0.1);
+			border-radius: 6px;
+			color: #93c5fd;
+			cursor: pointer;
+		}
+
+		.badge {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			padding: 4px 12px;
+			border-radius: 20px;
+			font-size: 0.74rem;
+			color: #64748b;
+			background: rgba(255, 255, 255, 0.03);
+			border: 1px solid rgba(255, 255, 255, 0.05);
+		}
+
+		.pulse-dot {
+			width: 6px;
+			height: 6px;
+			border-radius: 50%;
+			background: #22c55e;
+			animation: pulse 1.5s infinite;
+		}
+
+		@keyframes pulse {
+			0%, 100% { opacity: 1; transform: scale(1); }
+			50% { opacity: 0.3; transform: scale(0.8); }
+		}
+	</style>
+</head>
+<body>
+	<main class="container">
+		<img src="assets/icon.png" alt="GyanPath Icon" class="app-icon" onerror="this.style.display='none'" />
+
+		<div>
+			<h1>GyanPath</h1>
+			<p class="subtitle">IGNOU MCA Study Companion</p>
+		</div>
+
+		<div class="card">
+			<div class="spinner" id="spinner"></div>
+			<p class="status-text" id="statusLog">सर्वर से कनेक्ट हो रहा है…</p>
+
+			<div id="actionArea" style="display: none; width: 100%;">
+				<button class="btn btn-primary" id="retryBtn" onclick="tryConnect()">पुनः प्रयास करें (Retry)</button>
+			</div>
+
+			<button class="btn btn-secondary" onclick="toggleSettings()" id="settingsToggleBtn">⚙️ सर्वर IP / सेटिंग्स</button>
+
+			<div class="settings-box" id="settingsBox">
+				<label for="serverInput">सर्वर URL (IP / Port):</label>
+				<input type="text" id="serverInput" placeholder="http://192.168.1.40:3000" />
+				
+				<div class="quick-links">
+					<span class="chip" onclick="setPreset('http://192.168.1.40:3000')">Wi-Fi (192.168.1.40)</span>
+					<span class="chip" onclick="setPreset('http://localhost:3000')">USB (adb reverse)</span>
+					<span class="chip" onclick="setPreset('http://10.0.2.2:3000')">Emulator</span>
+				</div>
+
+				<button class="btn btn-primary" style="margin-top: 6px;" onclick="saveAndConnect()">सेव करें और कनेक्ट करें</button>
+			</div>
+		</div>
+
+		<div class="badge">
+			<span class="pulse-dot"></span>
+			<span>Offline Welcome v1.0</span>
+		</div>
+	</main>
+
+	<script>
+		const DEFAULT_URL = "http://192.168.1.40:3000";
+		const statusLog = document.getElementById("statusLog");
+		const spinner = document.getElementById("spinner");
+		const actionArea = document.getElementById("actionArea");
+		const serverInput = document.getElementById("serverInput");
+		const settingsBox = document.getElementById("settingsBox");
+
+		function getServerUrl() {
+			return localStorage.getItem("gyanpath_server_url") || DEFAULT_URL;
+		}
+
+		serverInput.value = getServerUrl();
+
+		function toggleSettings() {
+			settingsBox.classList.toggle("open");
+		}
+
+		function setPreset(url) {
+			serverInput.value = url;
+		}
+
+		function saveAndConnect() {
+			const clean = serverInput.value.trim().replace(/\/+$/, "");
+			if (clean) {
+				localStorage.setItem("gyanpath_server_url", clean);
+				tryConnect();
+			}
+		}
+
+		let attemptCount = 0;
+
+		async function tryConnect() {
+			const baseUrl = getServerUrl();
+			actionArea.style.display = "none";
+			spinner.style.display = "block";
+			statusLog.classList.remove("error-text");
+			statusLog.innerText = "Connecting to " + baseUrl + "…";
+
+			try {
+				const controller = new AbortController();
+				const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+				// Ping health endpoint or root
+				const res = await fetch(baseUrl + "/api/v1/health", {
+					method: "GET",
+					signal: controller.signal,
+					headers: { "Accept": "application/json" }
+				}).catch(() => null);
+
+				clearTimeout(timeoutId);
+
+				if (res && (res.ok || res.status < 500)) {
+					statusLog.innerText = "कनेक्ट हो गया! लोडिंग...";
+					setTimeout(() => {
+						window.location.replace(baseUrl);
+					}, 300);
+					return;
+				}
+				throw new Error("Server not responding");
+			} catch (err) {
+				spinner.style.display = "none";
+				statusLog.classList.add("error-text");
+				statusLog.innerText = "सर्वर से संपर्क नहीं हो सका। कृपया जांचें कि PC पर 'npm run dev' चालू है।";
+				actionArea.style.display = "block";
+				if (attemptCount === 0) {
+					// Auto open settings after first failure so user can review/change IP
+					settingsBox.classList.add("open");
+				}
+				attemptCount++;
+			}
+		}
+
+		// Initial connection attempt
+		setTimeout(tryConnect, 600);
+	</script>
+</body>
+</html>
