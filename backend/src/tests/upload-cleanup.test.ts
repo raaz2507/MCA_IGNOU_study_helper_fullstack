@@ -4,8 +4,10 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import test from "node:test";
 import crypto from "node:crypto";
+import { eq } from "drizzle-orm";
 import { env } from "../config/env.js";
-import { prisma } from "../config/prisma.js";
+import { db } from "../config/db.js";
+import { banners } from "../infrastructure/database/schema.js";
 import { contentRepository } from "../modules/content/content.repository.js";
 
 const pixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
@@ -48,7 +50,7 @@ test("replacing and deleting a banner removes its superseded upload files", asyn
 		await contentRepository.deleteBanner(id);
 		assert.equal(existsSync(secondFile), false);
 	} finally {
-		await prisma.banner.deleteMany({ where: { id } });
+		await db.delete(banners).where(eq(banners.id, id));
 		await fs.rm(uploadDirectory, { recursive: true, force: true });
 	}
 });

@@ -1,7 +1,10 @@
-import { prisma } from "../../config/prisma.js";
+import { randomUUID } from "node:crypto";
+import { asc, desc, eq, gte, inArray, isNotNull, sql } from "drizzle-orm";
+import { db } from "../../config/db.js";
+import { analyticsVisits, users } from "../../infrastructure/database/schema.js";
 
 export const analyticsRepository = {
-	createVisit(data: {
+	async createVisit(data: {
 		userId: string | null;
 		visitorHash: string;
 		sessionId: string;
@@ -13,37 +16,66 @@ export const analyticsRepository = {
 		country: string;
 		loggedIn: boolean;
 	}) {
-		return prisma.analyticsVisit.create({ data });
-	},
-	visitsSince(createdAt: Date) {
-		return prisma.analyticsVisit.findMany({
-			where: { createdAt: { gte: createdAt } },
-			orderBy: { createdAt: "asc" }
+		const id = randomUUID();
+		const now = new Date().toISOString();
+		await db.insert(analyticsVisits).values({
+			id,
+			...data,
+			createdAt: now
 		});
+		const rows = await db.select().from(analyticsVisits).where(eq(analyticsVisits.id, id));
+		return rows[0];
 	},
-	recentVisits(take = 250) {
-		return prisma.analyticsVisit.findMany({ orderBy: { createdAt: "desc" }, take });
+
+	async visitsSince(createdAt: Date) {
+		const rows = await db.select()
+			.from(analyticsVisits)
+			.where(gte(analyticsVisits.createdAt, createdAt.toISOString()))
+			.orderBy(asc(analyticsVisits.createdAt));
+		return rows.map((r) => ({ ...r, createdAt: new Date(r.createdAt) }));
 	},
-	totalVisits() {
-		return prisma.analyticsVisit.count();
+
+	async recentVisits(take = 250) {
+		const rows = await db.select()
+			.from(analyticsVisits)
+			.orderBy(desc(analyticsVisits.createdAt))
+			.limit(take);
+		return rows.map((r) => ({ ...r, createdAt: new Date(r.createdAt) }));
 	},
-	uniqueVisitors() {
-		return prisma.analyticsVisit.groupBy({ by: ["visitorHash"] });
+
+	async totalVisits() {
+		const res = await db.select({ count: sql<number>`count(*)` }).from(analyticsVisits);
+		return Number(res[0]?.count || 0);
 	},
-	userActivity(take = 8) {
-		return prisma.analyticsVisit.groupBy({
-			by: ["userId"],
-			where: { userId: { not: null } },
-			_count: { _all: true },
-			_max: { createdAt: true },
-			orderBy: { _max: { createdAt: "desc" } },
-			take
-		});
+
+	async uniqueVisitors() {
+		return db.select({ visitorHash: analyticsVisits.visitorHash })
+			.from(analyticsVisits)
+			.groupBy(analyticsVisits.visitorHash);
 	},
+
+	async userActivity(take = 8) {
+		return db.select({
+			userId: analyticsVisits.userId,
+			_count: { _all: sql<number>`count(*)` },
+			_max: { createdAt: sql<string>`max(${analyticsVisits.createdAt})` }
+		})
+		.from(analyticsVisits)
+		.where(isNotNull(analyticsVisits.userId))
+		.groupBy(analyticsVisits.userId)
+		.orderBy(desc(sql`max(${analyticsVisits.createdAt})`))
+		.limit(take);
+	},
+
 	usersByIds(ids: string[]) {
-		return prisma.user.findMany({
-			where: { id: { in: ids } },
-			select: { id: true, username: true, displayName: true, role: true }
-		});
+		if (ids.length === 0) return Promise.resolve([]);
+		return db.select({
+			id: users.id,
+			username: users.username,
+			displayName: users.displayName,
+			role: users.role
+		})
+		.from(users)
+		.where(inArray(users.id, ids));
 	}
 };

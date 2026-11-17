@@ -1,15 +1,19 @@
-import { prisma } from "../config/prisma.js";
+import { eq, sql } from "drizzle-orm";
+import { db } from "../config/db.js";
+import { banners, contributors, appSettings, fileAssets } from "../infrastructure/database/schema.js";
 
 export const uploadCleanupRepository = {
 	async references(publicPath: string) {
-		const [bannerCount, contributorCount, settings] = await Promise.all([
-			prisma.banner.count({ where: { image: publicPath } }),
-			prisma.contributor.count({ where: { avatar: publicPath } }),
-			prisma.appSetting.findMany({ select: { value: true } })
+		const [bannerRes, contribRes, settings] = await Promise.all([
+			db.select({ count: sql<number>`count(*)` }).from(banners).where(eq(banners.image, publicPath)),
+			db.select({ count: sql<number>`count(*)` }).from(contributors).where(eq(contributors.avatar, publicPath)),
+			db.select({ value: appSettings.value }).from(appSettings)
 		]);
-		return { bannerCount, contributorCount, settingValues: settings.map((setting) => setting.value) };
+		const bannerCount = Number(bannerRes[0]?.count || 0);
+		const contributorCount = Number(contribRes[0]?.count || 0);
+		return { bannerCount, contributorCount, settingValues: settings.map((s) => s.value) };
 	},
 	deleteFileAssetByPath(publicPath: string) {
-		return prisma.fileAsset.deleteMany({ where: { path: publicPath } });
+		return db.delete(fileAssets).where(eq(fileAssets.path, publicPath));
 	}
 };

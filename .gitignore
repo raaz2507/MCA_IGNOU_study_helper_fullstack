@@ -70,3 +70,5 @@ android/adb
 android/app/build/
 *.apk
 *.aab
+
+temp_working_dir/

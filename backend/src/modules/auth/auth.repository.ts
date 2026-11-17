@@ -1,91 +1,184 @@
-﻿import { createHash } from "node:crypto";
-import { prisma } from "../../config/prisma.js";
+import { createHash, randomUUID } from "node:crypto";
+import { eq, lt } from "drizzle-orm";
+import { db } from "../../config/db.js";
+import { users, sessions, appSettings } from "../../infrastructure/database/schema.js";
 
 export const hashToken = (token: string) =>
 	createHash("sha256").update(token).digest("hex");
 
+function toDate(val: string | null | undefined): Date | null {
+	if (!val) return null;
+	return new Date(val);
+}
+
+function mapUser(u: typeof users.$inferSelect | undefined) {
+	if (!u) return null;
+	return {
+		...u,
+		emailVerifiedAt: toDate(u.emailVerifiedAt),
+		emailVerificationExpiresAt: toDate(u.emailVerificationExpiresAt),
+		createdAt: new Date(u.createdAt),
+		updatedAt: new Date(u.updatedAt)
+	};
+}
+
+export type DbUser = NonNullable<ReturnType<typeof mapUser>>;
+
 export const authRepository = {
 	async setting<T>(key: string): Promise<T | null> {
-		const setting = await prisma.appSetting.findUnique({ where: { key } });
-		return setting?.value as T | null;
+		const rows = await db.select().from(appSettings).where(eq(appSettings.key, key));
+		if (!rows[0]) return null;
+		const val = rows[0].value;
+		return (typeof val === "string" ? JSON.parse(val) : val) as T | null;
 	},
-	findUserByUsername(username: string) {
-		return prisma.user.findUnique({ where: { username } });
+	async findUserByUsername(username: string): Promise<DbUser | null> {
+		const rows = await db.select().from(users).where(eq(users.username, username));
+		return mapUser(rows[0]);
 	},
-	findUserById(id: string) {
-		return prisma.user.findUnique({ where: { id } });
+	async findUserById(id: string): Promise<DbUser | null> {
+		const rows = await db.select().from(users).where(eq(users.id, id));
+		return mapUser(rows[0]);
 	},
-	findUserByEmail(email: string) {
-		return prisma.user.findUnique({ where: { email } });
+	async findUserByEmail(email: string): Promise<DbUser | null> {
+		const rows = await db.select().from(users).where(eq(users.email, email));
+		return mapUser(rows[0]);
 	},
-	findUserByVerificationTokenHash(emailVerificationTokenHash: string) {
-		return prisma.user.findUnique({ where: { emailVerificationTokenHash } });
+	async findUserByVerificationTokenHash(emailVerificationTokenHash: string): Promise<DbUser | null> {
+		const rows = await db.select().from(users).where(eq(users.emailVerificationTokenHash, emailVerificationTokenHash));
+		return mapUser(rows[0]);
 	},
-	createUser(data: {
+	async createUser(data: {
 		displayName: string;
 		username: string;
 		email: string;
 		passwordHash: string;
 		status: "PENDING" | "ACTIVE";
 		emailVerificationRequired?: boolean;
-	}) {
-		return prisma.user.create({ data });
+	}): Promise<DbUser> {
+		const id = randomUUID();
+		const now = new Date().toISOString();
+		await db.insert(users).values({
+			id,
+			displayName: data.displayName,
+			username: data.username,
+			email: data.email,
+			passwordHash: data.passwordHash,
+			status: data.status,
+			emailVerificationRequired: data.emailVerificationRequired ?? false,
+			createdAt: now,
+			updatedAt: now
+		});
+		const user = await this.findUserById(id);
+		if (!user) throw new Error("Failed to create user");
+		return user;
 	},
-	updateProfile(id: string, data: {
+	async updateProfile(id: string, data: {
 		displayName: string;
 		email: string;
 		emailVerifiedAt?: Date | null;
 		emailVerificationRequired?: boolean;
 		emailVerificationTokenHash?: string | null;
 		emailVerificationExpiresAt?: Date | null;
-	}) {
-		return prisma.user.update({ where: { id }, data });
+	}): Promise<DbUser> {
+		const updateValues: Record<string, any> = {
+			displayName: data.displayName,
+			email: data.email,
+			updatedAt: new Date().toISOString()
+		};
+		if (data.emailVerifiedAt !== undefined) {
+			updateValues.emailVerifiedAt = data.emailVerifiedAt ? data.emailVerifiedAt.toISOString() : null;
+		}
+		if (data.emailVerificationRequired !== undefined) {
+			updateValues.emailVerificationRequired = data.emailVerificationRequired;
+		}
+		if (data.emailVerificationTokenHash !== undefined) {
+			updateValues.emailVerificationTokenHash = data.emailVerificationTokenHash;
+		}
+		if (data.emailVerificationExpiresAt !== undefined) {
+			updateValues.emailVerificationExpiresAt = data.emailVerificationExpiresAt ? data.emailVerificationExpiresAt.toISOString() : null;
+		}
+		await db.update(users).set(updateValues).where(eq(users.id, id));
+		const user = await this.findUserById(id);
+		if (!user) throw new Error("User not found");
+		return user;
 	},
-	updatePassword(id: string, passwordHash: string) {
-		return prisma.user.update({ where: { id }, data: { passwordHash } });
+	async updatePassword(id: string, passwordHash: string): Promise<DbUser> {
+		await db.update(users).set({
+			passwordHash,
+			updatedAt: new Date().toISOString()
+		}).where(eq(users.id, id));
+		const user = await this.findUserById(id);
+		if (!user) throw new Error("User not found");
+		return user;
 	},
-	setEmailVerificationToken(id: string, tokenHash: string, expiresAt: Date) {
-		return prisma.user.update({
-			where: { id },
-			data: {
-				emailVerificationRequired: true,
-				emailVerificationTokenHash: tokenHash,
-				emailVerificationExpiresAt: expiresAt
-			}
+	async setEmailVerificationToken(id: string, tokenHash: string, expiresAt: Date): Promise<DbUser> {
+		await db.update(users).set({
+			emailVerificationRequired: true,
+			emailVerificationTokenHash: tokenHash,
+			emailVerificationExpiresAt: expiresAt.toISOString(),
+			updatedAt: new Date().toISOString()
+		}).where(eq(users.id, id));
+		const user = await this.findUserById(id);
+		if (!user) throw new Error("User not found");
+		return user;
+	},
+	async markEmailVerified(id: string, verifiedAt: Date): Promise<DbUser> {
+		await db.update(users).set({
+			emailVerifiedAt: verifiedAt.toISOString(),
+			emailVerificationRequired: false,
+			emailVerificationTokenHash: null,
+			emailVerificationExpiresAt: null,
+			updatedAt: new Date().toISOString()
+		}).where(eq(users.id, id));
+		const user = await this.findUserById(id);
+		if (!user) throw new Error("User not found");
+		return user;
+	},
+	async deleteUserSessions(userId: string) {
+		return db.delete(sessions).where(eq(sessions.userId, userId));
+	},
+	async createSession(userId: string, refreshToken: string, expiresAt: Date) {
+		const id = randomUUID();
+		const now = new Date().toISOString();
+		await db.insert(sessions).values({
+			id,
+			userId,
+			tokenHash: hashToken(refreshToken),
+			expiresAt: expiresAt.toISOString(),
+			createdAt: now
 		});
+		return {
+			id,
+			userId,
+			tokenHash: hashToken(refreshToken),
+			expiresAt,
+			createdAt: new Date(now)
+		};
 	},
-	markEmailVerified(id: string, verifiedAt: Date) {
-		return prisma.user.update({
-			where: { id },
-			data: {
-				emailVerifiedAt: verifiedAt,
-				emailVerificationRequired: false,
-				emailVerificationTokenHash: null,
-				emailVerificationExpiresAt: null
-			}
-		});
+	async findSession(refreshToken: string) {
+		const tokenHash = hashToken(refreshToken);
+		const rows = await db.select({
+			session: sessions,
+			user: users
+		})
+		.from(sessions)
+		.innerJoin(users, eq(sessions.userId, users.id))
+		.where(eq(sessions.tokenHash, tokenHash));
+
+		if (!rows[0]) return null;
+		const s = rows[0].session;
+		const u = mapUser(rows[0].user)!;
+		return {
+			...s,
+			expiresAt: new Date(s.expiresAt),
+			createdAt: new Date(s.createdAt),
+			user: u
+		};
 	},
-	deleteUserSessions(userId: string) {
-		return prisma.session.deleteMany({ where: { userId } });
+	async deleteSession(refreshToken: string) {
+		return db.delete(sessions).where(eq(sessions.tokenHash, hashToken(refreshToken)));
 	},
-	createSession(userId: string, refreshToken: string, expiresAt: Date) {
-		return prisma.session.create({
-			data: { userId, tokenHash: hashToken(refreshToken), expiresAt }
-		});
-	},
-	findSession(refreshToken: string) {
-		return prisma.session.findUnique({
-			where: { tokenHash: hashToken(refreshToken) },
-			include: { user: true }
-		});
-	},
-	deleteSession(refreshToken: string) {
-		return prisma.session.deleteMany({
-			where: { tokenHash: hashToken(refreshToken) }
-		});
-	},
-	deleteExpiredSessions() {
-		return prisma.session.deleteMany({ where: { expiresAt: { lt: new Date() } } });
+	async deleteExpiredSessions() {
+		return db.delete(sessions).where(lt(sessions.expiresAt, new Date().toISOString()));
 	}
 };
-

@@ -1359,7 +1359,7 @@ export const getSystemStatus: RequestHandler = asyncHandler(async (_request, res
 		api: "online",
 		database: "connected",
 		architecture: "Express + TypeScript Modular Monolith",
-		databaseEngine: "PostgreSQL + Prisma",
+		databaseEngine: "SQLite + Drizzle ORM",
 		nodeVersion: process.version,
 		redis: "optional"
 	});

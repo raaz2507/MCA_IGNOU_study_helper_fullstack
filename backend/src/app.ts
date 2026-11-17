@@ -270,31 +270,34 @@ export function createApp() {
 			resources: "/resources"
 		}
 	}));
-	app.get("/resources", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "resources.eta"), {
-		meta: {
-			title: "Study Resources | GyanPath",
-			description: "IGNOU MCA question papers, study material, question banks and video lectures in one place.",
-			socialDescription,
-			canonicalUrl: `${env.siteUrl}/resources`,
-			socialTitle,
-			socialImage
-		},
-		shell: {
-			activePage: "resources",
-			title: "Study Resources",
-			subtitle: "Previous Year Question Papers & Study Material"
-		},
-		footer: await footerData(),
-		stylesheets: ["/assets/css/pages/home.css?v=35"],
-		scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
-			{ src: "/assets/js/components/subject-card.js?v=10", module: true },
-			{ src: "/assets/js/components/card-tilt.js?v=6" },
-			{ src: "/assets/js/components/banner-carousel.js?v=3", module: true },
-			{ src: "/assets/js/pages/resources.js?v=3", module: true }
-		],
-		...await resourcesPageData()
-	}));
+	app.get("/resources", async (request, response) => {
+		const programCode = typeof request.query.program === "string" ? request.query.program : undefined;
+		return sendPage(response, path.join(env.viewsRoot, "pages", "resources.eta"), {
+			meta: {
+				title: "Study Resources | GyanPath",
+				description: "IGNOU question papers, study material, question banks and video lectures in one place.",
+				socialDescription,
+				canonicalUrl: `${env.siteUrl}/resources`,
+				socialTitle,
+				socialImage
+			},
+			shell: {
+				activePage: "resources",
+				title: "Study Resources",
+				subtitle: "Previous Year Question Papers & Study Material"
+			},
+			footer: await footerData(),
+			stylesheets: ["/assets/css/pages/home.css?v=35"],
+			scripts: [
+				{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+				{ src: "/assets/js/components/subject-card.js?v=10", module: true },
+				{ src: "/assets/js/components/card-tilt.js?v=6" },
+				{ src: "/assets/js/components/banner-carousel.js?v=3", module: true },
+				{ src: "/assets/js/pages/resources.js?v=3", module: true }
+			],
+			...await resourcesPageData(programCode)
+		});
+	});
 	app.get("/about", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "about.eta"), {
 		meta: {
 			title: "About | GyanPath",

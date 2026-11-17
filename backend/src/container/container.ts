@@ -1,15 +1,14 @@
 import type { CatalogRepository } from "../modules/catalog/catalog.repository.port.js";
-import { PrismaCatalogRepository } from "../modules/catalog/repositories/catalog.prisma.repository.js";
+import { DrizzleCatalogRepository } from "../modules/catalog/repositories/catalog.drizzle.repository.js";
 
-class LazyPrismaCatalogRepository implements CatalogRepository {
+class LazyDrizzleCatalogRepository implements CatalogRepository {
+	private repo = new DrizzleCatalogRepository();
 	async subjects() {
-		const { prisma } = await import("../config/prisma.js");
-		return new PrismaCatalogRepository(prisma).subjects();
+		return this.repo.subjects();
 	}
 	async papers(subjectCode?: string) {
-		const { prisma } = await import("../config/prisma.js");
-		return new PrismaCatalogRepository(prisma).papers(subjectCode);
+		return this.repo.papers(subjectCode);
 	}
 }
 
-export const container = Object.freeze({ catalogRepository: new LazyPrismaCatalogRepository() });
+export const container = Object.freeze({ catalogRepository: new LazyDrizzleCatalogRepository() });

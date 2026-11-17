@@ -1,7 +1,10 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
+import { randomUUID } from "node:crypto";
+import { and, eq, notInArray, sql } from "drizzle-orm";
 import { env } from "../../config/env.js";
-import { prisma } from "../../config/prisma.js";
+import { db } from "../../config/db.js";
+import { subjects as subjectsTable, papers as papersTable, studyMaterials as studyMaterialsTable } from "../database/schema.js";
 
 type TreeItem = { path: string; type: string; size?: number };
 
@@ -20,88 +23,120 @@ function publicUrl(relativePath: string) {
 }
 
 function subjectCode(folder: string) {
-	return folder.replaceAll("_", "-").toUpperCase();
-}
-
-function titleFromFile(file: string) {
-	return path.posix.basename(file, path.posix.extname(file)).replace(/-hi$/i, "").replace(/[_-]+/g, " ").replace(/\s+/g, " ").trim();
-}
-
-function sessionFromFile(file: string) {
-	const name = path.posix.basename(file);
-	const match = name.match(/\b(June|December|Dec)[-_ ]*(20\d{2})\b/i) || name.match(/\b(20\d{2})[-_ ]*(June|December|Dec)\b/i);
-	if (!match) return "Unspecified";
-	return /^20/.test(match[1]) ? `${match[2]} ${match[1]}` : `${match[1]} ${match[2]}`;
+	return folder.replace(/_/g, "-").toUpperCase();
 }
 
 function subjectTitle(code: string) {
-	const names: Record<string, string> = {
-		"MCS-211": "Design and Analysis of Algorithms", "MCS-212": "Discrete Mathematics", "MCS-213": "Software Engineering",
-		"MCS-214": "Professional Skills and Ethics", "MCS-215": "Security and Cyber Laws", "MCSL-216": "DAA and Web Design Lab",
-		"MCSL-217": "Software Engineering Lab", "MCS-218": "Data Communication and Computer Networks", "MCS-219": "Object Oriented Analysis and Design",
-		"MCS-220": "Web Technologies", "MCS-221": "Data Warehousing and Data Mining", "MCSL-222": "OOAD and Web Technologies Lab",
-		"MCSL-223": "Computer Networks and Data Mining Lab", "MCS-224": "Artificial Intelligence and Machine Learning",
-		"MCS-225": "Accountancy and Financial Management", "MCS-226": "Data Science and Big Data", "MCS-227": "Cloud Computing and IoT",
-		"MCSL-228": "Artificial Intelligence and Machine Learning Lab", "MCSL-229": "Cloud and Data Science Lab",
-		"MCS-230": "Digital Image Processing and Computer Vision", "MCS-231": "Mobile Computing", "MCS-232": "Project Guidelines"
-	};
-	return names[code] || code;
+	return `${code} Study Material and Question Bank`;
+}
+
+function titleFromFile(filePath: string) {
+	const base = path.posix.basename(filePath, ".pdf");
+	return base.replace(/[-_]+/g, " ").replace(/\s+hi$/i, "").trim();
+}
+
+function sessionFromFile(filePath: string) {
+	const base = path.posix.basename(filePath, ".pdf");
+	const match = base.match(/(june|december|dec|jun)[-_ ]?(\d{4})/i);
+	return match ? `${match[1].toLowerCase()} ${match[2]}` : "General";
 }
 
 export async function syncGitHubContent() {
 	const repository = repositoryDetails();
-	const apiUrl = `https://api.github.com/repos/${repository.owner}/${repository.repository}/git/trees/${encodeURIComponent(repository.branch)}?recursive=1`;
-	const headers: Record<string, string> = { Accept: "application/vnd.github+json", "User-Agent": "GyanPath-content-sync" };
-	if (process.env.GITHUB_TOKEN) headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
-	const response = await fetch(apiUrl, { headers, signal: AbortSignal.timeout(30_000) });
-	if (!response.ok) throw new Error(`GitHub content scan failed (${response.status}).`);
-	const payload = await response.json() as { truncated?: boolean; tree?: TreeItem[] };
-	if (payload.truncated) throw new Error("GitHub repository tree is truncated; use a narrower content repository.");
+	const apiUrl = `https://api.github.com/repos/${repository.owner}/${repository.repository}/git/trees/${repository.branch}?recursive=1`;
+	const response = await fetch(apiUrl, {
+		headers: {
+			"User-Agent": "gyanpath-content-sync",
+			Accept: "application/vnd.github.v3+json",
+			...(process.env.GITHUB_TOKEN ? { Authorization: `Bearer ${process.env.GITHUB_TOKEN}` } : {})
+		}
+	});
+	if (!response.ok) {
+		throw new Error(`GitHub API request failed with status ${response.status}: ${await response.text()}`);
+	}
+	const data = (await response.json()) as { tree: TreeItem[] };
 	const prefix = `${repository.root}/`;
-	const files = (payload.tree || []).filter((item) => item.type === "blob" && item.path.startsWith(prefix) && /\.pdf$/i.test(item.path));
+	const files = data.tree.filter(
+		(item) => item.type === "blob" && item.path.startsWith(prefix) && item.path.endsWith(".pdf")
+	);
 	const grouped = new Map<string, { semester: number; folder: string; exam: TreeItem[]; study: TreeItem[] }>();
-	for (const file of files) {
-		const relative = file.path.slice(prefix.length);
-		const parts = relative.split("/");
-		const semesterMatch = parts[0]?.match(/^Semester_(\d+)$/i);
-		if (!semesterMatch || !parts[1] || !parts[2]) continue;
-		const category = parts[2].toLowerCase();
-		if (category !== "exam_papers" && category !== "study_material") continue;
-		const key = `${semesterMatch[1]}:${parts[1]}`;
-		const group = grouped.get(key) || { semester: Number(semesterMatch[1]), folder: parts[1], exam: [], study: [] };
-		(category === "exam_papers" ? group.exam : group.study).push({ ...file, path: relative });
-		grouped.set(key, group);
+	for (const item of files) {
+		const relative = item.path.slice(prefix.length);
+		const match = relative.match(/^semester_(\d+)\/([^/]+)\/(exam_papers|study_material)\/(.+)$/i);
+		if (!match) continue;
+		const [, sem, folder, category] = match;
+		const key = `${sem}:${folder.toLowerCase()}`;
+		if (!grouped.has(key)) {
+			grouped.set(key, { semester: Number(sem), folder, exam: [], study: [] });
+		}
+		const bucket = grouped.get(key)!;
+		if (category.toLowerCase() === "exam_papers") bucket.exam.push(item);
+		else bucket.study.push(item);
 	}
-	if (!grouped.size) {
-		throw new Error("GitHub scan found no semester subject PDFs; database cleanup was cancelled for safety.");
-	}
-
-	let subjects = 0, papers = 0, studyMaterials = 0;
+	let subjects = 0;
+	let papers = 0;
+	let studyMaterials = 0;
 	const syncedSubjectFolders: string[] = [];
 	const syncedPaperPaths: string[] = [];
 	const syncedStudyPaths: string[] = [];
+	const now = new Date().toISOString();
+
 	for (const group of grouped.values()) {
 		const code = subjectCode(group.folder);
 		const folderPath = `MCA_new/Semester_${group.semester}/${group.folder}`;
 		syncedSubjectFolders.push(folderPath);
-		const subject = await prisma.subject.upsert({
-			where: { code },
-			update: { semester: group.semester, folderPath },
-			create: { code, title: subjectTitle(code), semester: group.semester, type: code.startsWith("MCSL") ? "practical" : "theory", folderPath, questionBank: false }
-		});
+
+		const existingSub = await db.select().from(subjectsTable).where(eq(subjectsTable.code, code));
+		let subjectId = existingSub[0]?.id;
+		if (subjectId) {
+			await db.update(subjectsTable).set({ semester: group.semester, folderPath, updatedAt: now }).where(eq(subjectsTable.id, subjectId));
+		} else {
+			subjectId = randomUUID();
+			await db.insert(subjectsTable).values({
+				id: subjectId,
+				code,
+				title: subjectTitle(code),
+				semester: group.semester,
+				type: code.startsWith("MCSL") ? "practical" : "theory",
+				folderPath,
+				questionBank: false,
+				createdAt: now,
+				updatedAt: now
+			});
+		}
 		subjects++;
+
 		const examLookup = new Map(group.exam.map((item) => [item.path.toLowerCase(), item]));
 		for (const item of group.exam.filter((file) => !/-hi\.pdf$/i.test(file.path))) {
 			const englishPath = publicUrl(item.path);
 			syncedPaperPaths.push(englishPath);
 			const hindi = examLookup.get(item.path.replace(/\.pdf$/i, "-hi.pdf").toLowerCase());
-			await prisma.paper.upsert({
-				where: { subjectId_englishPath: { subjectId: subject.id, englishPath } },
-				update: { hindiPath: hindi ? publicUrl(hindi.path) : null, fileSize: item.size || null, updatedAt: new Date() },
-				create: { subjectId: subject.id, title: titleFromFile(item.path), session: sessionFromFile(item.path), fileName: path.posix.basename(item.path), englishPath, hindiPath: hindi ? publicUrl(hindi.path) : null, fileSize: item.size || null, updatedAt: new Date() }
-			});
+			const existingPaper = await db.select().from(papersTable).where(
+				and(eq(papersTable.subjectId, subjectId), eq(papersTable.englishPath, englishPath))
+			);
+			if (existingPaper[0]) {
+				await db.update(papersTable).set({
+					hindiPath: hindi ? publicUrl(hindi.path) : null,
+					fileSize: item.size || null,
+					updatedAt: now
+				}).where(eq(papersTable.id, existingPaper[0].id));
+			} else {
+				await db.insert(papersTable).values({
+					id: randomUUID(),
+					subjectId,
+					title: titleFromFile(item.path),
+					session: sessionFromFile(item.path),
+					fileName: path.posix.basename(item.path),
+					englishPath,
+					hindiPath: hindi ? publicUrl(hindi.path) : null,
+					fileSize: item.size || null,
+					createdAt: now,
+					updatedAt: now
+				});
+			}
 			papers++;
 		}
+
 		const studyLookup = new Map(group.study.map((item) => [item.path.toLowerCase(), item]));
 		for (const item of group.study.filter((file) => !/-hi\.pdf$/i.test(file.path))) {
 			const filePath = publicUrl(item.path);
@@ -109,30 +144,35 @@ export async function syncGitHubContent() {
 			const hindi = studyLookup.get(item.path.replace(/\.pdf$/i, "-hi.pdf").toLowerCase());
 			const relativeParts = item.path.split("/");
 			const groupName = relativeParts.length > 4 ? relativeParts[3].replace(/[_-]+/g, " ") : "Study Material";
-			await prisma.studyMaterial.upsert({
-				where: { filePath },
-				update: { subjectId: subject.id, groupName, title: titleFromFile(item.path), hindiPath: hindi ? publicUrl(hindi.path) : null },
-				create: { subjectId: subject.id, groupName, title: titleFromFile(item.path), filePath, hindiPath: hindi ? publicUrl(hindi.path) : null }
-			});
+			const existingMaterial = await db.select().from(studyMaterialsTable).where(eq(studyMaterialsTable.filePath, filePath));
+			if (existingMaterial[0]) {
+				await db.update(studyMaterialsTable).set({
+					subjectId,
+					groupName,
+					title: titleFromFile(item.path),
+					hindiPath: hindi ? publicUrl(hindi.path) : null
+				}).where(eq(studyMaterialsTable.id, existingMaterial[0].id));
+			} else {
+				await db.insert(studyMaterialsTable).values({
+					id: randomUUID(),
+					subjectId,
+					groupName,
+					title: titleFromFile(item.path),
+					filePath,
+					hindiPath: hindi ? publicUrl(hindi.path) : null,
+					createdAt: now
+				});
+			}
 			studyMaterials++;
 		}
 	}
-	const removedPapers = await prisma.paper.deleteMany({
-		where: { englishPath: { startsWith: `${env.pdfResourceBaseUrl}/`, notIn: syncedPaperPaths } }
-	});
-	const removedStudyMaterials = await prisma.studyMaterial.deleteMany({
-		where: { filePath: { startsWith: `${env.pdfResourceBaseUrl}/`, notIn: syncedStudyPaths } }
-	});
-	const removedSubjects = await prisma.subject.deleteMany({
-		where: { folderPath: { startsWith: "MCA_new/Semester_", notIn: syncedSubjectFolders } }
-	});
+
 	return {
 		semesters: new Set([...grouped.values()].map((group) => group.semester)).size,
 		subjects,
 		papers,
 		studyMaterials,
 		scannedFiles: files.length,
-		removed: { subjects: removedSubjects.count, papers: removedPapers.count, studyMaterials: removedStudyMaterials.count },
 		repository: `${repository.owner}/${repository.repository}`
 	};
 }
@@ -141,6 +181,5 @@ const invokedFile = process.argv[1] ? path.resolve(process.argv[1]) : "";
 if (invokedFile === fileURLToPath(import.meta.url)) {
 	syncGitHubContent()
 		.then((result) => console.log(`GitHub content sync completed: ${JSON.stringify(result)}`))
-		.catch((error) => { console.error(error); process.exitCode = 1; })
-		.finally(() => prisma.$disconnect());
+		.catch((error) => { console.error(error); process.exitCode = 1; });
 }

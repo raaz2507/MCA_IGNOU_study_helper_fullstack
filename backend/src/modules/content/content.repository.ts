@@ -1,8 +1,10 @@
 import crypto from "node:crypto";
 import fs from "node:fs/promises";
 import path from "node:path";
+import { asc, eq, inArray } from "drizzle-orm";
 import { env } from "../../config/env.js";
-import { prisma } from "../../config/prisma.js";
+import { db } from "../../config/db.js";
+import { banners, lectures, subjects, contributors } from "../../infrastructure/database/schema.js";
 import { cleanupReplacedUpload, deleteUnreferencedUpload } from "../../shared/upload-cleanup.js";
 
 function decodeImageDataUrl(value: string | null | undefined) {
@@ -38,21 +40,27 @@ function persistBannerImage(bannerId: string, image: string | null | undefined) 
 
 export const contentRepository = {
 	async listBanners() {
-		const banners = await prisma.banner.findMany({ orderBy: [{ priority: "asc" }, { createdAt: "asc" }] });
-		return Promise.all(banners.map(async (banner) => {
+		const rows = await db.select().from(banners).orderBy(asc(banners.priority), asc(banners.createdAt));
+		return Promise.all(rows.map(async (banner) => {
 			const image = await persistBannerImage(banner.id, banner.image);
 			if (image !== banner.image) {
-				return prisma.banner.update({ where: { id: banner.id }, data: { image } });
+				await db.update(banners).set({ image, updatedAt: new Date().toISOString() }).where(eq(banners.id, banner.id));
+				return { ...banner, image };
 			}
 			return banner;
 		}));
 	},
+
 	async saveBanner(item: any) {
 		const id = item.id || crypto.randomUUID();
-		const previous = item.id
-			? await prisma.banner.findUnique({ where: { id }, select: { image: true } })
-			: null;
+		let previousImage: string | null = null;
+		if (item.id) {
+			const prev = await db.select({ image: banners.image }).from(banners).where(eq(banners.id, id));
+			previousImage = prev[0]?.image || null;
+		}
+
 		const image = await persistBannerImage(id, item.image);
+		const now = new Date().toISOString();
 		const data = {
 			title: item.title,
 			description: item.description,
@@ -60,47 +68,85 @@ export const contentRepository = {
 			image,
 			buttonText: item.buttonText || null,
 			buttonUrl: item.buttonUrl || null,
-			startDate: item.startDate ? new Date(item.startDate) : null,
-			endDate: item.endDate ? new Date(item.endDate) : null,
+			startDate: item.startDate ? new Date(item.startDate).toISOString() : null,
+			endDate: item.endDate ? new Date(item.endDate).toISOString() : null,
 			priority: Number(item.priority || 0),
-			active: item.active !== false
+			active: item.active !== false,
+			updatedAt: now
 		};
-		const saved = item.id
-			? prisma.banner.upsert({ where: { id: item.id }, update: data, create: { id, ...data } })
-			: prisma.banner.create({ data: { id, ...data } });
-		const result = await saved;
-		await cleanupReplacedUpload(previous?.image, result.image);
+
+		if (item.id) {
+			await db.insert(banners)
+				.values({ id, ...data, createdAt: now })
+				.onConflictDoUpdate({
+					target: banners.id,
+					set: data
+				});
+		} else {
+			await db.insert(banners).values({ id, ...data, createdAt: now });
+		}
+
+		const savedRows = await db.select().from(banners).where(eq(banners.id, id));
+		const result = savedRows[0];
+		await cleanupReplacedUpload(previousImage, result?.image);
 		return result;
 	},
+
 	async deleteBanner(id: string) {
-		const deleted = await prisma.banner.delete({ where: { id } });
-		await deleteUnreferencedUpload(deleted.image);
-		return deleted;
+		const rows = await db.select().from(banners).where(eq(banners.id, id));
+		const banner = rows[0];
+		await db.delete(banners).where(eq(banners.id, id));
+		if (banner?.image) {
+			await deleteUnreferencedUpload(banner.image);
+		}
+		return banner;
 	},
-	listLectures() {
-		return prisma.lecture.findMany({
-			include: { subject: { select: { code: true } } },
-			orderBy: [{ order: "asc" }, { title: "asc" }]
-		});
+
+	async listLectures() {
+		const rows = await db.select({
+			lecture: lectures,
+			subjectCode: subjects.code
+		})
+		.from(lectures)
+		.innerJoin(subjects, eq(lectures.subjectId, subjects.id))
+		.orderBy(asc(lectures.order), asc(lectures.title));
+
+		return rows.map((r) => ({
+			...r.lecture,
+			subject: { code: r.subjectCode }
+		}));
 	},
+
 	async subjectCodes() {
-		const subjects = await prisma.subject.findMany({ select: { code: true } });
-		return new Set(subjects.map((subject) => subject.code.toUpperCase()));
+		const rows = await db.select({ code: subjects.code }).from(subjects);
+		return new Set(rows.map((s) => s.code.toUpperCase()));
 	},
+
 	async syncLectureCatalog(items: any[], updateExisting: boolean) {
-		return prisma.$transaction(async (transaction) => {
-			const subjects = await transaction.subject.findMany({ select: { id: true, code: true } });
-			const subjectIds = new Map(subjects.map((subject) => [subject.code.toUpperCase(), subject.id]));
-			const existing = new Set((await transaction.lecture.findMany({
-				where: { id: { in: items.map((item) => item.id) } },
-				select: { id: true }
-			})).map((lecture) => lecture.id));
-			let added = 0;
-			let updated = 0;
-			let skipped = 0;
+		const subRows = await db.select({ id: subjects.id, code: subjects.code }).from(subjects);
+		const subjectIds = new Map(subRows.map((s) => [s.code.toUpperCase(), s.id]));
+
+		const itemIds = items.map((item) => item.id);
+		let existingIds = new Set<string>();
+		if (itemIds.length > 0) {
+			const existingRows = await db.select({ id: lectures.id }).from(lectures).where(inArray(lectures.id, itemIds));
+			existingIds = new Set(existingRows.map((l) => l.id));
+		}
+
+		let added = 0;
+		let updated = 0;
+		let skipped = 0;
+		const now = new Date().toISOString();
+
+		await db.transaction(async (tx) => {
 			for (const item of items) {
+				const subjectId = subjectIds.get(item.subject);
+				if (!subjectId) {
+					skipped += 1;
+					continue;
+				}
 				const data = {
-					subjectId: subjectIds.get(item.subject)!,
+					subjectId,
 					title: item.title,
 					unit: item.unit || null,
 					description: item.description || null,
@@ -108,26 +154,34 @@ export const contentRepository = {
 					teacher: item.teacher || null,
 					language: item.language,
 					order: item.order,
-					active: item.active
+					active: item.active !== false,
+					updatedAt: now
 				};
-				if (existing.has(item.id)) {
+
+				if (existingIds.has(item.id)) {
 					if (!updateExisting) {
 						skipped += 1;
 						continue;
 					}
-					await transaction.lecture.update({ where: { id: item.id }, data });
+					await tx.update(lectures).set(data).where(eq(lectures.id, item.id));
 					updated += 1;
 				} else {
-					await transaction.lecture.create({ data: { id: item.id, ...data } });
+					await tx.insert(lectures).values({ id: item.id, ...data, createdAt: now });
 					added += 1;
 				}
 			}
-			return { added, updated, skipped, errors: 0, total: items.length };
 		});
+
+		return { added, updated, skipped, errors: 0, total: items.length };
 	},
+
 	async saveLecture(item: any) {
-		const subject = await prisma.subject.findUnique({ where: { code: item.subject } });
+		const subRows = await db.select().from(subjects).where(eq(subjects.code, item.subject));
+		const subject = subRows[0];
 		if (!subject) throw new Error("Selected subject does not exist.");
+
+		const id = item.id || crypto.randomUUID();
+		const now = new Date().toISOString();
 		const data = {
 			subjectId: subject.id,
 			title: item.title,
@@ -137,31 +191,53 @@ export const contentRepository = {
 			teacher: item.teacher || null,
 			language: item.language,
 			order: Number(item.order || 0),
-			active: item.active !== false
+			active: item.active !== false,
+			updatedAt: now
 		};
-		return item.id
-			? prisma.lecture.upsert({ where: { id: item.id }, update: data, create: { id: item.id, ...data } })
-			: prisma.lecture.create({ data });
+
+		if (item.id) {
+			await db.insert(lectures)
+				.values({ id, ...data, createdAt: now })
+				.onConflictDoUpdate({
+					target: lectures.id,
+					set: data
+				});
+		} else {
+			await db.insert(lectures).values({ id, ...data, createdAt: now });
+		}
+
+		const rows = await db.select().from(lectures).where(eq(lectures.id, id));
+		return rows[0];
 	},
-	deleteLecture(id: string) {
-		return prisma.lecture.delete({ where: { id } });
+
+	async deleteLecture(id: string) {
+		const rows = await db.select().from(lectures).where(eq(lectures.id, id));
+		await db.delete(lectures).where(eq(lectures.id, id));
+		return rows[0];
 	},
+
 	async listContributors() {
-		const contributors = await prisma.contributor.findMany({ where: { active: true }, orderBy: [{ order: "asc" }, { name: "asc" }] });
-		return Promise.all(contributors.map(async (contributor) => {
+		const rows = await db.select().from(contributors).where(eq(contributors.active, true)).orderBy(asc(contributors.order), asc(contributors.name));
+		return Promise.all(rows.map(async (contributor) => {
 			const avatar = await persistContributorAvatar(contributor.id, contributor.avatar);
 			if (avatar !== contributor.avatar) {
-				return prisma.contributor.update({ where: { id: contributor.id }, data: { avatar } });
+				await db.update(contributors).set({ avatar, updatedAt: new Date().toISOString() }).where(eq(contributors.id, contributor.id));
+				return { ...contributor, avatar };
 			}
 			return contributor;
 		}));
 	},
+
 	async saveContributor(item: any) {
 		const id = item.id || crypto.randomUUID();
-		const previous = item.id
-			? await prisma.contributor.findUnique({ where: { id }, select: { avatar: true } })
-			: null;
+		let previousAvatar: string | null = null;
+		if (item.id) {
+			const prev = await db.select({ avatar: contributors.avatar }).from(contributors).where(eq(contributors.id, id));
+			previousAvatar = prev[0]?.avatar || null;
+		}
+
 		const avatar = await persistContributorAvatar(id, item.avatar);
+		const now = new Date().toISOString();
 		const data = {
 			name: item.name,
 			info: item.info,
@@ -171,18 +247,34 @@ export const contentRepository = {
 				: null,
 			contributions: item.contributions || [],
 			order: Number(item.order || 0),
-			active: item.active !== false
+			active: item.active !== false,
+			updatedAt: now
 		};
-		const saved = item.id
-			? prisma.contributor.upsert({ where: { id: item.id }, update: data, create: { id, ...data } })
-			: prisma.contributor.create({ data: { id, ...data } });
-		const result = await saved;
-		await cleanupReplacedUpload(previous?.avatar, result.avatar);
+
+		if (item.id) {
+			await db.insert(contributors)
+				.values({ id, ...data, createdAt: now })
+				.onConflictDoUpdate({
+					target: contributors.id,
+					set: data
+				});
+		} else {
+			await db.insert(contributors).values({ id, ...data, createdAt: now });
+		}
+
+		const rows = await db.select().from(contributors).where(eq(contributors.id, id));
+		const result = rows[0];
+		await cleanupReplacedUpload(previousAvatar, result?.avatar);
 		return result;
 	},
+
 	async deleteContributor(id: string) {
-		const deleted = await prisma.contributor.delete({ where: { id } });
-		await deleteUnreferencedUpload(deleted.avatar);
-		return deleted;
+		const rows = await db.select().from(contributors).where(eq(contributors.id, id));
+		const contributor = rows[0];
+		await db.delete(contributors).where(eq(contributors.id, id));
+		if (contributor?.avatar) {
+			await deleteUnreferencedUpload(contributor.avatar);
+		}
+		return contributor;
 	}
 };

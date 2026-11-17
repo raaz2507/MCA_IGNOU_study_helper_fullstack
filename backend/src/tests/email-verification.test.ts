@@ -1,34 +1,43 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import bcrypt from "bcryptjs";
-import type { Prisma } from "@prisma/client";
+import { randomUUID } from "node:crypto";
 import request from "supertest";
+import { eq } from "drizzle-orm";
 import { createApp } from "../app.js";
-import { prisma } from "../config/prisma.js";
+import { db } from "../config/db.js";
+import { users, appSettings } from "../infrastructure/database/schema.js";
 import { hashToken } from "../modules/auth/auth.repository.js";
 
 test("email verification blocks login until a valid token is consumed", async () => {
 	const username = `verify-test-${Date.now()}`;
 	const email = `${username}@example.com`;
 	const token = "v".repeat(64);
-	const previousSetting = await prisma.appSetting.findUnique({ where: { key: "email-verification" } });
-	const user = await prisma.user.create({
-		data: {
-			username,
-			email,
-			displayName: "Verification Test",
-			passwordHash: await bcrypt.hash("verification-test-password", 4),
-			status: "ACTIVE",
-			emailVerificationRequired: true,
-			emailVerificationTokenHash: hashToken(token),
-			emailVerificationExpiresAt: new Date(Date.now() + 60_000)
-		}
+	const prevRows = await db.select().from(appSettings).where(eq(appSettings.key, "email-verification"));
+	const previousSetting = prevRows[0];
+	const userId = randomUUID();
+	const now = new Date().toISOString();
+
+	await db.insert(users).values({
+		id: userId,
+		username,
+		email,
+		displayName: "Verification Test",
+		passwordHash: await bcrypt.hash("verification-test-password", 4),
+		status: "ACTIVE",
+		emailVerificationRequired: true,
+		emailVerificationTokenHash: hashToken(token),
+		emailVerificationExpiresAt: new Date(Date.now() + 60_000).toISOString(),
+		createdAt: now,
+		updatedAt: now
 	});
-	await prisma.appSetting.upsert({
-		where: { key: "email-verification" },
-		update: { value: { enabled: true } },
-		create: { key: "email-verification", value: { enabled: true } }
-	});
+
+	await db.insert(appSettings)
+		.values({ key: "email-verification", value: { enabled: true }, updatedAt: now })
+		.onConflictDoUpdate({
+			target: appSettings.key,
+			set: { value: { enabled: true }, updatedAt: now }
+		});
 
 	try {
 		const app = createApp();
@@ -49,14 +58,13 @@ test("email verification blocks login until a valid token is consumed", async ()
 		});
 		assert.equal(login.status, 200);
 	} finally {
-		await prisma.user.deleteMany({ where: { id: user.id } });
+		await db.delete(users).where(eq(users.id, userId));
 		if (previousSetting) {
-			await prisma.appSetting.update({
-				where: { key: "email-verification" },
-				data: { value: previousSetting.value as Prisma.InputJsonValue }
-			});
+			await db.update(appSettings)
+				.set({ value: previousSetting.value, updatedAt: new Date().toISOString() })
+				.where(eq(appSettings.key, "email-verification"));
 		} else {
-			await prisma.appSetting.deleteMany({ where: { key: "email-verification" } });
+			await db.delete(appSettings).where(eq(appSettings.key, "email-verification"));
 		}
 	}
 });

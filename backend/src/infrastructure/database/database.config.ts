@@ -1,4 +1,4 @@
 export const databaseConfig = Object.freeze({
-	adapter: "prisma" as const,
+	adapter: "drizzle" as const,
 	provider: "sqlite" as const
 });

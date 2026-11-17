@@ -1,8 +1,5 @@
 @import url("./base.css");
 
-
-@import url("./base.css?v=2");
-
 body {
 				background: var(--app-background);
 				color: var(--app-text);
