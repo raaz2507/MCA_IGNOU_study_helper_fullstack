@@ -1,8 +1,32 @@
-﻿import path from "node:path";
+﻿import fs from "node:fs";
+import path from "node:path";
 import dotenv from "dotenv";
 import { z } from "zod";
 
-const projectRoot = process.cwd();
+function resolveProjectRoot(): string {
+	let dir = path.resolve(process.cwd());
+	while (dir && dir !== path.dirname(dir)) {
+		const pkgPath = path.join(dir, "package.json");
+		if (fs.existsSync(pkgPath)) {
+			try {
+				const pkg = JSON.parse(fs.readFileSync(pkgPath, "utf8"));
+				if (pkg.name === "gyanpath-mca-study-helper" || pkg.name === "gyanpath") {
+					return dir;
+				}
+			} catch {}
+		}
+		dir = path.dirname(dir);
+	}
+
+	const fallbackDir = path.resolve(__dirname, "..", "..");
+	if (fs.existsSync(path.join(fallbackDir, "package.json"))) {
+		return fallbackDir;
+	}
+
+	return path.resolve(process.cwd());
+}
+
+const projectRoot = resolveProjectRoot();
 const backendRoot = path.join(projectRoot, "backend");
 dotenv.config({ path: path.join(projectRoot, ".env") });
 
@@ -11,7 +35,7 @@ const schema = z.object({
 	PORT: z.coerce.number().int().positive().default(3000),
 	FRONTEND_ORIGIN: z.string().default("http://localhost:3000"),
 	SITE_URL: z.string().url().default("http://localhost:3000"),
-	PDF_RESOURCE_BASE_URL: z.string().default("/local-resources/MCA_new"),
+	PDF_RESOURCE_BASE_URL: z.string().default("/storage/resources/MCA_new"),
 	DATABASE_URL: z.string().min(1),
 	DATABASE_PROVIDER: z.enum(["postgresql", "mysql", "sqlite"]).default("postgresql"),
 	REDIS_URL: z.string().default("redis://localhost:6379"),
@@ -22,12 +46,14 @@ const schema = z.object({
 	FIREBASE_PROJECT_ID: z.string().trim().default(""),
 	FIREBASE_CLIENT_EMAIL: z.string().trim().default(""),
 	FIREBASE_PRIVATE_KEY: z.string().default(""),
-	FIRESTORE_DATABASE_ID: z.string().trim().default("(default)")
+	FIRESTORE_DATABASE_ID: z.string().trim().default("(default)"),
+	OPEN_BROWSER: z.string().optional().default("true")
 });
 
 const parsed = schema.parse(process.env);
 export const env = Object.freeze({
 	nodeEnv: parsed.NODE_ENV,
+	openBrowser: parsed.OPEN_BROWSER !== "false" && parsed.OPEN_BROWSER !== "0",
 	port: parsed.PORT,
 	frontendOrigin: parsed.FRONTEND_ORIGIN,
 	siteUrl: parsed.SITE_URL.replace(/\/$/, ""),
@@ -45,9 +71,11 @@ export const env = Object.freeze({
 	firestoreDatabaseId: parsed.FIRESTORE_DATABASE_ID,
 	projectRoot,
 	backendRoot,
-	localResourcesRoot: path.join(projectRoot, "local-resources"),
+	storageRoot: path.join(projectRoot, "storage"),
+	localResourcesRoot: path.join(projectRoot, "storage", "resources"),
+	uploadsRoot: path.join(projectRoot, "storage", "uploads"),
+	databasePath: path.join(backendRoot, "data", "gyanpath.db"),
 	frontendRoot: path.join(projectRoot, "frontend"),
 	viewsRoot: path.join(projectRoot, "frontend", "views"),
 	pagesRoot: path.join(projectRoot, "frontend", "pages")
 });
-

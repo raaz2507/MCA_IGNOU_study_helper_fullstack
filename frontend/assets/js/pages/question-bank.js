@@ -27,7 +27,7 @@ class QuestionBankApp {
     this.answerMode = "exam";
     this.view = "all";
     this.subjectFolder = this.getSubjectFolder();
-    this.resourceFolder = `../assets/resources/${this.subjectFolder}`;
+    this.resourceFolder = `/storage/resources/${this.subjectFolder}`;
     this.state = { done: [], bookmarks: [], revision: [] };
     this.init();
   }

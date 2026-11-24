@@ -1,8 +1,14 @@
+/* ==========================================================================
+   Breadcrumb Navigation
+   ========================================================================== */
 .breadcrumb {
-	max-width: 1600px;
+	max-width: var(--max-width-layout);
 	margin: var(--space-2) auto var(--space-3);
-	padding: 0 var(--space-6);
-	font: 600 0.9rem/1.4 var(--font-ui);
+	padding: var(--space-0) var(--space-6);
+	font-family: var(--font-ui);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-semibold);
+	line-height: var(--leading-normal);
 }
 
 .breadcrumb ol {
@@ -10,8 +16,8 @@
 	align-items: center;
 	flex-wrap: wrap;
 	gap: var(--space-2);
-	margin: 0;
-	padding: 10px var(--space-4);
+	margin: var(--space-0);
+	padding: var(--space-2) var(--space-4);
 	list-style: none;
 	border: 1px solid color-mix(in srgb, var(--app-muted) 24%, transparent);
 	border-radius: var(--radius-lg);
@@ -28,7 +34,7 @@
 
 .breadcrumb a {
 	display: inline-flex;
-	padding: 3px var(--space-2);
+	padding: var(--space-1) var(--space-2);
 	border-radius: var(--radius-sm);
 	color: var(--app-primary);
 	text-decoration: none;
@@ -46,6 +52,6 @@
 @media (max-width: 700px) {
 	.breadcrumb {
 		margin: var(--space-2) auto var(--space-3);
-		padding: 0 var(--space-3);
+		padding: var(--space-0) var(--space-3);
 	}
 }

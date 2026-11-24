@@ -39,21 +39,13 @@ Desktop.ini
 backend/data/*.json
 !backend/data/.gitkeep
 
-# Local PDF resources for offline testing
-local-resources/
-frontend/assets/resources/MCA_new/**/exam_papers/*.pdf
-frontend/assets/resources/MCA_new/**/study_material/**/*.pdf
+# Central storage resources (managed separately / contains large course PDFs and nested repository)
+storage/resources/
 
-# User uploads (retain directory placeholders)
-uploads/*
-!uploads/.gitkeep
-backend/uploads/*
-!backend/uploads/pdfs/
-!backend/uploads/images/
-!backend/uploads/exports/
-backend/uploads/pdfs/*
-backend/uploads/images/*
-backend/uploads/exports/*
+# Storage user uploads (retain directory placeholders)
+storage/uploads/*
+!storage/uploads/.gitkeep
+!storage/uploads/**/.gitkeep
 
 # SQLite & Local Databases
 *.db

@@ -5,6 +5,8 @@ import path from "node:path";
 import { eq } from "drizzle-orm";
 import { db } from "../../config/db.js";
 import {
+	programs,
+	semesters,
 	users,
 	subjects,
 	studyMaterials,
@@ -15,6 +17,7 @@ import {
 	contributors
 } from "./schema.js";
 import { programCatalogService } from "../../modules/catalog/program-catalog.service.js";
+import { storageService } from "../storage/storage.service.js";
 import { env } from "../../config/env.js";
 
 const UserRole = { ADMIN: "ADMIN", EDITOR: "EDITOR", USER: "USER" } as const;
@@ -22,9 +25,7 @@ const QuestionStatus = { PENDING: "PENDING", PUBLISHED: "PUBLISHED" } as const;
 
 function questionFile(subjectFolder: string, fileName: string) {
 	return path.join(
-		env.frontendRoot,
-		"assets",
-		"resources",
+		storageService.resourcesRoot,
 		subjectFolder,
 		"data",
 		fileName
@@ -61,6 +62,78 @@ async function seedUsers() {
 async function seedCatalog() {
 	console.log("Synchronizing program catalog from local-resources...");
 	await programCatalogService.syncProgramFromDisk("MCA_NEW", "Master of Computer Applications", "MCA_new");
+
+	// Seed secondary program (BCA_NEW) for multi-program demo & support
+	const bcaProgram = {
+		id: "bca_new",
+		code: "BCA_NEW",
+		title: "Bachelor of Computer Applications",
+		totalSemesters: 6,
+		folderName: "BCA_new",
+		active: true
+	};
+
+	const now = new Date().toISOString();
+	const existingBca = await db.select().from(programs).where(eq(programs.code, bcaProgram.code));
+	if (!existingBca[0]) {
+		await db.insert(programs).values({
+			...bcaProgram,
+			createdAt: now,
+			updatedAt: now
+		});
+	}
+
+	const sem1Id = "bca_new_sem_1";
+	const existingSem = await db.select().from(semesters).where(eq(semesters.id, sem1Id));
+	if (!existingSem[0]) {
+		await db.insert(semesters).values({
+			id: sem1Id,
+			programId: bcaProgram.id,
+			number: 1,
+			title: "Semester 1",
+			active: true,
+			status: "PUBLISHED",
+			createdAt: now,
+			updatedAt: now
+		});
+	}
+
+	const bcaSubjects = [
+		{
+			id: "bca_new_bcs_011",
+			programId: bcaProgram.id,
+			code: "BCS-011",
+			title: "Computer Basics and PC Software",
+			semester: 1,
+			type: "theory",
+			credits: 3,
+			folderPath: "BCA_new/Semester_1/bcs_011",
+			questionBank: false
+		},
+		{
+			id: "bca_new_bcsl_013",
+			programId: bcaProgram.id,
+			code: "BCSL-013",
+			title: "Computer Basics and PC Software Lab",
+			semester: 1,
+			type: "practical",
+			credits: 2,
+			folderPath: "BCA_new/Semester_1/bcsl_013",
+			questionBank: false
+		}
+	];
+
+	for (const sub of bcaSubjects) {
+		const existingSub = await db.select().from(subjects).where(eq(subjects.id, sub.id));
+		if (!existingSub[0]) {
+			await db.insert(subjects).values({
+				...sub,
+				createdAt: now,
+				updatedAt: now
+			});
+		}
+	}
+
 
 	// Seed question banks for subjects that have them
 	const allSubjects = await db.select().from(subjects);

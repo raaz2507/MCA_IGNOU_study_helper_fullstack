@@ -36,7 +36,7 @@
 
 	function rewriteLocalResourcePath(source, pdfBaseUrl) {
 		if (!source) return "";
-		const localPrefix = "/local-resources/MCA_new/";
+		const localPrefix = "/storage/resources/MCA_new/";
 		if (!source.startsWith(localPrefix)) return source;
 		return `${pdfBaseUrl}/${source.slice(localPrefix.length)}`;
 	}

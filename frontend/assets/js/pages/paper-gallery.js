@@ -1,5 +1,5 @@
 import { createPaperCard } from "../components/paper-card.js";
-import { getPapers } from "../api/papers.api.js";
+import { getPapers } from "../api/catalog.api.js";
 
 export class PaperGalleryPage {
 	async initialize() {

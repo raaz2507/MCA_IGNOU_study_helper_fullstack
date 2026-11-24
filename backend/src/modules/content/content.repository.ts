@@ -19,15 +19,13 @@ function decodeImageDataUrl(value: string | null | undefined) {
 	};
 }
 
+import { storageService } from "../../infrastructure/storage/storage.service.js";
+
 async function persistImageDataUrl(categoryParts: string[], value: string | null | undefined) {
 	const decoded = decodeImageDataUrl(value);
 	if (!decoded) return value || null;
 	const fileName = `${Date.now()}-${crypto.randomUUID()}${decoded.extension}`;
-	const uploadDir = path.join(env.projectRoot, "uploads", ...categoryParts);
-	const publicPath = `/uploads/${[...categoryParts, fileName].join("/")}`;
-	await fs.mkdir(uploadDir, { recursive: true });
-	await fs.writeFile(path.join(uploadDir, fileName), decoded.buffer);
-	return publicPath;
+	return storageService.saveUpload(categoryParts, fileName, decoded.buffer);
 }
 
 function persistContributorAvatar(contributorId: string, avatar: string | null | undefined) {

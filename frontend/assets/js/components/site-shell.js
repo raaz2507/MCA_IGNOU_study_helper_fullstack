@@ -1,4 +1,4 @@
-import { enhanceFooter } from "./footer.js?v=2";
+import { enhanceFooter } from "./footer.js";
 import { AccessController, AuthService } from "../utils/auth.js";
 import { renderBreadcrumb } from "./breadcrumb.js";
 import { recordPageVisit } from "../utils/analytics.js";
@@ -9,7 +9,7 @@ const body = document.body;
 if (!Array.isArray(window.STUDY_HELPER_THEMES)) {
 	await import("../utils/theme.js");
 }
-await import("../utils/page-preferences.js?v=6");
+await import("../utils/page-preferences.js");
 
 enhanceFooter(document.getElementById("app-footer"));
 renderBreadcrumb(body.dataset.page || "");

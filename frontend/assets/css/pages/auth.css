@@ -1,0 +1,99 @@
+/* ==========================================================================
+   Authentication, Account & Profile Forms
+   ========================================================================== */
+.login-message {
+	min-height: var(--space-6);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-bold);
+}
+
+.login-message.error {
+	color: var(--color-error);
+}
+
+.login-signup-prompt {
+	margin: var(--space-1) var(--space-0) var(--space-0);
+	color: var(--muted-text);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-bold);
+	text-align: center;
+}
+
+.login-signup-prompt a {
+	color: var(--app-primary);
+	font-weight: var(--font-weight-black);
+	text-decoration: none;
+}
+
+.login-signup-prompt a:hover {
+	text-decoration: underline;
+}
+
+.demo-accounts {
+	margin-top: var(--space-6);
+	padding-top: var(--space-5);
+	border-top: 1px solid var(--item-border);
+}
+
+.demo-accounts h2 {
+	margin-bottom: var(--space-2);
+	color: var(--heading-text);
+	font-size: var(--text-base);
+}
+
+.demo-accounts ul {
+	padding-left: var(--space-5);
+	color: var(--muted-text);
+	line-height: var(--leading-relaxed);
+}
+
+.profile-form {
+	display: grid;
+	gap: var(--space-4);
+	max-width: 620px;
+}
+
+.profile-form label {
+	display: grid;
+	gap: var(--space-2);
+	font-weight: var(--font-weight-extrabold);
+}
+
+.profile-form input {
+	padding: var(--field-padding-y) var(--field-padding-x);
+	border: 1px solid var(--item-border);
+	border-radius: var(--field-radius);
+	background: var(--soft-background);
+	color: var(--main-text);
+}
+
+.profile-form button {
+	justify-self: start;
+	background: var(--accent);
+	border-color: var(--accent);
+	color: var(--color-white);
+	font-weight: var(--font-weight-extrabold);
+}
+
+.secondary-link {
+	color: var(--main-text);
+	background: var(--soft-background);
+	border: 1px solid var(--item-border);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-extrabold);
+	text-align: center;
+}
+
+.access-message {
+	display: grid;
+	gap: var(--action-gap);
+	text-align: center;
+}
+
+.access-message h1 {
+	color: var(--heading-text);
+}
+
+.access-message p {
+	color: var(--muted-text);
+}

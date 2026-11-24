@@ -1,4 +1,4 @@
-import { getResourceCollections } from "../api/resources.api.js";
+import { getResourceCollections } from "../api/catalog.api.js";
 
 const collections = [
 	{

@@ -5,7 +5,7 @@ import { env } from "../../config/env.js";
 import { AppError } from "../../shared/errors/app-error.js";
 import { contentRepository } from "./content.repository.js";
 
-const catalogPath = path.join(env.projectRoot, "content", "video-lectures.json");
+const catalogPath = path.join(env.backendRoot, "data", "video-lectures.json");
 
 const lectureSchema = z.object({
 	id: z.string().trim().min(2).max(120),

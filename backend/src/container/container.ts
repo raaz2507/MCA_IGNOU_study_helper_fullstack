@@ -1,5 +1,6 @@
 import type { CatalogRepository } from "../modules/catalog/catalog.repository.port.js";
 import { DrizzleCatalogRepository } from "../modules/catalog/repositories/catalog.drizzle.repository.js";
+import { appCore } from "./app-core.js";
 
 class LazyDrizzleCatalogRepository implements CatalogRepository {
 	private repo = new DrizzleCatalogRepository();
@@ -11,4 +12,9 @@ class LazyDrizzleCatalogRepository implements CatalogRepository {
 	}
 }
 
-export const container = Object.freeze({ catalogRepository: new LazyDrizzleCatalogRepository() });
+export const container = Object.freeze({
+	catalogRepository: new LazyDrizzleCatalogRepository(),
+	core: appCore
+});
+
+export { appCore };

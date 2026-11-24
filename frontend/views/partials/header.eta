@@ -20,6 +20,20 @@ const managementNavigation = adminNavigation || editorNavigation; %>
 			<% if (it.shell.title !== 'GyanPath') { %><p><% if (it.shell.action === 'dashboard') { %>Welcome <strong data-user-name></strong> (<span data-user-role></span>).<% } else { %><%= it.shell.subtitle %><% } %></p><% } %>
 		</div>
 		<div class="header-actions">
+			<% if (it.availablePrograms && it.availablePrograms.length > 0) { %>
+			<div class="program-switcher" role="group" aria-label="Academic program">
+				<span class="program-label" id="programSelectorLabel"><span class="program-icon" aria-hidden="true">🎓</span> Program</span>
+				<div class="program-select-wrapper">
+					<select id="programSelector" class="program-select" aria-labelledby="programSelectorLabel">
+						<% for (const prog of it.availablePrograms) { %>
+							<option value="<%= prog.code %>"<% if (it.activeProgram && it.activeProgram.code.toUpperCase() === prog.code.toUpperCase()) { %> selected<% } %> title="<%= prog.title %>">
+								<%= prog.code %>
+							</option>
+						<% } %>
+					</select>
+				</div>
+			</div>
+			<% } %>
 			<div class="theme-switcher" role="group" aria-label="Choose page theme"></div>
 			<% if (it.shell.action === 'dashboard') { %>
 			<div class="protected-actions">

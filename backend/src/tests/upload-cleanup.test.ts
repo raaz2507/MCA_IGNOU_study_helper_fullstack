@@ -9,17 +9,18 @@ import { env } from "../config/env.js";
 import { db } from "../config/db.js";
 import { banners } from "../infrastructure/database/schema.js";
 import { contentRepository } from "../modules/content/content.repository.js";
+import { storageService } from "../infrastructure/storage/storage.service.js";
 
 const pixel = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=";
 
 function absoluteUpload(publicPath: string | null) {
-	if (!publicPath?.startsWith("/uploads/")) throw new Error("Expected an upload path.");
-	return path.join(env.projectRoot, publicPath.slice(1).replaceAll("/", path.sep));
+	if (!publicPath?.startsWith("/storage/uploads/")) throw new Error("Expected an upload path.");
+	return storageService.uploadPublicPathToAbsolute(publicPath);
 }
 
 test("replacing and deleting a banner removes its superseded upload files", async () => {
 	const id = `upload-cleanup-${crypto.randomUUID()}`;
-	const uploadDirectory = path.join(env.projectRoot, "uploads", "banners", id);
+	const uploadDirectory = path.join(storageService.uploadsRoot, "banners", id);
 	try {
 		const first = await contentRepository.saveBanner({
 			id,

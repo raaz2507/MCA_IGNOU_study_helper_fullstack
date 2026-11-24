@@ -1,12 +1,11 @@
-import { getPapers } from "../api/papers.api.js";
-import { getSubjects } from "../api/subjects.api.js";
+import { getPapers, getSubjects } from "../api/catalog.api.js";
 
 (async () => {
 	"use strict";
 	const container = document.getElementById("semesterContainer");
 	if (!container) return;
 	if (container.hasAttribute("data-ssr-subjects")) {
-		await import("../utils/page-preferences.js?v=6");
+		await import("../utils/page-preferences.js");
 		document.dispatchEvent(new CustomEvent("study-helper:subjects-rendered"));
 		return;
 	}
@@ -178,6 +177,6 @@ import { getSubjects } from "../api/subjects.api.js";
 		container.append(section);
 	});
 
-	await import("../utils/page-preferences.js?v=6");
+	await import("../utils/page-preferences.js");
 	document.dispatchEvent(new CustomEvent("study-helper:subjects-rendered"));
 })();

@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import path from "node:path";
 import { readFile } from "node:fs/promises";
 import express from "express";
@@ -17,7 +18,7 @@ import { adminRouter } from "./modules/admin/admin.routes.js";
 import { analyticsRouter } from "./modules/analytics/analytics.routes.js";
 import { feedbackRouter } from "./modules/feedback/feedback.routes.js";
 import { readLinkPreviewSettings, readShareSettings, readSupportSettings } from "./modules/admin/admin.controller.js";
-import { resourcesPageData } from "./modules/catalog/resources-page.service.js";
+import { appCore } from "./container/app-core.js";
 import { contentService } from "./modules/content/content.service.js";
 import { errorHandler } from "./shared/middleware/error-handler.js";
 
@@ -135,9 +136,11 @@ export function createApp() {
 		"login", "paper-gallery", "pdf-viewer", "profile", "question-bank",
 		"resources", "user-guide", "video-lectures"
 	];
-	const assetCache = {
+	const assetCache = env.nodeEnv === "production" ? {
 		maxAge: "30d",
 		immutable: true
+	} : {
+		maxAge: 0
 	};
 	const userContentCache = {
 		maxAge: "1h"
@@ -209,7 +212,13 @@ export function createApp() {
 	app.use("/api/admin", adminRouter);
 
 	app.use("/assets", express.static(path.join(env.frontendRoot, "assets"), assetCache));
-	app.use("/uploads", express.static(path.join(env.projectRoot, "uploads"), userContentCache));
+	app.use("/storage/uploads", express.static(env.uploadsRoot, userContentCache));
+	app.use("/storage/resources", express.static(env.localResourcesRoot, userContentCache));
+	const legacyLocalResources = path.join(env.projectRoot, "local-resources");
+	if (fs.existsSync(legacyLocalResources)) {
+		app.use("/storage/resources", express.static(legacyLocalResources, userContentCache));
+		app.use("/local-resources", express.static(legacyLocalResources, userContentCache));
+	}
 	app.use("/local-resources", express.static(env.localResourcesRoot, userContentCache));
 	app.use("/frontend", express.static(env.frontendRoot, assetCache));
 	app.get("/favicon.ico", (_request, response) => {
@@ -261,10 +270,10 @@ export function createApp() {
 			subtitle: "Your MCA study companion"
 		},
 		footer: await footerData(),
-		stylesheets: ["/assets/css/index.css?v=41", "/assets/css/pages/landing.css?v=5"],
+		stylesheets: ["/assets/css/index.css", "/assets/css/pages/landing.css"],
 		scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
-			{ src: "/assets/js/pages/home-account.js?v=2", module: true }
+			{ src: "/assets/js/components/site-shell.js", module: true },
+			{ src: "/assets/js/pages/home-account.js", module: true }
 		],
 		routes: {
 			resources: "/resources"
@@ -287,15 +296,15 @@ export function createApp() {
 				subtitle: "Previous Year Question Papers & Study Material"
 			},
 			footer: await footerData(),
-			stylesheets: ["/assets/css/pages/home.css?v=35"],
+			stylesheets: ["/assets/css/index.css"],
 			scripts: [
-				{ src: "/assets/js/components/site-shell.js?v=4", module: true },
-				{ src: "/assets/js/components/subject-card.js?v=10", module: true },
-				{ src: "/assets/js/components/card-tilt.js?v=6" },
-				{ src: "/assets/js/components/banner-carousel.js?v=3", module: true },
-				{ src: "/assets/js/pages/resources.js?v=3", module: true }
+				{ src: "/assets/js/components/site-shell.js", module: true },
+				{ src: "/assets/js/components/subject-card.js", module: true },
+				{ src: "/assets/js/components/card-tilt.js" },
+				{ src: "/assets/js/components/banner-carousel.js", module: true },
+				{ src: "/assets/js/pages/resources.js", module: true }
 			],
-			...await resourcesPageData(programCode)
+			...await appCore.catalog.getResourcesPageData(programCode)
 		});
 	});
 	app.get("/about", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "about.eta"), {
@@ -313,10 +322,10 @@ export function createApp() {
 			subtitle: "A simple resource center for IGNOU MCA students."
 		},
 		footer: await footerData(),
-		stylesheets: ["/assets/css/index.css?v=41"],
+		stylesheets: ["/assets/css/index.css"],
 		scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
-			{ src: "/assets/js/pages/about.js?v=1", module: true }
+			{ src: "/assets/js/components/site-shell.js", module: true },
+			{ src: "/assets/js/pages/about.js", module: true }
 		],
 		contributors: await contentService.list("contributors")
 	}));
@@ -339,7 +348,7 @@ export function createApp() {
 		footer: await footerData(),
 		stylesheets: settings.stylesheets,
 		scripts: settings.scripts || [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true }
+			{ src: "/assets/js/components/site-shell.js", module: true }
 		]
 	});
 	app.get("/profile", (_request, response) => standardPage(response, {
@@ -347,8 +356,8 @@ export function createApp() {
 		description: "Manage your GyanPath account and personal information.", robots: "noindex, nofollow",
 		headerTitle: "Student Profile", headerSubtitle: "Account and personal information.",
 		pageBody: { className: "auth-pending", allowedRoles: "user,editor,moderator,admin" },
-		stylesheets: ["/assets/css/index.css?v=41"], scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+		stylesheets: ["/assets/css/index.css"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true },
 			{ src: "/assets/js/pages/profile.js", module: true }
 		]
@@ -356,7 +365,7 @@ export function createApp() {
 	app.get("/user-guide", (_request, response) => standardPage(response, {
 		view: "user-guide", activePage: "guide", title: "User Guide | GyanPath",
 		description: "Learn how to use GyanPath to find IGNOU MCA semester resources, question papers, assignments and question banks.",
-		headerTitle: "User Guide", headerSubtitle: "How to use the MCA Study Helper.", stylesheets: ["/assets/css/index.css?v=41"],
+		headerTitle: "User Guide", headerSubtitle: "How to use the MCA Study Helper.", stylesheets: ["/assets/css/index.css"],
 		scripts: [{ src: "/assets/js/pages/user-guide.js", module: true }]
 	}));
 	app.get("/editor-guide", (_request, response) => standardPage(response, {
@@ -365,8 +374,8 @@ export function createApp() {
 		robots: "noindex, nofollow", headerTitle: "Editor Guide",
 		headerSubtitle: "Content-management workflows and publishing checks.",
 		pageBody: { className: "auth-pending", allowedRoles: "editor,admin" },
-		stylesheets: ["/assets/css/index.css?v=41"], scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+		stylesheets: ["/assets/css/index.css"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true }
 		]
 	}));
@@ -376,8 +385,8 @@ export function createApp() {
 		robots: "noindex, nofollow", headerTitle: "Admin Guide",
 		headerSubtitle: "Administrative controls, safety checks and platform operations.",
 		pageBody: { className: "auth-pending", allowedRoles: "admin" },
-		stylesheets: ["/assets/css/index.css?v=41"], scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+		stylesheets: ["/assets/css/index.css"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true }
 		]
 	}));
@@ -385,8 +394,8 @@ export function createApp() {
 		view: "video-lectures", activePage: "lectures", title: "IGNOU MCA Video Lectures | GyanPath",
 		description: "Watch curated IGNOU MCA video lectures by subject, unit, teacher and language.",
 		headerTitle: "Video Lectures", headerSubtitle: "Published MCA video lectures.", label: "Online Learning", action: "subjects",
-		stylesheets: ["/assets/css/index.css?v=41"], scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+		stylesheets: ["/assets/css/index.css"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/pages/video-lectures.js", module: true }
 		]
 	}));
@@ -394,10 +403,10 @@ export function createApp() {
 		view: "chat", activePage: "chat", title: "Chat | GyanPath", description: "Personal and study-group conversations on GyanPath.",
 		robots: "noindex, nofollow", headerTitle: "Chat Operations", headerSubtitle: "Static preview of personal and study-group conversations.",
 		label: "Admin and Editor", action: "logout", pageBody: { className: "auth-pending", allowedRoles: "admin,editor" },
-		stylesheets: ["/assets/css/pages/chat.css?v=2"], scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+		stylesheets: ["/assets/css/pages/chat.css"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true },
-			{ src: "/assets/js/pages/chat.js?v=2", module: true }
+			{ src: "/assets/js/pages/chat.js", module: true }
 		]
 	}));
 	app.get("/discussion", (_request, response) => standardPage(response, {
@@ -405,10 +414,10 @@ export function createApp() {
 		description: "Join IGNOU MCA subject-wise discussion rooms for doubts, answers and peer learning.",
 		robots: "noindex, nofollow", headerTitle: "Discussion Operations", headerSubtitle: "Static moderation preview for doubts and peer learning.",
 		label: "Admin and Editor", action: "logout", pageBody: { className: "auth-pending", allowedRoles: "admin,editor" },
-		stylesheets: ["/assets/css/pages/discussion.css?v=2"], scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+		stylesheets: ["/assets/css/pages/discussion.css"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true },
-			{ src: "/assets/js/pages/discussion.js?v=2", module: true }
+			{ src: "/assets/js/pages/discussion.js", module: true }
 		]
 	}));
 	app.get("/testing", (_request, response) => standardPage(response, {
@@ -418,15 +427,15 @@ export function createApp() {
 		headerSubtitle: "Community features available to Admin and Editor accounts.",
 		label: "Admin and Editor", action: "logout",
 		pageBody: { className: "auth-pending", allowedRoles: "admin,editor" },
-		stylesheets: ["/assets/css/pages/testing.css?v=1"], scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+		stylesheets: ["/assets/css/pages/testing.css"], scripts: [
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true }
 		]
 	}));
 	app.get("/pdf-viewer", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "pdf-viewer.eta"), {
 		meta: { title: "PDF Reader", description: "Read GyanPath study PDFs.", robots: "noindex, nofollow", canonicalUrl: `${env.siteUrl}/pdf-viewer`, socialTitle, socialDescription, socialImage },
 		shell: { activePage: "pdf-viewer", title: "PDF Reader", subtitle: "Study Reader", includeHeader: false, includeFooter: false },
-		stylesheets: ["/assets/css/pdf-viewer.css?v=2", "/assets/css/breadcrumb.css"],
+		stylesheets: ["/assets/css/pdf-viewer.css", "/assets/css/breadcrumb.css"],
 		scripts: [
 			{ src: "/assets/js/utils/theme.js" }, { src: "/assets/js/utils/page-preferences.js", module: true },
 			{ src: "/assets/js/components/standalone-page.js", module: true },
@@ -473,11 +482,11 @@ export function createApp() {
 			includeHeader: false,
 			includeFooter: false
 		},
-		stylesheets: ["/assets/css/pages/question-bank.css?v=4", "/assets/css/breadcrumb.css"],
+		stylesheets: ["/assets/css/app-paper.css", "/assets/css/breadcrumb.css"],
 		scripts: [
 			{ src: "https://cdn.jsdelivr.net/npm/marked/marked.min.js" },
 			{ src: "/assets/js/components/standalone-page.js", module: true },
-			{ src: "/assets/js/pages/question-bank.js?v=4", module: true }
+			{ src: "/assets/js/pages/question-bank.js", module: true }
 		]
 	}));
 	app.get("/dashboard", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "dashboard.eta"), {
@@ -502,14 +511,14 @@ export function createApp() {
 			allowedRoles: "admin,editor"
 		},
 		footer: await footerData(),
-		stylesheets: ["/assets/css/index.css?v=41"],
+		stylesheets: ["/assets/css/index.css"],
 		scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true },
-			{ src: "/assets/js/pages/video-lectures-admin.js?v=2", module: true },
+			{ src: "/assets/js/pages/video-lectures-admin.js", module: true },
 			{ src: "/assets/js/pages/banner-admin.js", module: true },
 			{ src: "/assets/js/pages/paper-preview-cache-admin.js", module: true },
-			{ src: "/assets/js/pages/link-preview-admin.js?v=2", module: true },
+			{ src: "/assets/js/pages/link-preview-admin.js", module: true },
 			{ src: "/assets/js/pages/contributors-admin.js", module: true }
 		]
 	}));
@@ -522,7 +531,6 @@ export function createApp() {
 		label: string;
 		action: "dashboard" | "logout";
 		roles: string;
-		stylesheetVersion: number;
 		pageScript: string;
 	}) => sendPage(response, path.join(env.viewsRoot, "pages", `${settings.view}.eta`), {
 		meta: {
@@ -543,9 +551,9 @@ export function createApp() {
 		},
 		pageBody: { className: "auth-pending", allowedRoles: settings.roles },
 		footer: await footerData(),
-		stylesheets: [`/assets/css/index.css?v=${settings.stylesheetVersion}`],
+		stylesheets: ["/assets/css/index.css"],
 		scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/utils/protected-page.js", module: true },
 			{ src: settings.pageScript, module: true }
 		]
@@ -555,36 +563,36 @@ export function createApp() {
 		title: "Study Materials | GyanPath Dashboard",
 		description: "Manage study material metadata, Hindi availability and checksums.",
 		label: "Resource Management", action: "dashboard", roles: "admin,editor",
-		stylesheetVersion: 41, pageScript: "/assets/js/pages/resource-management.js"
+		pageScript: "/assets/js/pages/resource-management.js"
 	}));
 	app.get("/dashboard/question-papers", (_request, response) => dashboardPage(response, {
 		view: "dashboard-question-papers", activePage: "dashboard-question-papers",
 		title: "Question Papers | GyanPath Dashboard",
 		description: "Manage question paper metadata, Hindi availability and checksums.",
 		label: "Resource Management", action: "dashboard", roles: "admin,editor",
-		stylesheetVersion: 41, pageScript: "/assets/js/pages/resource-management.js"
+		pageScript: "/assets/js/pages/resource-management.js"
 	}));
 	app.get("/dashboard/academic-operations", (_request, response) => dashboardPage(response, {
 		view: "dashboard-academic-operations", activePage: "dashboard-academic-operations",
 		title: "Academic Operations | GyanPath Dashboard",
 		description: "Manage semesters, subjects, assignments, reports and audit history.",
 		label: "Resource Management", action: "dashboard", roles: "admin,editor",
-		stylesheetVersion: 41, pageScript: "/assets/js/pages/admin-operations.js"
+		pageScript: "/assets/js/pages/admin-operations.js"
 	}));
 	app.get("/admin", (_request, response) => dashboardPage(response, {
 		view: "admin", activePage: "admin", title: "Super Admin | GyanPath", headerTitle: "Super Admin Control Panel",
 		description: "Platform overview, users, roles and system status.", label: "Admin Only",
-		action: "logout", roles: "admin", stylesheetVersion: 41, pageScript: "/assets/js/pages/admin.js?v=3"
+		action: "logout", roles: "admin", pageScript: "/assets/js/pages/admin.js"
 	}));
 	app.get("/admin/users", (_request, response) => dashboardPage(response, {
 		view: "admin-users", activePage: "admin-users", title: "User Management | GyanPath",
 		description: "Approvals, roles, audit checks and account actions.", label: "Admin Only",
-		action: "logout", roles: "admin", stylesheetVersion: 41, pageScript: "/assets/js/pages/admin-users.js"
+		action: "logout", roles: "admin", pageScript: "/assets/js/pages/admin-users.js"
 	}));
 	app.get("/admin/database", (_request, response) => dashboardPage(response, {
 		view: "admin-database", activePage: "admin-database", title: "Database Backup | GyanPath",
 		description: "Export, analyse and restore database records with uploaded images.", label: "Admin Only",
-		action: "logout", roles: "admin", stylesheetVersion: 41, pageScript: "/assets/js/pages/admin-database.js"
+		action: "logout", roles: "admin", pageScript: "/assets/js/pages/admin-database.js"
 	}));
 	app.get("/login", async (_request, response) => sendPage(response, path.join(env.viewsRoot, "pages", "login.eta"), {
 		meta: {
@@ -596,9 +604,9 @@ export function createApp() {
 			variant: "dashboard", label: "Secure Access"
 		},
 		footer: await footerData(),
-		stylesheets: ["/assets/css/index.css?v=41"],
+		stylesheets: ["/assets/css/index.css"],
 		scripts: [
-			{ src: "/assets/js/components/site-shell.js?v=4", module: true },
+			{ src: "/assets/js/components/site-shell.js", module: true },
 			{ src: "/assets/js/pages/login.js", module: true }
 		]
 	}));
@@ -611,7 +619,7 @@ export function createApp() {
 			activePage: "access-denied", title: "Access Denied", subtitle: "Permission required",
 			includeHeader: false, includeFooter: false
 		},
-		stylesheets: ["/assets/css/index.css?v=41"], scripts: []
+		stylesheets: ["/assets/css/index.css"], scripts: []
 	}));
 	app.get("/index.html", (request, response) => {
 		const query = request.url.includes("?") ? request.url.slice(request.url.indexOf("?")) : "";

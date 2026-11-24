@@ -3,7 +3,7 @@ import {
 	fetchLectureMetadata, getLectureCatalog, saveLectureCatalog,
 	syncLectureCatalog, validateLectureCatalog
 } from "../api/content.api.js";
-import { getSubjects } from "../api/subjects.api.js";
+import { getSubjects } from "../api/catalog.api.js";
 import { videoLectureStore } from "../utils/video-lectures-store.js";
 
 import { showToast } from "../utils/toast.js";

@@ -12,6 +12,7 @@ import {
 	papers
 } from "../../infrastructure/database/schema.js";
 import { contentSetup } from "../../config/content.setup.js";
+import { storageService } from "../../infrastructure/storage/storage.service.js";
 
 export type ProgramInfo = {
 	id: string;
@@ -232,19 +233,19 @@ export class ProgramCatalogService {
 	 * Returns program guide and assignments collections.
 	 */
 	async getResourceCollections(programFolder = "MCA_new"): Promise<{ programGuide: ResourceCollectionItem[]; assignments: ResourceCollectionItem[] }> {
-		const programDir = path.join(env.localResourcesRoot, programFolder);
+		const programDir = storageService.resourcePath(programFolder);
 
 		const scanFolder = (folderName: string): ResourceCollectionItem[] => {
 			const folderPath = path.join(programDir, folderName);
 			if (!existsSync(folderPath)) return [];
 			return filesInDir(folderPath, ".pdf", true).map((file) => {
 				const stat = statSync(file);
-				const relPath = path.relative(env.localResourcesRoot, file).split(path.sep).join("/");
+				const relPath = path.relative(storageService.resourcesRoot, file);
 				const relGroup = path.relative(folderPath, path.dirname(file)).split(path.sep).filter(Boolean).join(" / ");
 				return {
 					title: titleFromFile(file),
 					group: relGroup,
-					path: `/local-resources/${relPath}`,
+					path: storageService.resourcePublicUrl(relPath),
 					fileName: path.basename(file),
 					size: stat.size,
 					updated: formatUpdated(stat.mtime)
@@ -293,7 +294,7 @@ export class ProgramCatalogService {
 	async syncProgramFromDisk(programCode = "MCA_NEW", programTitle = "Master of Computer Applications", folderName = "MCA_new") {
 		const programId = programCode.toLowerCase().replace(/[^a-z0-9]+/g, "_");
 		const now = new Date().toISOString();
-		const programRoot = path.join(env.localResourcesRoot, folderName);
+		const programRoot = storageService.resourcePath(folderName);
 
 		if (!existsSync(programRoot)) {
 			throw new Error(`Program directory does not exist: ${programRoot}`);
@@ -366,13 +367,13 @@ export class ProgramCatalogService {
 				const examDir = path.join(subDir, "exam_papers");
 				const studyDir = path.join(subDir, "study_material");
 
-				// Check for HTML viewer
+				// Check for HTML viewer in storage/resources
 				const htmlFiles = filesInDir(examDir, ".html").filter((f) => path.basename(f).toLowerCase() !== "index.html");
 				const htmlViewerPath = htmlFiles[0]
-					? `/assets/resources/${folderName}/${path.basename(semDir)}/${rawFolder}/exam_papers/${path.basename(htmlFiles[0])}`
+					? storageService.resourcePublicUrl(`${folderName}/${path.basename(semDir)}/${rawFolder}/exam_papers/${path.basename(htmlFiles[0])}`)
 					: null;
 
-				const hasQuestionBank = existsSync(path.join(env.frontendRoot, "assets", "resources", folderName, path.basename(semDir), rawFolder, "data", "manifest.json"));
+				const hasQuestionBank = existsSync(path.join(subDir, "data", "manifest.json"));
 
 				// Upsert Subject
 				const existingSub = await db.select().from(subjects).where(eq(subjects.code, code));
@@ -402,13 +403,13 @@ export class ProgramCatalogService {
 					const studyPdfs = filesInDir(studyDir, ".pdf", true);
 					for (const pdf of studyPdfs) {
 						const parent = path.relative(studyDir, path.dirname(pdf)).split(path.sep).filter(Boolean).join(" / ") || "Study Material";
-						const relToLocal = path.relative(env.localResourcesRoot, pdf).split(path.sep).join("/");
+						const relToLocal = path.relative(storageService.resourcesRoot, pdf);
 						await db.insert(studyMaterials).values({
 							id: randomUUID(),
 							subjectId,
 							groupName: parent,
 							title: path.parse(pdf).name,
-							filePath: `/local-resources/${relToLocal}`,
+							filePath: storageService.resourcePublicUrl(relToLocal),
 							status: "PUBLISHED",
 							createdAt: now
 						});
@@ -430,8 +431,8 @@ export class ProgramCatalogService {
 						const parsed = path.parse(english);
 						const hindi = hindiMap.get(parsed.name.toLowerCase());
 						const stat = statSync(english);
-						const relEnglish = path.relative(env.localResourcesRoot, english).split(path.sep).join("/");
-						const relHindi = hindi ? path.relative(env.localResourcesRoot, hindi).split(path.sep).join("/") : null;
+						const relEnglish = path.relative(storageService.resourcesRoot, english);
+						const relHindi = hindi ? path.relative(storageService.resourcesRoot, hindi) : null;
 
 						await db.insert(papers).values({
 							id: randomUUID(),
@@ -439,8 +440,8 @@ export class ProgramCatalogService {
 							title: parsed.name.replace(/\bquestion\s+paper\b/i, "").replace(/\s+/g, " ").trim(),
 							session: sessionFromName(parsed.name),
 							fileName: parsed.base,
-							englishPath: `/local-resources/${relEnglish}`,
-							hindiPath: relHindi ? `/local-resources/${relHindi}` : null,
+							englishPath: storageService.resourcePublicUrl(relEnglish),
+							hindiPath: relHindi ? storageService.resourcePublicUrl(relHindi) : null,
 							previewPath: this.fallbackPreview,
 							fileSize: stat.size,
 							status: "PUBLISHED",

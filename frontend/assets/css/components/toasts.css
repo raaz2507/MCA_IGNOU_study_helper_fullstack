@@ -1,0 +1,94 @@
+/* ==========================================================================
+   Toasts & Notifications
+   ========================================================================== */
+.toast-region {
+	position: fixed;
+	top: var(--panel-padding-compact);
+	right: var(--panel-padding-compact);
+	z-index: var(--z-modal);
+	display: grid;
+	gap: var(--filter-gap);
+	width: min(360px, calc(100vw - var(--page-gutter)));
+	pointer-events: none;
+}
+
+.toast-message {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	align-items: start;
+	gap: var(--space-3);
+	padding: var(--space-3) var(--space-4);
+	color: var(--main-text);
+	background: var(--card-background);
+	border: 1px solid var(--card-border);
+	border-left: var(--space-1) solid var(--app-primary);
+	border-radius: var(--radius-md);
+	box-shadow: var(--shadow-xl);
+	pointer-events: auto;
+	animation: toast-in var(--transition-fast) var(--ease-out);
+}
+
+.toast-message.success {
+	border-left-color: var(--app-success);
+}
+
+.toast-message.error {
+	border-left-color: var(--app-danger);
+}
+
+.toast-message.warning {
+	border-left-color: var(--app-warning);
+}
+
+.toast-message.info {
+	border-left-color: var(--app-primary);
+}
+
+.toast-message.is-leaving {
+	animation: toast-out var(--transition-fast) ease-in forwards;
+}
+
+.toast-message p {
+	margin: var(--space-0);
+	color: var(--heading-text);
+	font-size: var(--text-sm);
+	font-weight: var(--font-weight-extrabold);
+	line-height: var(--leading-normal);
+}
+
+.toast-close {
+	padding: var(--space-1) var(--badge-padding-y);
+	color: var(--muted-text);
+	background: var(--color-transparent);
+	border: 0;
+	border-radius: var(--radius-xs);
+	cursor: pointer;
+	font: inherit;
+	font-size: var(--text-2xs);
+	font-weight: var(--font-weight-black);
+}
+
+.toast-close:hover,
+.toast-close:focus-visible {
+	color: var(--heading-text);
+	background: var(--soft-background);
+	outline: none;
+}
+
+@keyframes toast-in {
+	from {
+		opacity: 0;
+		transform: translateY(calc(-1 * var(--space-2)));
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes toast-out {
+	to {
+		opacity: 0;
+		transform: translateY(calc(-1 * var(--space-2)));
+	}
+}

@@ -1,0 +1,67 @@
+/* ==========================================================================
+   Academic Program Switcher (2-line layout)
+   ========================================================================== */
+.program-switcher {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  background: var(--soft-background-2);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1) var(--space-2);
+}
+
+.program-switcher .program-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  font-size: var(--text-2xs);
+  font-weight: var(--font-weight-extrabold);
+  color: var(--muted-text);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  line-height: var(--leading-tight);
+  user-select: none;
+}
+
+.program-switcher .program-icon {
+  font-size: var(--text-sm);
+  line-height: var(--leading-none);
+}
+
+.program-switcher .program-select-wrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+.program-switcher .program-select {
+  width: 100%;
+  background: transparent;
+  border: 0;
+  color: var(--heading-text);
+  font: inherit;
+  font-size: var(--text-xs);
+  font-weight: var(--font-weight-extrabold);
+  cursor: pointer;
+  padding: 1px var(--space-0);
+  outline: none;
+  border-radius: var(--radius-xs);
+  transition: color var(--transition-fast);
+}
+
+.program-switcher .program-select:focus-visible {
+  outline: var(--field-focus-ring);
+}
+
+.program-switcher .program-select option {
+  background: var(--app-surface);
+  color: var(--main-text);
+}
+
+@media (max-width: 900px) {
+  .program-switcher {
+    align-items: center;
+  }
+}

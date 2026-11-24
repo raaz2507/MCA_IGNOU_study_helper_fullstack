@@ -12,13 +12,12 @@ function containsPath(value: unknown, publicPath: string): boolean {
 	return false;
 }
 
+import { storageService } from "../infrastructure/storage/storage.service.js";
+
 function uploadAbsolutePath(publicPath: string) {
-	if (!publicPath.startsWith("/uploads/")) return null;
-	const uploadsRoot = path.resolve(env.projectRoot, "uploads");
-	const relativePath = publicPath.slice("/uploads/".length).replaceAll("/", path.sep);
-	const absolutePath = path.resolve(uploadsRoot, relativePath);
-	if (!absolutePath.startsWith(uploadsRoot + path.sep)) return null;
-	return { absolutePath, uploadsRoot };
+	const absolutePath = storageService.uploadPublicPathToAbsolute(publicPath);
+	if (!absolutePath) return null;
+	return { absolutePath, uploadsRoot: storageService.uploadsRoot };
 }
 
 async function isReferenced(publicPath: string) {

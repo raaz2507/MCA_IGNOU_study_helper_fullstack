@@ -1,7 +1,7 @@
 ﻿import type { RequestHandler } from "express";
 import { env } from "../../config/env.js";
 import { asyncHandler } from "../../shared/middleware/async-handler.js";
-import { authService } from "./auth.service.js";
+import { appCore } from "../../container/app-core.js";
 import { changePasswordSchema, loginSchema, registerSchema, resendVerificationSchema, updateProfileSchema, verifyEmailSchema } from "./auth.schema.js";
 
 const cookieOptions = {
@@ -13,7 +13,7 @@ const cookieOptions = {
 
 export const login: RequestHandler = asyncHandler(async (request, response) => {
 	const input = loginSchema.parse(request.body);
-	const result = await authService.login(input.username, input.password);
+	const result = await appCore.auth.login(input.username, input.password);
 	response.cookie("gyanpath_access", result.accessToken, {
 		...cookieOptions,
 		maxAge: 15 * 60 * 1000
@@ -27,22 +27,22 @@ export const login: RequestHandler = asyncHandler(async (request, response) => {
 
 export const register: RequestHandler = asyncHandler(async (request, response) => {
 	const input = registerSchema.parse(request.body);
-	const result = await authService.register(input);
+	const result = await appCore.auth.register(input);
 	response.status(201).json(result);
 });
 
 export const verifyEmail: RequestHandler = asyncHandler(async (request, response) => {
 	const input = verifyEmailSchema.parse(request.body);
-	response.json(await authService.verifyEmail(input.token));
+	response.json(await appCore.auth.verifyEmail(input.token));
 });
 
 export const resendVerification: RequestHandler = asyncHandler(async (request, response) => {
 	const input = resendVerificationSchema.parse(request.body);
-	response.json(await authService.resendVerification(input.email));
+	response.json(await appCore.auth.resendVerification(input.email));
 });
 
 export const refresh: RequestHandler = asyncHandler(async (request, response) => {
-	const result = await authService.refresh(String(request.cookies?.gyanpath_refresh || ""));
+	const result = await appCore.auth.refresh(String(request.cookies?.gyanpath_refresh || ""));
 	response.cookie("gyanpath_access", result.accessToken, {
 		...cookieOptions,
 		maxAge: 15 * 60 * 1000
@@ -51,28 +51,28 @@ export const refresh: RequestHandler = asyncHandler(async (request, response) =>
 });
 
 export const me: RequestHandler = asyncHandler(async (request, response) => {
-	response.json(await authService.currentUser(request.user!.id));
+	response.json(await appCore.auth.currentUser(request.user!.id));
 });
 
 export const profile: RequestHandler = asyncHandler(async (request, response) => {
-	response.json(await authService.profile(request.user!.id));
+	response.json(await appCore.auth.profile(request.user!.id));
 });
 
 export const updateProfile: RequestHandler = asyncHandler(async (request, response) => {
 	const input = updateProfileSchema.parse(request.body);
-	response.json(await authService.updateProfile(request.user!.id, input));
+	response.json(await appCore.auth.updateProfile(request.user!.id, input));
 });
 
 export const changePassword: RequestHandler = asyncHandler(async (request, response) => {
 	const input = changePasswordSchema.parse(request.body);
-	await authService.changePassword(request.user!.id, input.currentPassword, input.newPassword);
+	await appCore.auth.changePassword(request.user!.id, input.currentPassword, input.newPassword);
 	response.clearCookie("gyanpath_access", cookieOptions);
 	response.clearCookie("gyanpath_refresh", cookieOptions);
 	response.json({ success: true });
 });
 
 export const logout: RequestHandler = asyncHandler(async (request, response) => {
-	await authService.logout(request.cookies?.gyanpath_refresh);
+	await appCore.auth.logout(request.cookies?.gyanpath_refresh);
 	response.clearCookie("gyanpath_access", cookieOptions);
 	response.clearCookie("gyanpath_refresh", cookieOptions);
 	response.json({ success: true });

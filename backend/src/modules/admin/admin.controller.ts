@@ -479,7 +479,7 @@ async function databaseBackup() {
 		}))
 		.filter((file) => file.path)
 		.forEach((file) => fileMap.set(file.path, file));
-	const uploadsRoot = path.join(env.projectRoot, "uploads");
+	const uploadsRoot = env.uploadsRoot;
 	async function collectUploads(dir: string) {
 		let entries: import("node:fs").Dirent[] = [];
 		try {
@@ -518,7 +518,7 @@ async function backupZip(backup: DatabaseBackup) {
 		const normalized = normalizeBackupFilePath(file.path);
 		if (!normalized) continue;
 		const source = path.resolve(env.projectRoot, normalized);
-		if (!source.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) continue;
+		if (!source.startsWith(path.resolve(env.uploadsRoot) + path.sep)) continue;
 		try {
 			entries.push({
 				name: `files/${normalized}`,
@@ -541,7 +541,7 @@ async function restoreBackupFiles(entries: Map<string, Buffer>, backup: Database
 		const selectedAction = resolution.files?.[normalized];
 		let exists = false;
 		const target = path.resolve(env.projectRoot, normalized);
-		if (!target.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) continue;
+		if (!target.startsWith(path.resolve(env.uploadsRoot) + path.sep)) continue;
 		try {
 			await fs.access(target);
 			exists = true;
@@ -610,19 +610,19 @@ function uploadPublicPathToAbsolute(publicPath: string) {
 	const normalized = normalizeBackupFilePath(publicPath);
 	if (!normalized) return null;
 	const absolute = path.resolve(env.projectRoot, normalized);
-	const uploadsRoot = path.resolve(env.projectRoot, "uploads");
+	const uploadsRoot = path.resolve(env.uploadsRoot);
 	return absolute.startsWith(uploadsRoot + path.sep) ? absolute : null;
 }
 
 async function moveUploadFile(publicPath: string | null | undefined, category: string) {
-	if (!publicPath || !publicPath.startsWith("/uploads/")) return null;
+	if (!publicPath || !publicPath.startsWith("/storage/uploads/")) return null;
 	const source = uploadPublicPathToAbsolute(publicPath);
 	if (!source) return null;
 	const categoryParts = uploadCategoryPath(category);
 	const fileName = path.basename(source);
-	const targetDir = path.join(env.projectRoot, "uploads", ...categoryParts);
+	const targetDir = path.join(env.uploadsRoot, ...categoryParts);
 	const target = path.join(targetDir, fileName);
-	const nextPath = `/uploads/${[...categoryParts, fileName].join("/")}`;
+	const nextPath = `/storage/uploads/${[...categoryParts, fileName].join("/")}`;
 	if (publicPath === nextPath) return { changed: false, path: publicPath };
 	try {
 		await fs.access(source);
@@ -636,7 +636,7 @@ async function moveUploadFile(publicPath: string | null | undefined, category: s
 		const alternateName = `${parsed.name}-${Date.now()}${parsed.ext}`;
 		const alternateTarget = path.join(targetDir, alternateName);
 		await fs.rename(source, alternateTarget);
-		return { changed: true, path: `/uploads/${[...categoryParts, alternateName].join("/")}` };
+		return { changed: true, path: `/storage/uploads/${[...categoryParts, alternateName].join("/")}` };
 	} catch {
 		await fs.rename(source, target);
 		return { changed: true, path: nextPath };
@@ -645,14 +645,14 @@ async function moveUploadFile(publicPath: string | null | undefined, category: s
 
 async function saveGeneratedQrImage(data: string, category: string, size = 300) {
 	const categoryParts = uploadCategoryPath(category);
-	const uploadDir = path.join(env.projectRoot, "uploads", ...categoryParts);
+	const uploadDir = path.join(env.uploadsRoot, ...categoryParts);
 	const url = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&data=${encodeURIComponent(data)}`;
 	const qrResponse = await fetch(url);
 	if (!qrResponse.ok) throw new Error("QR image could not be generated.");
 	const buffer = Buffer.from(await qrResponse.arrayBuffer());
 	const storedName = `${Date.now()}-${crypto.randomUUID()}.png`;
 	const filePath = path.join(uploadDir, storedName);
-	const publicPath = `/uploads/${[...categoryParts, storedName].join("/")}`;
+	const publicPath = `/storage/uploads/${[...categoryParts, storedName].join("/")}`;
 	await fs.mkdir(uploadDir, { recursive: true });
 	await fs.writeFile(filePath, buffer);
 	const asset = await adminRepository.createFileAsset({
@@ -718,7 +718,7 @@ async function normalizeReferencedUpload(
 	movedPaths: Map<string, string>,
 	summary: NormalizeUploadSummary
 ) {
-	if (!publicPath || !publicPath.startsWith("/uploads/")) {
+	if (!publicPath || !publicPath.startsWith("/storage/uploads/")) {
 		summary.skipped += 1;
 		return null;
 	}
@@ -736,7 +736,7 @@ async function normalizeReferencedUpload(
 }
 
 async function normalizeLooseSettingsUploads(movedPaths: Map<string, string>, summary: NormalizeUploadSummary) {
-	const settingsRoot = path.join(env.projectRoot, "uploads", "settings");
+	const settingsRoot = path.join(env.uploadsRoot, "settings");
 	let entries: import("node:fs").Dirent[] = [];
 	try {
 		entries = await fs.readdir(settingsRoot, { withFileTypes: true });
@@ -941,7 +941,7 @@ async function analyzeBackup(backup: DatabaseBackup, entries: Map<string, Buffer
 		const archiveData = entries?.get(`files/${normalized}`) || null;
 		if (archiveData) filesInZip += 1;
 		const target = path.resolve(env.projectRoot, normalized);
-		if (target.startsWith(path.resolve(env.projectRoot, "uploads") + path.sep)) {
+		if (target.startsWith(path.resolve(env.uploadsRoot) + path.sep)) {
 			try {
 				const currentData = await fs.readFile(target);
 				filesAlreadyPresent += 1;
@@ -1152,13 +1152,13 @@ export const uploadSettingQrImage: RequestHandler = asyncHandler(async (request,
 	}
 	const category = String(request.body.category || "settings/misc");
 	const categoryParts = uploadCategoryPath(category);
-	const uploadDir = path.join(env.projectRoot, "uploads", ...categoryParts);
+	const uploadDir = path.join(env.uploadsRoot, ...categoryParts);
 	await fs.mkdir(uploadDir, { recursive: true });
 	const extension = path.extname(request.file.originalname).toLowerCase() || ".png";
 	const storedName = `${Date.now()}-${crypto.randomUUID()}${extension}`;
 	const filePath = path.join(uploadDir, storedName);
 	await fs.writeFile(filePath, request.file.buffer);
-	const publicPath = `/uploads/${[...categoryParts, storedName].join("/")}`;
+	const publicPath = `/storage/uploads/${[...categoryParts, storedName].join("/")}`;
 	const asset = await adminRepository.createFileAsset({
 			originalName: request.file.originalname,
 			storedName,
@@ -1222,7 +1222,7 @@ export const moveOldUploadImages: RequestHandler = asyncHandler(async (request, 
 	await normalizeLooseSettingsUploads(movedPaths, summary);
 
 	if (Object.keys(summary.mappings).length) {
-		const mappingPath = path.join(env.projectRoot, "uploads", "old-upload-image-mapping.json");
+		const mappingPath = path.join(env.uploadsRoot, "old-upload-image-mapping.json");
 		await fs.mkdir(path.dirname(mappingPath), { recursive: true });
 		await fs.writeFile(mappingPath, JSON.stringify(summary.mappings, null, 2), "utf8");
 	}

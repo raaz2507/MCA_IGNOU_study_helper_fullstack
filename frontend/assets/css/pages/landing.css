@@ -1,3 +1,8 @@
+@import url("../tokens.css");
+
+/* ==========================================================================
+   Landing Page & Account Panel
+   ========================================================================== */
 .landing-page {
 	min-height: 62vh;
 	padding: calc(var(--space-8) + var(--space-4)) var(--space-6);
@@ -8,21 +13,21 @@
 	grid-template-columns: minmax(0, 1.25fr) minmax(320px, 480px);
 	gap: calc(var(--space-8) + var(--space-4));
 	align-items: center;
-	max-width: 1180px;
-	margin: 0 auto;
+	max-width: var(--max-width-hero);
+	margin: var(--space-0) auto;
 }
 
 .landing-copy h2 {
 	max-width: 720px;
-	font-size: clamp(2rem, 5vw, 4.6rem);
-	line-height: 1.04;
-	margin: var(--space-3) 0 var(--space-5);
+	font-size: clamp(var(--text-2xl), 5vw, var(--text-4xl));
+	line-height: var(--leading-tight);
+	margin: var(--space-3) var(--space-0) var(--space-5);
 }
 
 .landing-copy > p:not(.dashboard-label) {
 	max-width: 650px;
-	font-size: 1.1rem;
-	line-height: 1.7;
+	font-size: var(--text-md);
+	line-height: var(--leading-relaxed);
 	margin-bottom: var(--space-7);
 }
 
@@ -42,23 +47,23 @@
 }
 
 .account-tabs button {
-	min-height: 36px;
-	padding: 6px var(--space-2);
+	min-height: var(--space-9);
+	padding: var(--space-1) var(--space-2);
 	border: 1px solid var(--border);
 	border-radius: var(--button-radius);
-	background: transparent;
+	background: var(--color-transparent);
 	color: var(--text);
 	font: inherit;
-	font-size: clamp(0.7rem, 1.5vw, 0.875rem);
-	font-weight: 700;
-	line-height: 1.15;
+	font-size: clamp(var(--text-2xs), 1.5vw, var(--text-sm));
+	font-weight: var(--font-weight-bold);
+	line-height: var(--leading-tight);
 	cursor: pointer;
-	transition: transform 160ms ease, background 160ms ease, color 160ms ease;
+	transition: transform var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
 }
 
 .account-tabs button[aria-selected="true"] {
 	background: var(--accent);
-	color: white;
+	color: var(--color-white);
 	border-color: var(--accent);
 }
 
@@ -82,7 +87,7 @@
 .account-form label {
 	display: grid;
 	gap: var(--space-2);
-	font-weight: 700;
+	font-weight: var(--font-weight-bold);
 }
 
 .account-form input {
@@ -99,18 +104,18 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 46px;
+	min-height: calc(var(--space-10) + var(--space-1));
 	padding: var(--button-padding-y) var(--button-padding-x);
 	border: 0;
 	border-radius: var(--button-radius);
 	background: var(--accent);
 	color: var(--accent-text);
 	font: inherit;
-	font-weight: 800;
+	font-weight: var(--font-weight-extrabold);
 	text-decoration: none;
 	cursor: pointer;
 	box-shadow: 0 var(--space-2) var(--space-6) color-mix(in srgb, var(--accent) 26%, transparent);
-	transition: transform 160ms ease, filter 160ms ease;
+	transition: transform var(--transition-fast), filter var(--transition-fast);
 }
 
 .account-form > button:hover,
@@ -123,9 +128,9 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	min-height: 40px;
+	min-height: var(--space-10);
 	color: var(--accent);
-	font-weight: 900;
+	font-weight: var(--font-weight-black);
 	text-decoration: none;
 }
 
@@ -134,7 +139,7 @@
 }
 
 .account-form small {
-	line-height: 1.5;
+	line-height: var(--leading-normal);
 	color: var(--muted);
 }
 
@@ -146,14 +151,14 @@
 }
 
 .resend-verification button {
-	min-height: 42px;
+	min-height: var(--space-10);
 	padding: var(--button-padding-y) var(--button-padding-x);
 	border: 1px solid var(--accent);
 	border-radius: var(--button-radius);
-	background: transparent;
+	background: var(--color-transparent);
 	color: var(--accent);
 	font: inherit;
-	font-weight: 800;
+	font-weight: var(--font-weight-extrabold);
 	cursor: pointer;
 }
 
